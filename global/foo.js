@@ -1,0 +1,102 @@
+module.exports = {
+  makeRandomPassword: () => {
+    //Math.floor(Math.random() * (max - min + 1)) + min;
+    let email_password = '';
+    let max_length = Math.floor(Math.random() * (20 - 10 + 1)) + 10; // 10~20
+    for (let i = 0; i <= max_length; i++) {
+      let flag = Math.floor(Math.random() * (1 - 0 + 1)) + 0; // 0~1
+      let ascii_code = Math.floor(Math.random() * (122 - 65 + 1)) + 65; // 65~122 (아스키 코드 문자 범위)
+      // 91~96 : 특수문자 범위
+      if (ascii_code >= 91 && ascii_code <= 96) {
+        ascii_code += 10;
+      }
+      email_password += (flag) ? String.fromCharCode(ascii_code) : ascii_code;
+    }
+    return email_password;
+  },
+  getDateSerial: () => {
+    let date = new Date(Date.now());
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let date = date.getDate();
+
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+
+    let mili_second = date.getMilliseconds();
+    return `${year}${month < 10 ? "0" + month : month}${date}_${hour}${minute}${second}_${mili_second}`
+  },
+  getIp: (req) => {
+    let ip = req.header('x-forwarded-for') || req.connection.remoteAddress || null;
+    ip = (ip) ? ip.replace(/f/gi, "") : ip;
+    ip = (ip) ? ip.replace(/:/g, "") : ip;
+    return ip;
+  },
+  makeErrContext: (category, status, detail) => {
+    let max = (detail && detail.max != null) ? detail.max : null;
+    let message = {
+      0: {
+        0: `다른 것을 선택해주세요`,
+        404: `대상의 상위존재를 찾을 수 없습니다`,
+      },
+      1: {
+        0: `삭제 상태입니다`,
+        1: `블라인드 상태입니다`,
+        2: `블라인드 상태입니다`,
+        3: `비밀 상태입니다, 본인 또는 관리자 계정으로 로그인해주세요`,
+        404: `대상을 찾을 수 없습니다`,
+      },
+      3: {
+        0: `운영자로 로그인 해주세요`,
+        10: `로그인 해주세요`,
+        100: `운영자 일부만 사용 가능합니다`,
+        110: `운영자와 회원 일부만 사용 가능합니다`,
+      },
+      5: {
+        1: `${max}분부터 수정/삭제 불가능합니다`,
+        2: `자식이 ${max}개부터 수정/삭제 불가능합니다`,
+        3: `댓글 ${max}개부터 수정/삭제 불가능합니다`,
+        4: `${max}단계부터 작성 불가능합니다 (답글/대댓글)`,
+        5: `답글/대댓글은 한 단계에서 ${max}까지 작성 가능합니다`,
+        6: `임시 닉네임을 입력해주세요`,
+        7: `카테고리를 다시 선택해주세요`,
+        8: `해당 글의 작성자가 답글을 비허용 했습니다`,
+      },
+      7: {
+        0: `운영자나 해당 회원으로 로그인 해주세요`,
+        1: `해당 회원으로 로그인 해주세요`,
+        2: `비밀번호를 입력해주세요`,
+        3: `비밀번호가 일치하지 않습니다`,
+      },
+    }
+    return {
+      category,
+      status,
+      message: message[category][status],
+      detail
+    };
+  },
+  parseDateTimeFromDB: (string_from_db) => {
+    let target_date = new Date(string_from_db);
+    let target_year = target_date.getFullYear();
+    let target_month = target_date.getMonth() + 1;
+    let target_day = target_date.getDate();
+    let target_hours = target_date.getHours();
+    let target_minutes = target_date.getMinutes();
+
+    let target_string = `${target_year}-${((target_month<10)? ("0"+target_month): target_month)}-${((target_day<10)? ("0"+target_day): target_day)} ${((target_hours<10)? ("0"+target_hours): target_hours)}:${((target_minutes<10)? ("0"+target_minutes): target_minutes)}`;
+
+    return target_string;
+  },
+  parseDateFromDB: (string_from_db) => {
+    let target_date = new Date(string_from_db);
+    let target_year = target_date.getFullYear();
+    let target_month = target_date.getMonth() + 1;
+    let target_day = target_date.getDate();
+
+    let target_string = `${target_year}-${((target_month<10)? ("0"+target_month): target_month)}-${((target_day<10)? ("0"+target_day): target_day)}`;
+
+    return target_string;
+  },
+}

@@ -1,0 +1,24 @@
+{
+  "name": "classroom",
+  "version": "1.0.0",
+  "description": "Korea National Open University Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anjunha/Classroom.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anjunha/Classroom/issues"
+  },
+  "homepage": "https://github.com/anjunha/Classroom#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "morgan": "^1.9.1"
+  }
+}
