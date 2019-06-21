@@ -1,6 +1,5 @@
 # Classroom
 
-Korea National Open University
 Schoool project
 
 ## 설치 방법 (Installation)
