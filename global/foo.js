@@ -15,16 +15,16 @@ module.exports = {
     return email_password;
   },
   getDateSerial: () => {
-    let date = new Date(Date.now());
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let date = date.getDate();
+    let now = new Date(Date.now());
+    let year = now.getFullYear();
+    let month = now.getMonth() + 1;
+    let date = now.getDate();
 
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    let second = date.getSeconds();
+    let hour = now.getHours();
+    let minute = now.getMinutes();
+    let second = now.getSeconds();
 
-    let mili_second = date.getMilliseconds();
+    let mili_second = now.getMilliseconds();
     return `${year}${month < 10 ? "0" + month : month}${date}_${hour}${minute}${second}_${mili_second}`
   },
   getIp: (req) => {

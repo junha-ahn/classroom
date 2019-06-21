@@ -42,7 +42,7 @@ module.exports = {
   deleteAWSFile: (file_path) => {
     if (file_path) {
       let path_list = file_path.split('/').slice(3);
-      file_key = path_list.join('/');
+      let file_key = path_list.join('/');
       let params = {
         Bucket: BUCKET_NAME,
         Key: file_key
