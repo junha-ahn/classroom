@@ -31,4 +31,17 @@ router.post('/user', function (req, res, next) {
     message: "성공"
   })
 });
+
+router.delete('/user/:user_id', function (req, res, next) {
+  let flag = false;
+  for (let i in results) {
+    if (results[i].user_id == req.params.user_id) {
+      results.splice(i, 1);
+      flag = true;
+    }
+  }
+  res.status(200).json({
+    message: flag ? '성공' : '삭제 실패'
+  })
+});
 module.exports = router;
