@@ -4,7 +4,7 @@
   "description": "Korea National Open University Project",
   "main": "server.js",
   "scripts": {
-    "start": "node server"
+    "start": "nodemon server"
   },
   "repository": {
     "type": "git",

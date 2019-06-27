@@ -1,8 +1,12 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+let indexRoute = require(path.join(__dirname, '/routes/index.js'));
+let apiRoute = require(path.join(__dirname, '/routes/api.js'));
 
 app.use(cors());
 
@@ -13,6 +17,11 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
+app.use(express.static(__dirname + '/views'));
+
+app.use('/', indexRoute);
+app.use('/api', apiRoute);
 
 app.use(function (error, req, res, next) {
   res.status(error.status || 500);
