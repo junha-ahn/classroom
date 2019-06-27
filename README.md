@@ -8,6 +8,7 @@ Schoool project
 
 * ```cd classroom```
 * ```npm install ```
+* ```npm install -g nodemon ```
 
 ## 사용 방법 (Running)
 ~~~~
