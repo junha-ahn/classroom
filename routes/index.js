@@ -11,10 +11,13 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/user', function (req, res, next) {
-  res.render('user', {
-    title: 'User!',
-    results,
-  });
+  console.log('hi')
+  let error = new Error('배가 고프다');
+  next(error);
+  // res.render('user', {
+  //   title: 'User!',
+  //   results,
+  // });
 });
 
 module.exports = router;

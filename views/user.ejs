@@ -6,17 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
 
-  <script type="text/javascript" src="/js/collection.js"></script>
+  <script type="text/javascript" src="/javascripts/collection.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
+
 <body>
 
   <div id="app">
     <header>
-        <% include ./header %>
-    </header>  
+      <% include ./header %>
+    </header>
 
     <main>
       <input v-model="formData.name" type="txet">
@@ -34,13 +36,13 @@
       //array.length = 0;
       array.splice(0, array.length);
     }
-    
+
     var app = new Vue({
       el: '#app',
       data: function () {
         return {
           message: 'Hello',
-          users: <%- JSON.stringify(results) %>,
+          users: < % -JSON.stringify(results) % > ,
           formData: {},
         }
       },
