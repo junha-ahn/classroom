@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
+app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/views'));
 
 app.use('/', indexRoute);

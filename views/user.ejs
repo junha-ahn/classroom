@@ -7,6 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
 
+  <script type="text/javascript" src="/js/collection.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
@@ -54,10 +55,6 @@
             data: null,
             success: function (data) {
               app.users = data.results;
-              // resetArray(users);
-              // data.results.forEach(function (e) {
-              //   users.push(e)
-              // });
             },
             error: function (e) {
               alert("e : ", e);
