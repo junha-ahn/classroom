@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <header>
+        <% include ./header %>
+    </header>  
+
+    <main>
+      <h1 @click="handleClickItem">{{ message }} {{ name }} <input v-bind:value="name" v-model="name" type="text"></h1>
+      <h2> Just testing (Vue.js, Ajax, <%=msg %>) DB is not in use. </h2>
+      <h2> You can create and delete users. </h2>
+    </main>
+  </div>
+
+  <script>
+    function resetArray(array) {
+      //array.length = 0;
+      array.splice(0, array.length);
+    }
+    let msg = "<%=msg %>";
+    console.log('msg : ',msg)
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          message: 'Hello',
+          name: 'World!',
+        }
+      },
+      methods: {
+        handleClickItem: function (e) {
+          this.message = 'Click';
+        },
+      }
+    })
+  </script>
+
+</body>
+
+</html>

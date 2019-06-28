@@ -1,19 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-let results = [{
-    user_id: 1,
-    name: '보라돌이'
-  },
-  {
-    user_id: 2,
-    name: '뚜비'
-  },
-  {
-    user_id: 3,
-    name: '나나'
-  },
-];
+let results = require('../data.js');
 
 router.get('/user', function (req, res, next) {
   res.status(200).json({
@@ -23,13 +11,21 @@ router.get('/user', function (req, res, next) {
 });
 
 router.post('/user', function (req, res, next) {
-  results.push({
-    user_id: results.length + 1,
-    name: req.body.name
-  })
-  res.status(200).json({
-    message: "성공"
-  })
+  let name = req.body.name;
+
+  if (name) {
+    results.push({
+      user_id: results.length + 1,
+      name
+    })
+    res.status(200).json({
+      message: "성공"
+    })
+  } else {
+    res.status(401).json({
+      message : "이름을 재대로 입력해주세요"
+    })
+  }
 });
 
 router.delete('/user/:user_id', function (req, res, next) {

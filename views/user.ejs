@@ -10,49 +10,40 @@
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
-
 <body>
+
   <div id="app">
-    <h1 @click="handleClickItem">{{ message }} {{ name }} <input v-bind:value="name" v-model="name" type="text"></h1>
-    <h2> Just testing (Vue.js and Ajax) DB is not in use. </h2>
-    <h2> You can create and delete users. </h2>
+    <header>
+        <% include ./header %>
+    </header>  
 
-    <br />
-    <br />
-    <input v-model="formData.name" type="txet">
-    <button @click="insertUser">유저 추가</button>
-    <ul>
-      <li v-for="user in users">
-        {{user.user_id}} {{user.name}} 
-        <button @click="deleteUser(user.user_id)">삭제</button>
-      </li>
-    </ul>
+    <main>
+      <input v-model="formData.name" type="txet">
+      <button @click="insertUser">유저 추가</button>
+      <ul>
+        <li v-for="(user, i) in users" :key="i">
+          {{user.user_id}} {{user.name}}
+          <button @click="deleteUser(user.user_id)">삭제</button>
+        </li>
+      </ul>
+    </main>
   </div>
-
   <script>
-
     function resetArray(array) {
       //array.length = 0;
       array.splice(0, array.length);
     }
-
+    
     var app = new Vue({
       el: '#app',
       data: function () {
         return {
           message: 'Hello',
-          name: 'World!',
-          users: [],
+          users: <%- JSON.stringify(results) %>,
           formData: {},
         }
       },
-      created: function () {
-        this.getUser();
-      },
       methods: {
-        handleClickItem: function (e) {
-          this.message = 'Click';
-        },
         getUser: function () {
           var users = this.users;
           $.ajax({
@@ -62,10 +53,11 @@
             contentType: "application/json; charset=UTF-8",
             data: null,
             success: function (data) {
-              resetArray(users);
-              data.results.forEach(function (e) {
-                users.push(e)
-              });
+              app.users = data.results;
+              // resetArray(users);
+              // data.results.forEach(function (e) {
+              //   users.push(e)
+              // });
             },
             error: function (e) {
               alert("e : ", e);
@@ -93,7 +85,7 @@
         deleteUser: function (user_id) {
           var getUser = this.getUser;
           $.ajax({
-            url: "/api/user/"+user_id,
+            url: "/api/user/" + user_id,
             type: "DELETE",
             cache: false,
             contentType: "application/json; charset=UTF-8",
