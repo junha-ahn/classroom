@@ -8,19 +8,26 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anjunha/Classroom.git"
+    "url": "git+https://github.com/junha-ahn/classroom.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/anjunha/Classroom/issues"
+    "url": "https://github.com/junha-ahn/classroom/issues"
   },
-  "homepage": "https://github.com/anjunha/Classroom#readme",
+  "homepage": "https://github.com/junha-ahn/classroom#readme",
   "dependencies": {
+    "bcrypt": "^3.0.6",
+    "cookie-parser": "^1.4.4",
     "dotenv": "^8.0.0",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
-    "morgan": "^1.9.1"
+    "express-session": "^1.16.2",
+    "morgan": "^1.9.1",
+    "mysql": "^2.17.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "squel": "^5.13.0"
   },
   "devDependencies": {
     "eslint": "^5.16.0"

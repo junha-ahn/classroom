@@ -11,4 +11,10 @@ const pool = mysql.createPool({
   timezone: 'utc',
 });
 
+pool.on('connection', function (connection) {
+  console.log('연결 발생');
+});
+pool.on('release', function (connection) {
+  console.log('연결 종료');
+});
 module.exports = pool;

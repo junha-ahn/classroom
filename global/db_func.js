@@ -1,4 +1,4 @@
-let pool = require('../auth_db.js');
+let pool = require('../db.js');
 
 module.exports = {
   getDBConnection : () => {
