@@ -13,7 +13,14 @@ const {
 
 router.get('/', async (req, res, next) => {
   res.render('main', {
-    campuses : global_data.campuses,
+    page_name: 'Main',
+    campuses: global_data.campuses,
+  });
+});
+
+router.get('/reservation/:building_id', async (req, res, next) => {
+  res.render('Reservation', {
+    page_name: 'reservation',
   });
 });
 

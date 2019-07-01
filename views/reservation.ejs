@@ -21,21 +21,7 @@
     </header>
 
     <main>
-    <ul>
-      <li v-for="(campus, i) in campuses" :key="i">
-        {{campus.name}}
-        <ol>
-          <li v-for="(building, j) in campus.building_rseults" :key="j">
-            <a v-bind:href="'/reservation/'+ building.building_id" v-if="building.is_active==1">
-              {{building.name}}
-            </a>
-            <a v-else>
-              {{building.name}}
-            </a>
-          </li>
-        </ol>
-      </li>
-    </ul>
+
     </main>
   </div>
 
@@ -45,7 +31,7 @@
       el: '#app',
       data: function () {
         return {
-          campuses : <%-JSON.stringify(campuses) %>,
+          
         }
       },
     })
