@@ -17,7 +17,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
     email,
     password,
     name,
-    phone_number,
+    phone,
   } = req.body;
   let connection;
   try {
@@ -31,7 +31,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
         email,
         hashed_password,
         name,
-        phone_number,
+        phone,
       });
       res.status(200).json({
         message: '가입 성공',

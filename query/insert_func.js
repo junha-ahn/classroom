@@ -14,7 +14,7 @@ let self = {
           campus_id,
           building_id,
           name,
-          phone_number,
+          phone,
           student_number,
         } = object;
         user_type = 10
@@ -33,7 +33,7 @@ let self = {
           .set('campus_id', campus_id)
           .set('building_id', building_id)
           .set('name', name)
-          .set('phone_number', phone_number)
+          .set('phone', phone)
           .set('student_number', student_number)
           .toParam();
         await db_func.sendQueryInTransaction(connection, personString);

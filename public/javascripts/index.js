@@ -5,15 +5,13 @@ function makeGlobal() {
       var type = object.type || 'get';
       var data = object.data;
       var query = object.query;
-      if (data != null) {
-        data = JSON.stringify(data);
-      }
+
       $.ajax({
         url: url + serializeQuery(query),
         type: type,
         cache: false,
         contentType: "application/json; charset=UTF-8",
-        data: data,
+        data: data != null ? JSON.stringify(data) : null,
         success: function (rd) {
           var status;
           done(rd, status);
@@ -27,16 +25,17 @@ function makeGlobal() {
       });
     }
   }
+  function serializeQuery(query) {
+    if (!query)
+      return '';
+    var data = Object.keys(query);
+    return data.length
+    ? '?' + data.map(function(key){
+      var value = query[key];
+      return (value !== '' && value !== null && value !== undefined)
+      ? key + '=' + value
+      : ''
+    }).join('&')
+    : '';
+  };
 }
-
-function serializeQuery(query) {
-  var data = Object.keys(query);
-  return data.length
-  ? '?' + data.map(function(key){
-    var value = query[key];
-    return (value !== '' && value !== null && value !== undefined)
-    ? key + '=' + value
-    : ''
-  }).join('&')
-  : '';
-};

@@ -25,10 +25,17 @@ router.get('/reservation/:building_id', async (req, res, next) => {
   if (!building[0]) {
     res.render('NotFound', {});
   } else {
-    res.render('Reservation', {
-      page_name: 'reservation',
-    });
+    res.render('Reservation', {});
   }
 });
 
+router.get('/login', isNotLoggedIn, async (req, res, next) => {
+  res.render('login', {});
+});
+
+router.get('/join', isNotLoggedIn, async (req, res, next) => {
+  res.render('join', {
+    campuses: global_data.campus_results,
+  });
+});
 module.exports = router;

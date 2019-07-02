@@ -8,9 +8,9 @@
   <title>Document</title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
 
-  <script type="text/javascript" src="/javascripts/index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="/javascripts/index.js"></script>
 </head>
 
 <body>
@@ -21,18 +21,7 @@
     </header>
 
     <main>
-    
-      <button @click="logout()">로그아웃</button>
-      <h1>안녕하세요</h1>
 
-      이메일 : <input v-model="loginForm.email" type="email">
-      비밀번호 : <input v-model="loginForm.password" type="password">
-      <button @click="login()">로그인</button>
-
-      <br/>
-      <br/>
-      <br/>
-      
       이메일 : <input v-model="joinForm.email" type="email">
       비밀번호 : <input v-model="joinForm.password" type="password">
       이름 :  <input v-model="joinForm.name" type="text">
@@ -46,10 +35,7 @@
       el: '#app',
       data: function () {
         return {
-          loginForm: {
-            email:null,
-            password:null,
-          },
+          campuses : <%-JSON.stringify(campuses) %>,
           joinForm: {
             email:null,
             password:null,
@@ -58,32 +44,6 @@
         }
       },
       methods: {
-        logout: function () {
-          global.ajax({
-            url: '/auth/logout',
-            type: 'GET',
-            data: null,
-          },
-          function(data, status) {
-            alert(data.message);
-          },
-          function(message, status, data) {
-            alert(message);
-          });
-        },
-        login: function () {
-          global.ajax({
-            url: '/auth/login',
-            type: 'POST',
-            data: app.loginForm
-          },
-          function(data, status) {
-            alert(data.message);
-          },
-          function(message, status, data) {
-            alert(message);
-          });
-        },
         join: function () {
           global.ajax({
             url: '/auth/join',
