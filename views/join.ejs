@@ -21,10 +21,35 @@
     </header>
 
     <main>
-
+      학생 <input type="checkbox" v-model="joinForm.is_student" true-value="1" false-value="0">
+      {{ joinForm.is_student == 1 ? '학생입니다' : '교직원입니다' }}
+      <br/>
+      캠퍼스 : 
+      <select v-model="joinForm.campus_id">
+        <option v-for="(campus, i) in campuses" v-bind:value="campus.campus_id" :key="i">
+          {{ campus.name }}
+        </option>
+      </select> 
+      <span>Selected ID: {{ joinForm.campus_id }}</span>
+      <br/>
+      빌딩 : 
+      <%# <select v-model="joinForm.building_id">
+        <option v-for="(building, j) in campuses[i].building_results" v-bind:value="building.building_id" :key="j">
+          {{ building.name }}
+        </option>
+      </select>  %>
+      <span>Selected ID: {{ joinForm.building_id }}</span>
+      <br/>
       이메일 : <input v-model="joinForm.email" type="email">
+      <br/>
       비밀번호 : <input v-model="joinForm.password" type="password">
+      <br/>
       이름 :  <input v-model="joinForm.name" type="text">
+      <br/>
+      전화번호 :  <input v-model="joinForm.phone" type="text">
+      <br/>
+      학번 :  <input v-model="joinForm.student_number" type="text">
+      <br/>
       <button @click="join()">가입</button>
     </main>
   </div>
@@ -37,9 +62,15 @@
         return {
           campuses : <%-JSON.stringify(campuses) %>,
           joinForm: {
+            is_student:1,
+            campus_id:null,
+            building_id:null,
+            campus_name:null,
             email:null,
             password:null,
             name:null,
+            phone:null,
+            student_number:null,
           }
         }
       },
