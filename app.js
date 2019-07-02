@@ -52,7 +52,7 @@ app.use(function (error, req, res, next) {
 });
 
 app.use(function (req, res, next) {
-  res.status(404).send('404 Not Found');
+  res.status(404).render('NotFound',{});
 });
 
 module.exports = app;

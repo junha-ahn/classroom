@@ -13,15 +13,22 @@ const {
 
 router.get('/', async (req, res, next) => {
   res.render('main', {
-    page_name: 'Main',
-    campuses: global_data.campuses,
+    campuses: global_data.campus_results,
   });
 });
 
 router.get('/reservation/:building_id', async (req, res, next) => {
-  res.render('Reservation', {
-    page_name: 'reservation',
-  });
+  let building_id = req.params.building_id;
+
+  let building = global_data.building_results.filter(building => building.building_id == building_id);
+  
+  if (!building[0]) {
+    res.render('NotFound', {});
+  } else {
+    res.render('Reservation', {
+      page_name: 'reservation',
+    });
+  }
 });
 
 module.exports = router;

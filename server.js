@@ -1,4 +1,6 @@
 require('dotenv/config');
+require('./setting/campuses')();
+
 let http = require('http');
 let app = require('./app');
 let server = http.Server(app);
