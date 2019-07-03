@@ -25,20 +25,20 @@
       {{ joinForm.is_student == 1 ? '학생입니다' : '교직원입니다' }}
       <br/>
       캠퍼스 : 
-      <select v-model="joinForm.campus_id">
+      <select v-model="joinForm.campus_id"  @change="replaceBuildings()">
         <option v-for="(campus, i) in campuses" v-bind:value="campus.campus_id" :key="i">
           {{ campus.name }}
         </option>
       </select> 
-      <span>Selected ID: {{ joinForm.campus_id }}</span>
+      <span>Campus ID: {{ joinForm.campus_id }}</span>
       <br/>
       빌딩 : 
-      <%# <select v-model="joinForm.building_id">
-        <option v-for="(building, j) in campuses[i].building_results" v-bind:value="building.building_id" :key="j">
+      <select v-model="joinForm.building_id">
+        <option v-for="(building, j) in buildings" v-bind:value="building.building_id" :key="j">
           {{ building.name }}
         </option>
-      </select>  %>
-      <span>Selected ID: {{ joinForm.building_id }}</span>
+      </select>
+      <span>Building ID: {{ joinForm.building_id }}</span>
       <br/>
       이메일 : <input v-model="joinForm.email" type="email">
       <br/>
@@ -61,6 +61,7 @@
       data: function () {
         return {
           campuses : <%-JSON.stringify(campuses) %>,
+          buildings: [],
           joinForm: {
             is_student:1,
             campus_id:null,
@@ -75,6 +76,10 @@
         }
       },
       methods: {
+        replaceBuildings: function(event) {
+          this.buildings = this.campuses[this.joinForm.campus_id].building_results;
+          this.joinForm.building_id = null;
+        },
         join: function () {
           global.ajax({
             url: '/auth/join',
