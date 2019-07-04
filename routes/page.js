@@ -54,11 +54,11 @@ router.get('/reservation/:building_id', async (req, res, next) => {
   let building = info.buildings[building_id];
   
   if (!building[0]) {
-    res.render('NotFound', foo.getResJson(req.user, {
+    res.render('error', foo.getResJson(req.user, {
 
     }));
   } else {
-    res.render('Reservation', foo.getResJson(req.user, {
+    res.render('reservation', foo.getResJson(req.user, {
 
     }));
   }
