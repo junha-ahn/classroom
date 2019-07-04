@@ -10,11 +10,14 @@ const pool = mysql.createPool({
   debug: false,
   timezone: 'utc',
 });
-
+pool.on('acquire', function (connection) {
+  console.log('Connection %d acquired', connection.threadId);
+});
 pool.on('connection', function (connection) {
-  console.log('연결 발생');
+  connection.query('SET SESSION auto_increment_increment=1')
 });
 pool.on('release', function (connection) {
-  console.log('연결 종료');
+  console.log('Connection %d released', connection.threadId);
 });
+
 module.exports = pool;

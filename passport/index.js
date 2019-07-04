@@ -8,6 +8,7 @@ module.exports = (passport) => {
     done(null, user.user_id)
   });
   passport.deserializeUser(async (user_id, done) => {
+    console.log('===========================')
     let connection;
     try {
       connection = await db_func.getDBConnection();

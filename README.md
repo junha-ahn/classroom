@@ -2,7 +2,10 @@
 
 Schoool project
 
-부트스트랩을 사용합니다.
+Vue.js, ejs, bootstrap, jQuery(ajax)
+
+Node.js, Express
+
 
 저작권 허가 및 라이선스에 대해, 어기고 있는 사항이 있다면 알려주세요.
 
