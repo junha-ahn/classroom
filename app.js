@@ -52,7 +52,10 @@ app.use(function (error, req, res, next) {
 });
 
 app.use(function (req, res, next) {
-  res.status(404).render('NotFound',{});
+  res.status(404).render('error',{
+    error_name : "404 Not Found",
+    message : '존재하지 않는 페이지입니다'
+  });
 });
 
 module.exports = app;

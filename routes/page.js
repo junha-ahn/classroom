@@ -35,7 +35,8 @@ router.get('/login', isNotLoggedIn, async (req, res, next) => {
 
 router.get('/join', isNotLoggedIn, async (req, res, next) => {
   res.render('join', {
-    campuses: global_data.campus_results,
+    campus_results: global_data.campus_results,
+    buildings: global_data.buildings,
   });
 });
 module.exports = router;

@@ -6,11 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
 
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script type="text/javascript" src="/javascripts/index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script type="text/javascript" src="/javascripts/index.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -21,12 +22,17 @@
     </header>
 
     <main>
-      <br/>
-      이메일 : <input v-model="loginForm.email" type="email">
-      <br/>
-      비밀번호 : <input v-model="loginForm.password" type="password">
-      <br/>
-      <button @click="login()">로그인</button>
+      <form v-on:submit="login">
+        <div class="form-inline">
+          <label>이메일 주소</label>
+          <input v-model="loginForm.email" type="email" class="form-control" placeholder="이메일을 입력하세요">
+        </div>
+        <div class="form-inline">
+          <label>암호</label>
+          <input v-model="loginForm.password" type="password" class="form-control"placeholder="암호">
+        </div>
+        <button @click="login()" type="submit" class="btn btn-primary">로그인</button>
+      </form>
     </main>
   </div>
 
@@ -56,7 +62,8 @@
             alert(message);
           });
         },
-        login: function () {
+        login(e) {
+          e.preventDefault();
           global.ajax({
             url: '/auth/login',
             type: 'POST',

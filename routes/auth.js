@@ -16,8 +16,11 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
   const {
     email,
     password,
+    campus_id,
+    building_id,
     name,
     phone,
+    student_number,
   } = req.body;
   let connection;
   try {
@@ -30,8 +33,11 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
       await insert_func.insertUser(connection, {
         email,
         hashed_password,
+        campus_id,
+        building_id,
         name,
         phone,
+        student_number,
       });
       res.status(200).json({
         message: '가입 성공',

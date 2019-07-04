@@ -6,11 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  
   <link rel='stylesheet' href='/stylesheets/style.css' />
-
   <script type="text/javascript" src="/javascripts/index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -21,21 +22,23 @@
     </header>
 
     <main>
-    <ul>
-      <li v-for="(campus, i) in campuses" :key="i">
-        {{campus.name}}
-        <ol>
-          <li v-for="(building, j) in campus.building_results" :key="j">
-            <a v-bind:href="'/reservation/'+ building.building_id" v-if="building.is_active==1">
-              {{building.name}}
-            </a>
-            <a v-else>
-              {{building.name}}
-            </a>
-          </li>
-        </ol>
-      </li>
-    </ul>
+      <div class="campuses">
+        <dl>
+          <dt v-for="(campus, i) in campuses" :key="i">
+            <button type="button" class="btn btn-primary">{{campus.name}}</button>
+            <dl>
+              <dt v-for="(building, j) in campus.building_results" :key="j">
+                <button type="button" class="btn btn-success" @click="locationHref('/reservation/'+ building.building_id)" v-if="building.is_active==1">
+                  {{building.name}}
+                </button>
+                <button type="button" class="btn btn-default" v-else>
+                  {{building.name}}
+                </button>
+              </dt>
+            </dl>
+          </dt>
+        </dl>
+      </div>
     </main>
   </div>
 
@@ -48,6 +51,11 @@
           campuses : <%-JSON.stringify(campuses) %>,
         }
       },
+      methods : {
+        locationHref: function (link) {
+          location.href= link;
+        }
+      }
     })
   </script>
 

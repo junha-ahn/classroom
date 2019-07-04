@@ -43,25 +43,17 @@ module.exports = {
       connection.release();
     } 
   },
-  sendQueryToDB : (connection,queryString) => {
+  sendQueryToDB : (connection,queryString, isTransaction) => {
     return new Promise((resolve, reject) => {
       connection.query(queryString.text, queryString.values,(error, result, fields)=>{
         if (error) { 
-          reject(error)
-        }
-        else {
-          resolve(result);          
-        }
-      });
-    });
-  },
-  sendQueryInTransaction : (connection,queryString) => {
-    return new Promise((resolve, reject) => {
-      connection.query(queryString.text, queryString.values,(error, result, fields)=>{
-        if (error) { 
-          return connection.rollback(function() { 
+          if (isTransaction) {
+            return connection.rollback(function() { 
+              reject(error)
+            }); 
+          } else {
             reject(error)
-          }); 
+          }
         }
         else {
           resolve(result);          
