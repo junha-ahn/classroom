@@ -18,7 +18,7 @@ passportConfig(passport);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(morgan(process.env.NODE_ENV == 'PRODUCTION' ? 'common' : 'dev'));
+app.use(morgan(process.env.NODE_ENV == 'development' ? 'dev' : 'common'));
 app.use(express.json());
 app.use(express.urlencoded({
   extended: false
@@ -45,7 +45,7 @@ app.use('/api', apiRoute);
 
 app.use(function (error, req, res, next) {
   res.status(error.status || 500);
-  if (process.env.NODE_ENV === 'DEVELOPMENT') {
+  if (process.env.NODE_ENV === 'development') {
     console.error(error);
   }
   res.json({
