@@ -41,9 +41,15 @@
       </table>
       <nav>
         <ul class="pagination">
-          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-          <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+          <li
+          v-for="page in pagenation"
+          :key="page.value"
+          :class="{active: page.isSelf}">
+            <a :href="'/group?page=' + page.value" aria-label="Previous">
+              <span aria-hidden="true" v-html="page.name"></span>
+            </a>
+          </li>
+  
         </ul>
       </nav>
     </main>
@@ -55,6 +61,11 @@
 
   <script>
     var global = makeGlobal();
+    var results = <%-JSON.stringify(results) %>;
+    var list_count = <%-JSON.stringify(list_count) %>;
+    var page = <%-JSON.stringify(query.page) %>;
+    var page_length = <%-JSON.stringify(query.page_length) %>;
+
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -62,14 +73,28 @@
           page_name: 'group',
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
-          results : <%-JSON.stringify(results) %>,
+          results,
+          list_count,
         }
-      },
+      }, // data
       methods : {
         locationHref: function (link) {
           location.href= link;
         }
-      }
+      }, // methods
+      computed: {
+        pagenation: function() {
+          return pagenation({
+            numberOfItems:list_count,
+            itemsPerPage: page_length,
+            pagesPerNav:5,
+            indexOfPage: page,
+            hasPrevAndNext: true,
+            prevText:'&laquo;',
+            nextText:'&raquo;',
+          })
+        },
+      }, // computed
     })
   </script>
 

@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 const db_func = require('../global/db_func');
 const select_func = require('../query/select_func');
@@ -20,11 +20,11 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/group', async (req, res, next) => {
+  req.query.page_length = 10;
   let {
     page,
     page_length,
   } = req.query;
-  page_length = 10;
 
   let connection;
   try {
@@ -40,6 +40,7 @@ router.get('/group', async (req, res, next) => {
     res.render('group', foo.getResJson(req.user, {
       results,
       list_count,
+      query: req.query,
     }));
   } catch (error) {
     next(error);
