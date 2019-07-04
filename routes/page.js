@@ -17,10 +17,37 @@ router.get('/', async (req, res, next) => {
   });
 });
 
+router.get('/group', async (req, res, next) => {
+  let {
+    page_num,
+    page_length,
+  } = req.query;
+
+  let connection;
+  try {
+    connection = await db_func.getDBConnection();
+    let {
+      results,
+      list_count,
+    } = await select_func.getStudyGroup(connection, {
+      page_num,
+      page_length,
+    })
+    res.render('group', {
+      results,
+      list_count,
+    });
+  } catch (error) {
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
+});
+
 router.get('/reservation/:building_id', async (req, res, next) => {
   let building_id = req.params.building_id;
 
-  let building = global_data.building_results.filter(building => building.building_id == building_id);
+  let building = global_data.buildings[building_id];
   
   if (!building[0]) {
     res.render('NotFound', {});
@@ -39,4 +66,5 @@ router.get('/join', isNotLoggedIn, async (req, res, next) => {
     buildings: global_data.buildings,
   });
 });
+
 module.exports = router;

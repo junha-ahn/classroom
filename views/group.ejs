@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script type="text/javascript" src="/javascripts/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+</head>
+
+<body>
+
+  <div id="app">
+    <header>
+      <% include ./header %>
+    </header>
+
+    <main>
+      <table class="table table-striped">
+        <thead>
+          <th>이름</th>
+          <th>학습관명</th>
+          <th>설명</th>
+          <th>생성일</th>
+        </thead>
+        <tbody>
+          <tr class="active" v-for="(study_group, i) in results" :key="i">
+            <td>{{study_group.name}}</td>
+            <td>{{study_group.building_id}}</td>
+            <td>{{study_group.description}}</td>
+            <td>{{study_group.date_created}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+
+  <script>
+    var global = makeGlobal();
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          results : <%-JSON.stringify(results) %>,
+        }
+      },
+      methods : {
+        locationHref: function (link) {
+          location.href= link;
+        }
+      }
+    })
+  </script>
+
+</body>
+
+</html>
