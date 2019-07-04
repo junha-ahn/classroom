@@ -13,9 +13,10 @@ const {
 } = require('./middlewares');
 
 router.get('/', async (req, res, next) => {
+  let campus_id = (req.user) ? info.building_object[req.user.building_id].campus_id : 0;
   res.render('main', foo.getResJson(req.user, {
     campuses: info.campuses,
-    campus_id : (req.user) ? req.user.campus_id : 0,
+    campus_id,
   }));
 });
 
@@ -51,7 +52,6 @@ router.get('/group', async (req, res, next) => {
 
 router.get('/reservation/:building_id', async (req, res, next) => {
   let building_id = req.params.building_id;
-
   let building = info.buildings[building_id];
   
   if (!building[0]) {

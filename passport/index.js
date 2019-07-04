@@ -5,28 +5,14 @@ const select_func = require('../query/select_func');
 
 module.exports = (passport) => {
   passport.serializeUser((user, done) => {
-    done(null, user.user_id)
+    done(null, {
+      user_id: user.user_id,
+      user_type : user.user_type,
+      building_id : user.building_id,
+    })
   });
-  passport.deserializeUser(async (user_id, done) => {
-    console.log('===========================')
-    let connection;
-    try {
-      connection = await db_func.getDBConnection();
-      let {
-        results
-      } = await select_func.getViewTableUser(connection, {
-        user_id,
-      });
-      if (results[0]) {
-        done(null, results[0]);
-      } else {
-        done(null);
-      }
-    } catch (error) {
-      done(error);
-    } finally {
-      db_func.release(connection);
-    }
+  passport.deserializeUser(async (user, done) => {
+    done(null, user);
   })
   local(passport);
 };
