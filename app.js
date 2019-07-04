@@ -5,20 +5,30 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
+const helmet = require('helmet');
+const hpp = require('hpp');
+const RedisStore = require('connect-redis')(session);
 
-let foo = require('./global/foo.js');
+const pageRoute = require(path.join(__dirname, '/routes/page'));
+const authRoute = require(path.join(__dirname, '/routes/auth'));
+const apiRoute = require(path.join(__dirname, '/routes/api'));
 
-let pageRoute = require(path.join(__dirname, '/routes/page'));
-let authRoute = require(path.join(__dirname, '/routes/auth'));
-let apiRoute = require(path.join(__dirname, '/routes/api'));
 const passportConfig = require('./passport');
+const foo = require('./global/foo.js');
+
 
 passportConfig(passport);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(morgan(process.env.NODE_ENV == 'development' ? 'dev' : 'common'));
+if (process.env.NODE_ENV == 'production') {
+  app.use(morgan('combined'));
+  app.use(helmet())
+  app.use(hpp())
+} else {
+  app.use(morgan('dev'));
+}
 app.use(express.json());
 app.use(express.urlencoded({
   extended: false
@@ -31,7 +41,13 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: false
-  }
+  },
+  store : new RedisStore({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    pass: process.env.REDIS_PASSWORD,
+    logErrors: true,
+  })
 }));
 
 app.use(express.static(__dirname + '/public'));
