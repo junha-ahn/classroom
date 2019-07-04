@@ -1,4 +1,97 @@
 module.exports = {
+  department_results: [{
+      department_id: 1,
+      name: '국어국문학과'
+    },
+    {
+      department_id: 2,
+      name: '영어영문학과'
+    },
+    {
+      department_id: 3,
+      name: '중어중문학과'
+    },
+    {
+      department_id: 4,
+      name: '불어불문학과'
+    },
+    {
+      department_id: 5,
+      name: '일본학과'
+    },
+    {
+      department_id: 6,
+      name: '법학과'
+    },
+    {
+      department_id: 7,
+      name: '행정학과'
+    },
+    {
+      department_id: 8,
+      name: '경제학과'
+    },
+    {
+      department_id: 9,
+      name: '경영학과'
+    },
+    {
+      department_id: 10,
+      name: '무역학과'
+    },
+    {
+      department_id: 11,
+      name: '미디어영상학과'
+    },
+    {
+      department_id: 12,
+      name: '관광학과'
+    },
+    {
+      department_id: 13,
+      name: '사회복지학과'
+    },
+    {
+      department_id: 14,
+      name: '농학과'
+    },
+    {
+      department_id: 15,
+      name: '생활과학과'
+    },
+    {
+      department_id: 16,
+      name: '컴퓨터과학과'
+    },
+    {
+      department_id: 17,
+      name: '정보통계학과'
+    },
+    {
+      department_id: 18,
+      name: '환경보건학과'
+    },
+    {
+      department_id: 19,
+      name: '간호학과'
+    },
+    {
+      department_id: 20,
+      name: '교육학과'
+    },
+    {
+      department_id: 21,
+      name: '청소년교육과'
+    },
+    {
+      department_id: 22,
+      name: '유아교육과'
+    },
+    {
+      department_id: 23,
+      name: '문화교양학과'
+    }
+  ],
   campus_results: [{
     campus_id: 1,
     name: "서울",
@@ -88,7 +181,7 @@ module.exports = {
     building_id: 11,
     campus_id: 3,
     name: "인천지역대학",
-    is_active:1,
+    is_active: 1,
   }, {
     building_id: 12,
     campus_id: 3,

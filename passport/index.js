@@ -13,7 +13,7 @@ module.exports = (passport) => {
       connection = await db_func.getDBConnection();
       let {
         results
-      } = await select_func.getUser(connection, {
+      } = await select_func.getViewTableUser(connection, {
         user_id,
       });
       if (results[0]) {

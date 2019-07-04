@@ -11,7 +11,7 @@ let self = {
         let {
           user_id,
           email,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -20,7 +20,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'user_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('user')
             .where(squel.case()
@@ -45,7 +45,7 @@ let self = {
               .else(squel.expr().and('user.email = ?', email)))
             .order(`user.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -81,7 +81,7 @@ let self = {
         let {
           user_id,
           email,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -90,7 +90,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'user_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('user')
             .left_join('person', null, 'person.user_id = user.user_id')
@@ -117,7 +117,7 @@ let self = {
               .else(squel.expr().and('user.email = ?', email)))
             .order(`user.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -125,12 +125,12 @@ let self = {
             .left_join('person', null, 'person.user_id = user.user_id')
             .where(squel.case()
               .when('? IS NULL', user_id)
-              .then(squel.expr().and('user_id IS NOT NULL'))
-              .else(squel.expr().and('user_id = ?', user_id)))
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_id = ?', user_id)))
             .where(squel.case()
               .when('? IS NULL', email)
-              .then(squel.expr().and('user_id IS NOT NULL'))
-              .else(squel.expr().and('email = ?', email)))
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.email = ?', email)))
             .order(`user.${sort_key}`, sort_type)
             .toParam();
         }
@@ -154,7 +154,7 @@ let self = {
         let {
           user_id,
           email,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -163,7 +163,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'user_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('user')
             .left_join('user_authority', null, 'user_authority.user_id = user.user_id')
@@ -190,7 +190,7 @@ let self = {
               .else(squel.expr().and('user.email = ?', email)))
             .order(`user.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -228,7 +228,7 @@ let self = {
           study_group_id,
           department_id,
           building_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -236,8 +236,8 @@ let self = {
 
         sort_key = (sort_key) ? sort_key : 'study_group_id';
         sort_type = (sort_type == false) ? false : true;
-
-        if (page_num && page_length) {
+        
+        if (page && page_length) {
           countString = squel.select()
             .from('study_group')
             .where(squel.case()
@@ -270,7 +270,7 @@ let self = {
               .else(squel.expr().and('study_group.building_id = ?', building_id)))
             .order(`study_group.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -310,7 +310,7 @@ let self = {
           study_group_id,
           department_id,
           building_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -319,7 +319,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'study_group_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('study_group')
             .where(squel.case()
@@ -352,7 +352,7 @@ let self = {
               .else(squel.expr().and('study_group.building_id = ?', building_id)))
             .order(`study_group.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -392,7 +392,7 @@ let self = {
           study_group_user_id,
           study_group_id,
           user_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -401,7 +401,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'study_group_user_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('study_group_user')
             .where(squel.case()
@@ -435,7 +435,7 @@ let self = {
               .else(squel.expr().and('study_group_user.user_id = ?', user_id)))
             .order(`study_group_user.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -477,7 +477,7 @@ let self = {
           study_group_id,
           department_id,
           building_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -486,7 +486,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'study_group_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('study_group_user')
             .join('user', null, 'user.user_id = study_group_user.user_id')
@@ -524,7 +524,7 @@ let self = {
               .else(squel.expr().and('study_group_user.building_id = ?', building_id)))
             .order(`study_group_user.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -558,6 +558,63 @@ let self = {
       }
     });
   },
+  getDepartment: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          department_id,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+
+        sort_key = (sort_key) ? sort_key : 'department_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('department')
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('department.department_id IS NOT NULL'))
+              .else(squel.expr().and('department.department_id = ?', department_id)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('department')
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('department.department_id IS NOT NULL'))
+              .else(squel.expr().and('department.department_id = ?', department_id)))
+            .order(`department.${sort_key}`, sort_type)
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('department')
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('department_id IS NOT NULL'))
+              .else(squel.expr().and('department_id = ?', department_id)))
+            .order(`department.${sort_key}`, sort_type)
+            .toParam();
+        }
+
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   getCampus: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -565,7 +622,7 @@ let self = {
         let countString
         let {
           campus_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -574,7 +631,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'campus_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('campus')
             .where(squel.case()
@@ -591,7 +648,7 @@ let self = {
               .else(squel.expr().and('campus.campus_id = ?', campus_id)))
             .order(`campus.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -623,7 +680,7 @@ let self = {
         let {
           building_id,
           campus_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -632,7 +689,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'building_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('building')
             .where(squel.case()
@@ -657,7 +714,7 @@ let self = {
               .else(squel.expr().and('building.campus_id = ?', campus_id)))
             .order(`building.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -694,7 +751,7 @@ let self = {
           room_id,
           building_id,
           room_category_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -703,7 +760,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'room_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('room')
             .where(squel.case()
@@ -736,7 +793,7 @@ let self = {
               .else(squel.expr().and('room.room_category_id = ?', room_category_id)))
             .order(`room.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()
@@ -776,7 +833,7 @@ let self = {
         let {
           notification_id,
           receiver_id,
-          page_num,
+          page,
           page_length,
           sort_key,
           sort_type
@@ -785,7 +842,7 @@ let self = {
         sort_key = (sort_key) ? sort_key : 'notification_id';
         sort_type = (sort_type == false) ? false : true;
 
-        if (page_num && page_length) {
+        if (page && page_length) {
           countString = squel.select()
             .from('notification')
             .where(squel.case()
@@ -810,7 +867,7 @@ let self = {
               .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
             .order(`notification.${sort_key}`, sort_type)
             .limit(page_length)
-            .offset((parseInt(page_num) - 1) * page_length)
+            .offset((parseInt(page) - 1) * page_length)
             .toParam();
         } else {
           queryString = squel.select()

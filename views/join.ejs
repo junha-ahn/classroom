@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8">
@@ -41,10 +41,15 @@
         <div class="form-inline">
           <label>이메일 주소</label>
           <input v-model="joinForm.email" type="email" class="form-control" placeholder="이메일을 입력하세요">
+          <button type="submit" class="btn btn-default">확인하기</button>
         </div>
         <div class="form-inline">
           <label>암호</label>
           <input v-model="joinForm.password" type="password" class="form-control" placeholder="암호">
+        </div>
+        <div class="form-inline">
+          <label>암호 확인</label>
+          <input type="password" class="form-control" placeholder="암호 확인">
         </div>
         <div class="form-inline">
           <label>이름</label>
@@ -61,6 +66,10 @@
         <button type="submit" class="btn btn-primary">가입</button>
       </form>
     </main>
+    
+    <footer>
+      <% include ./footer %>
+    </footer>
   </div>
 
   <script>
@@ -69,6 +78,9 @@
       el: '#app',
       data: function () {
         return {
+          page_name: 'join',
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
           campus_results : <%-JSON.stringify(campus_results) %>,
           buildings : <%-JSON.stringify(buildings) %>,
           building_results: [],

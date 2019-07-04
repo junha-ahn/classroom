@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8">
@@ -15,30 +15,42 @@
 </head>
 
 <body>
-
   <div id="app">
     <header>
       <% include ./header %>
     </header>
 
     <main>
-      <table class="table table-striped">
+      <table class="table table-hover">
         <thead>
           <th>이름</th>
-          <th>학습관명</th>
+          <th>학과</th>
+          <th>학습관</th>
           <th>설명</th>
           <th>생성일</th>
         </thead>
         <tbody>
-          <tr class="active" v-for="(study_group, i) in results" :key="i">
+          <tr v-for="(study_group, i) in results" :key="i">
             <td>{{study_group.name}}</td>
-            <td>{{study_group.building_id}}</td>
+            <td>{{study_group.department_name}}</td>
+            <td>{{study_group.building_name}}</td>
             <td>{{study_group.description}}</td>
             <td>{{study_group.date_created}}</td>
           </tr>
         </tbody>
       </table>
+      <nav>
+        <ul class="pagination">
+          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+          <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+          <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+        </ul>
+      </nav>
     </main>
+    
+    <footer>
+      <% include ./footer %>
+    </footer>
   </div>
 
   <script>
@@ -47,6 +59,9 @@
       el: '#app',
       data: function () {
         return {
+          page_name: 'group',
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
           results : <%-JSON.stringify(results) %>,
         }
       },

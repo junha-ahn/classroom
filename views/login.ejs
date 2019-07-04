@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8">
@@ -34,6 +34,10 @@
         <button @click="login()" type="submit" class="btn btn-primary">로그인</button>
       </form>
     </main>
+    
+    <footer>
+      <% include ./footer %>
+    </footer>
   </div>
 
   <script>
@@ -42,6 +46,9 @@
       el: '#app',
       data: function () {
         return {
+          page_name: 'login',
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
           loginForm: {
             email:null,
             password:null,
@@ -71,6 +78,7 @@
           },
           function(data, status) {
             alert(data.message);
+            location.href='/'
           },
           function(message, status, data) {
             alert(message);

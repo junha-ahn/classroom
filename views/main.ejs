@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8">
@@ -25,21 +25,27 @@
       <div class="campuses">
         <dl>
           <dt v-for="(campus, i) in campuses" :key="i">
-            <button type="button" class="btn btn-primary">{{campus.name}}</button>
+            <button type="button" class="btn btn-primary"  @click="clickCampus(campus.campus_id)">{{campus.name}}</button>
             <dl>
               <dt v-for="(building, j) in campus.building_results" :key="j">
-                <button type="button" class="btn btn-success" @click="locationHref('/reservation/'+ building.building_id)" v-if="building.is_active==1">
-                  {{building.name}}
-                </button>
-                <button type="button" class="btn btn-default" v-else>
-                  {{building.name}}
-                </button>
+                <div v-if="campus_id==building.campus_id">
+                  <button v-if="building.is_active==1" type="button" class="btn btn-success" @click="locationHref('/reservation/'+ building.building_id)" >
+                    {{building.name}}
+                  </button>
+                  <button v-else type="button" class="btn btn-default" @click="alertBuildingMsg">
+                    {{building.name}}
+                  </button>
+                </div>
               </dt>
             </dl>
           </dt>
         </dl>
       </div>
     </main>
+    
+    <footer>
+      <% include ./footer %>
+    </footer>
   </div>
 
   <script>
@@ -48,10 +54,25 @@
       el: '#app',
       data: function () {
         return {
+          page_name: 'main',
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+          page_name: 'main',
           campuses : <%-JSON.stringify(campuses) %>,
+          campus_id: <%- campus_id %>,
         }
       },
       methods : {
+        alertBuildingMsg() {
+          alert('현재 비 활성화된 건물입니다.');
+        },
+        clickCampus: function (campus_id) {
+          if (this.campus_id == campus_id) {
+            this.campus_id = null;
+          } else {
+            this.campus_id = campus_id
+          }
+        },
         locationHref: function (link) {
           location.href= link;
         }

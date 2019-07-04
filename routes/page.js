@@ -4,7 +4,8 @@ var router = express.Router();
 const db_func = require('../global/db_func');
 const select_func = require('../query/select_func');
 
-const global_data = require('../global/data');
+const info = require('../global/info');
+const foo = require('../global/foo');
 
 const {
   isLoggedIn,
@@ -12,16 +13,18 @@ const {
 } = require('./middlewares');
 
 router.get('/', async (req, res, next) => {
-  res.render('main', {
-    campuses: global_data.campus_results,
-  });
+  res.render('main', foo.getResJson(req.user, {
+    campuses: info.campuses,
+    campus_id : (req.user) ? req.user.campus_id : 0,
+  }));
 });
 
 router.get('/group', async (req, res, next) => {
   let {
-    page_num,
+    page,
     page_length,
   } = req.query;
+  page_length = 10;
 
   let connection;
   try {
@@ -30,13 +33,14 @@ router.get('/group', async (req, res, next) => {
       results,
       list_count,
     } = await select_func.getStudyGroup(connection, {
-      page_num,
+      page,
       page_length,
     })
-    res.render('group', {
+    foo.cleaningList(results);
+    res.render('group', foo.getResJson(req.user, {
       results,
       list_count,
-    });
+    }));
   } catch (error) {
     next(error);
   } finally {
@@ -47,24 +51,30 @@ router.get('/group', async (req, res, next) => {
 router.get('/reservation/:building_id', async (req, res, next) => {
   let building_id = req.params.building_id;
 
-  let building = global_data.buildings[building_id];
+  let building = info.buildings[building_id];
   
   if (!building[0]) {
-    res.render('NotFound', {});
+    res.render('NotFound', foo.getResJson(req.user, {
+
+    }));
   } else {
-    res.render('Reservation', {});
+    res.render('Reservation', foo.getResJson(req.user, {
+
+    }));
   }
 });
 
 router.get('/login', isNotLoggedIn, async (req, res, next) => {
-  res.render('login', {});
+  res.render('login', foo.getResJson(req.user, {
+
+  }));
 });
 
 router.get('/join', isNotLoggedIn, async (req, res, next) => {
-  res.render('join', {
-    campus_results: global_data.campus_results,
-    buildings: global_data.buildings,
-  });
+  res.render('join', foo.getResJson(req.user, {
+    campus_results: info.campus_results,
+    buildings: info.buildings,
+  }));
 });
 
 module.exports = router;

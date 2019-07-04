@@ -1,5 +1,5 @@
 require('dotenv/config');
-require('./setting/campuses')();
+require('./global/setting')();
 
 let http = require('http');
 let app = require('./app');

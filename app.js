@@ -6,10 +6,13 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 
+let foo = require('./global/foo.js');
+
 let pageRoute = require(path.join(__dirname, '/routes/page'));
 let authRoute = require(path.join(__dirname, '/routes/auth'));
 let apiRoute = require(path.join(__dirname, '/routes/api'));
 const passportConfig = require('./passport');
+
 passportConfig(passport);
 
 app.set('views', path.join(__dirname, 'views'));
@@ -52,10 +55,10 @@ app.use(function (error, req, res, next) {
 });
 
 app.use(function (req, res, next) {
-  res.status(404).render('error',{
+  res.status(404).render('error', foo.getResJson(req.user, {
     error_name : "404 Not Found",
     message : '존재하지 않는 페이지입니다'
-  });
+  }));
 });
 
 module.exports = app;

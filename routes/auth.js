@@ -82,9 +82,7 @@ router.post('/login', isNotLoggedIn, async (req, res, next) => {
 router.get('/logout', isLoggedIn, async (req, res) => {
   req.logout();
   req.session.destroy();
-  res.status(200).json({
-    message: '로그아웃 성공',
-  })
+  res.redirect('/');
 });
 
 module.exports = router;

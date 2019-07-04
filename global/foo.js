@@ -1,4 +1,7 @@
-module.exports = {
+let info = require('./info');
+let constant = require('./constant');
+
+let self = {
   makeRandomPassword: () => {
     //Math.floor(Math.random() * (max - min + 1)) + min;
     let email_password = '';
@@ -99,4 +102,30 @@ module.exports = {
 
     return target_string;
   },
+  cleaningList: (array) => {
+    for (let i in array) {
+      array[i].date_created = array[i].date_created ? self.parseDateFromDB(array[i].date_created) : array[i].date_created;
+      array[i].date_last_updated = array[i].date_last_updated ? self.parseDateFromDB(array[i].date_last_updated) : array[i].date_last_updated;
+
+      if (array[i].campus_id) {
+        array[i].campus_name = info.campus_object[array[i].campus_id].name;
+      }
+      if (array[i].building_id) {
+        array[i].building_name = info.building_object[array[i].building_id].name;
+      }
+      if (array[i].department_id) {
+        array[i].department_name = info.department_object[array[i].department_id].name;
+      }
+    }
+  },
+  getResJson: (user, json) => {
+    json.is_user = (user) ? true : false;
+    json.is_admin = (user && user.user_type == constant.ADMIN_TYPE) ? true : false;
+    
+    return {
+      ...json,
+    }
+  },
 }
+
+module.exports = self
