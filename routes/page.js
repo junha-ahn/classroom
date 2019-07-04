@@ -60,7 +60,7 @@ router.get('/reservation/:building_id', async (req, res, next) => {
     }));
   } else {
     res.render('reservation', foo.getResJson(req.user, {
-
+      query: req.query,
     }));
   }
 });
