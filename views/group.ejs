@@ -21,6 +21,18 @@
     </header>
 
     <main>
+      <label>학과</label>
+      <select class="form-control" v-model="query.department_id">
+        <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="query.department_id == department.department_id" :key="i">
+          {{ department.name }}
+        </option>
+      </select>
+      <label>학습관</label>
+      <select class="form-control" v-model="query.building_id">
+        <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
+          {{ building.name }}
+        </option>
+      </select>
       <table class="table table-hover">
         <thead>
           <th>이름</th>
@@ -61,8 +73,6 @@
     var global = makeGlobal();
     var results = <%-JSON.stringify(results) %>;
     var list_count = <%-JSON.stringify(list_count) %>;
-    var page = <%-JSON.stringify(query.page) %>;
-    var page_length = <%-JSON.stringify(query.page_length) %>;
 
     var app = new Vue({
       el: '#app',
@@ -71,28 +81,32 @@
           page_name: 'group',
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
+          query : <%-JSON.stringify(query) %>,
           results,
           list_count,
+          department_results : <%-JSON.stringify(department_results) %>,
+          building_results : <%-JSON.stringify(building_results) %>,
         }
-      }, // data
-      methods : {
-        locationHref: function (link) {
-          location.href= link;
-        }
-      }, // methods
+      },
       computed: {
         pagenation: function() {
           return pagenation({
-            numberOfItems:list_count,
-            itemsPerPage: page_length,
+            numberOfItems:this.list_count,
+            itemsPerPage: this.query.page_length,
             pagesPerNav:5,
-            indexOfPage: page,
+            indexOfPage: this.query.page,
             hasPrevAndNext: true,
             prevText:'&laquo;',
             nextText:'&raquo;',
           })
         },
-      }, // computed
+      }, 
+      watch: {
+        query: function(query) {
+          alert('api/group' + global.serializeQuery(this.query))
+          location.href= 'api/group' + global.serializeQuery(this.query);
+        },
+      }
     })
   </script>
 

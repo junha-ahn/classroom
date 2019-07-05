@@ -8,6 +8,7 @@ module.exports = (passport) => {
     done(null, {
       user_id: user.user_id,
       user_type : user.user_type,
+      campus_id : user.campus_id,
       building_id : user.building_id,
     })
   });

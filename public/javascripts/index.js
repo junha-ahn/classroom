@@ -1,5 +1,19 @@
 function makeGlobal() {
+  var serializeQuery =  function(query) {
+    if (!query)
+      return '';
+    var data = Object.keys(query);
+    return data.length
+    ? '?' + data.map(function(key){
+      var value = query[key];
+      return (value !== '' && value !== null && value !== undefined)
+      ? key + '=' + value
+      : ''
+    }).join('&')
+    : '';
+  }
   return {
+    serializeQuery: serializeQuery,
     ajax: function (object, done, err) {
       var url = object.url;
       var type = object.type || 'get';
@@ -19,25 +33,13 @@ function makeGlobal() {
         error: function (e) {
           var status = e.status;
           var rd = e.responseJSON;
-          var msg = rd.message || '죄송합니다 오류가 발생했습니다.'
+          var msg = rd ? rd.message : '죄송합니다 오류가 발생했습니다.'
+          msg = msg ? msg : '죄송합니다 오류가 발생했습니다.'
           err(msg, status, rd)
         }
       });
     }
   }
-  function serializeQuery(query) {
-    if (!query)
-      return '';
-    var data = Object.keys(query);
-    return data.length
-    ? '?' + data.map(function(key){
-      var value = query[key];
-      return (value !== '' && value !== null && value !== undefined)
-      ? key + '=' + value
-      : ''
-    }).join('&')
-    : '';
-  };
 }
 
 /** 

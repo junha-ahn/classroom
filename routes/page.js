@@ -13,10 +13,9 @@ const {
 } = require('./middlewares');
 
 router.get('/', async (req, res, next) => {
-  let campus_id = (req.user) ? info.building_object[req.user.building_id].campus_id : 0;
   res.render('main', foo.getResJson(req.user, {
     campuses: info.campuses,
-    campus_id,
+    campus_id : req.user ? req.user.campus_id : 0,
   }));
 });
 
@@ -25,7 +24,12 @@ router.get('/group', async (req, res, next) => {
   let {
     page,
     page_length,
+    department_id,
+    building_id,
   } = req.query;
+
+  department_id = department_id || req.user ? req.user.department_id : null;
+  building_id = building_id || req.user ? req.user.building_id : null;
 
   let connection;
   try {
@@ -36,12 +40,18 @@ router.get('/group', async (req, res, next) => {
     } = await select_func.getStudyGroup(connection, {
       page,
       page_length,
+      department_id,
+      building_id,
     })
     foo.cleaningList(results);
+    let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
+
     res.render('group', foo.getResJson(req.user, {
       results,
       list_count,
       query: req.query,
+      department_results: info.department_results,
+      building_results,
     }));
   } catch (error) {
     next(error);
