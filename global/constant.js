@@ -4,6 +4,8 @@ const ADMIN_TYPE = 30;
 const USER_TYPE_ARRAY = [USER_TYPE, ADMIN_TYPE];
 
 module.exports = {
+  UNCHANGED_STATUS:401,
+  UNCHANGED_MESSAGE: '변경사항이 없습니다',
   USER_TYPE,
   ADMIN_TYPE,
   USER_TYPE_ARRAY,

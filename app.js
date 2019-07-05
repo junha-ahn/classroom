@@ -10,6 +10,7 @@ const hpp = require('hpp');
 const RedisStore = require('connect-redis')(session);
 
 const pageRoute = require(path.join(__dirname, '/routes/page'));
+const adminPageRoute = require(path.join(__dirname, '/routes/admin'));
 const authRoute = require(path.join(__dirname, '/routes/auth'));
 const apiRoute = require(path.join(__dirname, '/routes/api'));
 
@@ -56,12 +57,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', pageRoute);
+app.use('/admin', adminPageRoute);
 app.use('/auth', authRoute);
 app.use('/api', apiRoute);
 
 app.use(function (error, req, res, next) {
   res.status(error.status || 500);
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV != 'production') {
     console.error(error);
   }
   res.json({

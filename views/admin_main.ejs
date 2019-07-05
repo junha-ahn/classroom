@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script type="text/javascript" src="/javascripts/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+</head>
+
+<body>
+
+  <div id="app">
+    <header>
+      <% include ./header %>
+    </header>
+
+    <main>
+      <% include ./admin_menu %>
+    </main>
+    
+    <footer>
+      <% include ./footer %>
+    </footer>
+  </div>
+
+  <script>
+    var global = makeGlobal();
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          page_name: 'admin',
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+        }
+      },
+      methods : {
+        
+      }
+    })
+  </script>
+
+</body>
+
+</html>

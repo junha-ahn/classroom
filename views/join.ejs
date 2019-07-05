@@ -26,6 +26,12 @@
         <label>학생</label>
         <input type="checkbox" v-model="joinForm.is_student" true-value="1" false-value="0">
         <br/>
+        <label>학과</label>
+        <select class="form-control" v-model="joinForm.department_id">
+          <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
+            {{ department.name }}
+          </option>
+        </select>
         <label>캠퍼스</label>
         <select class="form-control" v-model="joinForm.campus_id" @change="replaceBuildings()">
           <option v-for="(campus, i) in campus_results" v-bind:value="campus.campus_id" :key="i">
@@ -81,11 +87,13 @@
           page_name: 'join',
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
+          department_results : <%-JSON.stringify(department_results) %>,
           campus_results : <%-JSON.stringify(campus_results) %>,
           buildings : <%-JSON.stringify(buildings) %>,
           building_results: [],
           joinForm: {
             is_student: 1,
+            department_id: null,
             campus_id: null,
             building_id: null,
             campus_name: null,

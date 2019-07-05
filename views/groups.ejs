@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script type="text/javascript" src="/javascripts/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <% include ./header %>
+    </header>
+
+    <main>
+      <label>학과</label>
+      <select class="form-control" v-model="query.department_id" @change="onChange()">
+        <option v-bind:value="0" :selected="query.department_id===0">전체</option>
+        <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="query.department_id == department.department_id" :key="i">
+          {{ department.name }}
+        </option>
+      </select>
+      <label>학습관</label>
+      <select class="form-control" v-model="query.building_id" @change="onChange()">
+        <option v-bind:value="0" :selected="query.building_id===0">전체</option>
+        <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
+          {{ building.name }}
+        </option>
+      </select>
+      <table class="table table-hover">
+        <thead>
+          <th>이름</th>
+          <th>학과</th>
+          <th>학습관</th>
+          <th>생성일</th>
+          <th>가입</th>
+          <th>자세히보기</th>
+        </thead>
+        <tbody>
+          <tr v-for="(study_group, i) in results" :key="i">
+            <td>{{study_group.name}}</td>
+            <td>{{study_group.department_name}}</td>
+            <td>{{study_group.building_name}}</td>
+            <td>{{study_group.date_created}}</td>
+            <td>
+              <button type="button" class="btn btn-primary" v-if="study_group.is_join != 1" @click="joinStudyGroup(study_group.study_group_id, true)"> 가입 </button>
+              <button type="button" class="btn btn-danger" v-else @click="joinStudyGroup(study_group.study_group_id, false)"> 가입취소 </button>
+            
+            </td>
+            <td><button type="button" class="btn btn-default" @click="locationHref('/group/single/' + study_group.study_group_id)"> 조회 </button></td>
+          </tr>
+        </tbody>
+      </table>
+      <nav>
+        <ul class="pagination">
+          <li
+          v-for="page in pagenation"
+          :key="page.value"
+          :class="{active: page.isSelf}">
+            <a @click="chagePage(page.value)" aria-label="Previous">
+              <span aria-hidden="true" v-html="page.name"></span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div v-if="is_user">
+        <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 그룹</button>
+        <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 그룹</button>
+
+        <button type="button" class="btn btn-primary" v-if="query.is_join==1" @click="clickIsJoin(0)">가입한 그룹</button>
+        <button type="button" class="btn btn-default" v-else @click="clickIsJoin(1)">가입한 그룹</button>
+      </div>
+      <button type="button" class="btn btn-primary">생성</button>
+    </main>
+    
+    <footer>
+      <% include ./footer %>
+    </footer>
+  </div>
+
+  <script>
+    var global = makeGlobal();
+    var results = <%-JSON.stringify(results) %>;
+    var list_count = <%-JSON.stringify(list_count) %>;
+
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          page_name: 'group',
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+          query : <%-JSON.stringify(query) %>,
+          results,
+          list_count,
+          department_results : <%-JSON.stringify(department_results) %>,
+          building_results : <%-JSON.stringify(building_results) %>,
+        }
+      },
+      computed: {
+        pagenation: function() {
+          return pagenation({
+            numberOfItems:this.list_count,
+            itemsPerPage: 10,
+            pagesPerNav:5,
+            indexOfPage: this.query.page,
+            hasPrevAndNext: true,
+            prevText:'&laquo;',
+            nextText:'&raquo;',
+          })
+        },
+      }, 
+      methods : {
+        joinStudyGroup: function(study_group_id, is_join) {
+          global.ajax({
+            url: '/api/study_group/join/'+study_group_id,
+            type: is_join ? 'POST' : 'DELETE',
+            data: null,
+          },
+          function(data, status) {
+            app.refresh();
+          },
+          function(message, status, data) {
+            alert(message);
+          })
+        },
+        clickIsJoin: function(is_join) {
+          this.query.is_join = is_join;
+          this.refresh();
+        },
+        clickIsMine: function(is_mine) {
+          this.query.is_mine = is_mine;
+          this.refresh();
+        },
+        chagePage: function(page) {
+          this.query.page = page;
+          this.refresh();
+        },
+        onChange: function() {
+          this.query.page = 1;
+          this.refresh();
+        },
+        refresh: function() {
+          this.query.building_id = this.query.building_id || undefined;
+          this.query.department_id = this.query.department_id || undefined;
+          location.href= '/group/lookup' + global.serializeQuery(this.query);
+        },
+        locationHref: function (link) {
+          location.href= link;
+        }
+      },
+    })
+  </script>
+
+</body>
+
+</html>

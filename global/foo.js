@@ -102,9 +102,10 @@ let self = {
 
     return target_string;
   },
-  cleaningList: (array) => {
+  cleaningList: (array, user, is_personal) => {
     for (let i in array) {
       array[i].date_created = array[i].date_created ? self.parseDateFromDB(array[i].date_created) : array[i].date_created;
+      array[i].date_joined = array[i].date_joined ? self.parseDateFromDB(array[i].date_joined) : array[i].date_joined;
       array[i].date_last_updated = array[i].date_last_updated ? self.parseDateFromDB(array[i].date_last_updated) : array[i].date_last_updated;
 
       if (array[i].campus_id) {
@@ -116,14 +117,32 @@ let self = {
       if (array[i].department_id) {
         array[i].department_name = info.department_object[array[i].department_id].name;
       }
+
+      if (is_personal) {
+        if (!user || user.user_type != constant.ADMIN_TYPE) {
+          array[i].name = array[i].name ? array[i].name.slice(0,1) + ('*'.repeat(array[i].name.length - 1)) : null;
+          array[i].phone = array[i].phone ? '비공개' : undefined;
+          array[i].student_number = array[i].student_number ? '비공개' : undefined
+        }
+      }
     }
   },
   getResJson: (user, json) => {
     json.is_user = (user) ? true : false;
     json.is_admin = (user && user.user_type == constant.ADMIN_TYPE) ? true : false;
-    
     return {
       ...json,
+    }
+  },
+  setRes: (res, set_result, json) => {
+    if (set_result.affectedRows) {
+      res.status(200).json({
+        ...json,
+      })
+    } else {
+      res.status(constant.UNCHANGED_STATUS).json({
+        display_message: constant.UNCHANGED_MESSAGE
+      })
     }
   },
 }

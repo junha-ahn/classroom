@@ -6,7 +6,7 @@ const passport = require('passport');
 const {
   isLoggedIn,
   isNotLoggedIn
-} = require('./middlewares');
+} = require('../global/middlewares');
 
 const db_func = require('../global/db_func');
 const select_func = require('../query/select_func');

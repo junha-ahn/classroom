@@ -85,6 +85,26 @@ let self = {
       }
     });
   },
+  insertStudyGroupUser: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          user_id,
+          study_group_id,
+        } = object;
+
+        let userString = squel.insert()
+          .into('study_group_user')
+          .set('user_id',user_id)
+          .set('study_group_id', study_group_id)
+          .toParam();
+        let insert_result = await db_func.sendQueryToDB(connection, userString, true);
+        resolve(insert_result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }
 
 module.exports = self;

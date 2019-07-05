@@ -10,7 +10,7 @@ const foo = require('../global/foo');
 const {
   isLoggedIn,
   isNotLoggedIn
-} = require('./middlewares');
+} = require('../global/middlewares');
 
 router.get('/', async (req, res, next) => {
   res.render('main', foo.getResJson(req.user, {
@@ -19,15 +19,15 @@ router.get('/', async (req, res, next) => {
   }));
 });
 
-router.get('/group', async (req, res, next) => {
+router.get('/group/lookup', async (req, res, next) => {
   let {
     page,
     page_length,
     department_id,
     building_id,
     is_mine,
+    is_join,
   } = req.query;
-  is_mine = is_mine || 0;
   page_length = page_length || 10;
   department_id = department_id ? department_id  : (req.user) ? req.user.department_id : null;
   building_id = building_id ? building_id : (req.user) ? req.user.building_id : null;
@@ -45,12 +45,13 @@ router.get('/group', async (req, res, next) => {
       department_id,
       building_id,
       is_mine,
+      is_join,
       user_id : (req.user) ? req.user.user_id : null,
     });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
 
-    res.render('group', foo.getResJson(req.user, {
+    res.render('groups', foo.getResJson(req.user, {
       results,
       list_count,
       query: {
@@ -60,6 +61,36 @@ router.get('/group', async (req, res, next) => {
       },
       department_results: info.department_results,
       building_results,
+    }));
+  } catch (error) {
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
+});
+
+router.get('/group/single/:study_group_id', async (req, res, next) => {
+  let study_group_id = req.params.study_group_id || null;
+
+  let connection;
+  try {
+    connection = await db_func.getDBConnection();
+    
+    let groupObject = await select_func.getStudyGroup(connection, {
+      study_group_id,
+      user_id : (req.user) ? req.user.user_id : null,
+    });
+    foo.cleaningList(groupObject.results);
+    let {
+      results,
+      list_count,
+    } = await select_func.getViewTableStudyGroupPerson(connection, {
+      study_group_id,
+    });
+    foo.cleaningList(results, req.user, true);
+    res.render('group', foo.getResJson(req.user, {
+      group: groupObject.results[0],
+      results,
     }));
   } catch (error) {
     next(error);
@@ -91,6 +122,7 @@ router.get('/login', isNotLoggedIn, async (req, res, next) => {
 
 router.get('/join', isNotLoggedIn, async (req, res, next) => {
   res.render('join', foo.getResJson(req.user, {
+    department_results: info.department_results,
     campus_results: info.campus_results,
     buildings: info.buildings,
   }));
