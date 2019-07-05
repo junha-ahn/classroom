@@ -53,7 +53,11 @@ router.get('/group', async (req, res, next) => {
     res.render('group', foo.getResJson(req.user, {
       results,
       list_count,
-      query: req.query,
+      query: {
+        ...req.query,
+        department_id: department_id || 0,
+        building_id: building_id || 0,
+      },
       department_results: info.department_results,
       building_results,
     }));
