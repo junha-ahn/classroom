@@ -42,12 +42,12 @@ app.use(session({
     httpOnly: true,
     secure: false
   },
-  store : (process.env.NODE_ENV == 'development') ? 
-  undefined : new RedisStore({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    logErrors: true,
-  })
+  store: (process.env.NODE_ENV == 'development') ?
+    undefined : new RedisStore({
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      logErrors: true,
+    })
 }));
 
 app.use(express.static(__dirname + '/public'));
@@ -72,8 +72,8 @@ app.use(function (error, req, res, next) {
 
 app.use(function (req, res, next) {
   res.status(404).render('error', foo.getResJson(req.user, {
-    error_name : "404 Not Found",
-    message : '존재하지 않는 페이지입니다'
+    error_name: "404 Not Found",
+    message: '존재하지 않는 페이지입니다'
   }));
 });
 

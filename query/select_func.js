@@ -228,6 +228,8 @@ let self = {
           study_group_id,
           department_id,
           building_id,
+          user_id,
+          is_mine,
           page,
           page_length,
           sort_key,
@@ -236,7 +238,7 @@ let self = {
 
         sort_key = (sort_key) ? sort_key : 'study_group_id';
         sort_type = (sort_type == false) ? false : true;
-        
+
         if (page && page_length) {
           countString = squel.select()
             .from('study_group')
@@ -252,6 +254,10 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
               .else(squel.expr().and('study_group.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.user_id = ?', user_id)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -268,6 +274,14 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
               .else(squel.expr().and('study_group.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.user_id = ?', user_id)))
+            .field('study_group.*')
+            .field(squel.case()
+              .when('study_group.user_id = ?', user_id)
+              .then('1').else('0'), 'is_mine')
             .order(`study_group.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -277,8 +291,8 @@ let self = {
             .from('study_group')
             .where(squel.case()
               .when('? IS NULL', study_group_id)
-              .then(squel.expr().and('study_group_id IS NOT NULL'))
-              .else(squel.expr().and('study_group_id = ?', study_group_id)))
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.study_group_id = ?', study_group_id)))
             .where(squel.case()
               .when('? IS NULL', department_id)
               .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
@@ -287,6 +301,14 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
               .else(squel.expr().and('study_group.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.user_id = ?', user_id)))
+            .field('study_group.*')
+            .field(squel.case()
+              .when('study_group.user_id = ?', user_id)
+              .then('1').else('0'), 'is_mine')
             .order(`study_group.${sort_key}`, sort_type)
             .toParam();
         }
@@ -420,7 +442,7 @@ let self = {
             .toParam();
           queryString = squel.select()
             .from('study_group_user')
-            .join('study_group',null,'study_group.study_group_id = study_group_user.study_group_id')
+            .join('study_group', null, 'study_group.study_group_id = study_group_user.study_group_id')
             .where(squel.case()
               .when('? IS NULL', study_group_user_id)
               .then(squel.expr().and('study_group_user.study_group_user_id IS NOT NULL'))
@@ -440,7 +462,7 @@ let self = {
         } else {
           queryString = squel.select()
             .from('study_group_user')
-            .join('study_group',null,'study_group.study_group_id = study_group_user.study_group_id')
+            .join('study_group', null, 'study_group.study_group_id = study_group_user.study_group_id')
             .where(squel.case()
               .when('? IS NULL', study_group_user_id)
               .then(squel.expr().and('study_group_user_id IS NOT NULL'))

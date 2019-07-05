@@ -22,13 +22,15 @@
 
     <main>
       <label>학과</label>
-      <select class="form-control" v-model="query.department_id">
+      <select class="form-control" v-model="query.department_id" @change="onChange()">
+        <option v-bind:value="null" :selected="query.department_id == 0">전체</option>
         <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="query.department_id == department.department_id" :key="i">
           {{ department.name }}
         </option>
       </select>
       <label>학습관</label>
-      <select class="form-control" v-model="query.building_id">
+      <select class="form-control" v-model="query.building_id" @change="onChange()">
+        <option v-bind:value="null" :selected="query.building_id == 0">전체</option>
         <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
           {{ building.name }}
         </option>
@@ -39,6 +41,7 @@
           <th>학과</th>
           <th>학습관</th>
           <th>생성일</th>
+          <th>조회</th>
         </thead>
         <tbody>
           <tr v-for="(study_group, i) in results" :key="i">
@@ -46,6 +49,7 @@
             <td>{{study_group.department_name}}</td>
             <td>{{study_group.building_name}}</td>
             <td>{{study_group.date_created}}</td>
+            <td><button type="button" class="btn btn-warning"> {{study_group.is_mine}} </button></td>
           </tr>
         </tbody>
       </table>
@@ -55,7 +59,7 @@
           v-for="page in pagenation"
           :key="page.value"
           :class="{active: page.isSelf}">
-            <a :href="'/group?page=' + page.value" aria-label="Previous">
+            <a @click="chagePage(page.value)" aria-label="Previous">
               <span aria-hidden="true" v-html="page.name"></span>
             </a>
           </li>
@@ -92,7 +96,7 @@
         pagenation: function() {
           return pagenation({
             numberOfItems:this.list_count,
-            itemsPerPage: this.query.page_length,
+            itemsPerPage: 10,
             pagesPerNav:5,
             indexOfPage: this.query.page,
             hasPrevAndNext: true,
@@ -101,12 +105,19 @@
           })
         },
       }, 
-      watch: {
-        query: function(query) {
-          alert('group' + global.serializeQuery(this.query))
+      methods : {
+        chagePage: function(page) {
+          this.query.page = page;
+          this.refresh();
+        },
+        onChange: function() {
+          this.query.page = 1;
+          this.refresh();
+        },
+        refresh: function() {
           location.href= '/group' + global.serializeQuery(this.query);
         },
-      }
+      },
     })
   </script>
 

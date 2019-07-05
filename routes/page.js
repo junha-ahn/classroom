@@ -20,14 +20,15 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/group', async (req, res, next) => {
-  req.query.page_length = 10;
   let {
     page,
     page_length,
     department_id,
     building_id,
+    is_mine,
   } = req.query;
-
+  is_mine = is_mine || 0;
+  page_length = page_length || 10;
   department_id = department_id ? department_id  : (req.user) ? req.user.department_id : null;
   building_id = building_id ? building_id : (req.user) ? req.user.building_id : null;
 
@@ -43,6 +44,8 @@ router.get('/group', async (req, res, next) => {
       page_length,
       department_id,
       building_id,
+      is_mine,
+      user_id : (req.user) ? req.user.user_id : null,
     });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
