@@ -1,6 +1,6 @@
 # Classroom
 
-Vue.js, ejs, bootstrap, jQuery(ajax)
+Vue.js(CDN), ejs, bootstrap, jQuery(ajax)
 
 Node.js, Express
 
@@ -15,5 +15,4 @@ Node.js, Express
 ## 사용 방법 (Running)
 ~~~~
 npm run dev
-npm start
 ~~~~
