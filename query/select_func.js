@@ -235,7 +235,7 @@ let self = {
           sort_key,
           sort_type
         } = object;
-
+        
         sort_key = (sort_key) ? sort_key : 'study_group_id';
         sort_type = (sort_type == false) ? false : true;
 
@@ -835,7 +835,6 @@ let self = {
             .order(`room.${sort_key}`, sort_type)
             .toParam();
         }
-
         let results = await db_func.sendQueryToDB(connection, queryString);
         let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
         resolve({

@@ -41,7 +41,7 @@
           <th>학과</th>
           <th>학습관</th>
           <th>생성일</th>
-          <th>조회</th>
+          <th>자세히보기</th>
         </thead>
         <tbody>
           <tr v-for="(study_group, i) in results" :key="i">
@@ -49,7 +49,7 @@
             <td>{{study_group.department_name}}</td>
             <td>{{study_group.building_name}}</td>
             <td>{{study_group.date_created}}</td>
-            <td><button type="button" class="btn btn-warning"> {{study_group.is_mine}} </button></td>
+            <td><button type="button" class="btn btn-default"> 조회 </button></td>
           </tr>
         </tbody>
       </table>

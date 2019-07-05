@@ -31,11 +31,11 @@
   <dl>
     <dt v-for="(floor, i) in rooms" :key="i">
       <div class="btn-group-vertical" role="group" aria-label="...">
-        <button type="button" class="btn btn-default" @click="changeRoomFloor(i)">{{i}} 층</button>
+        <button type="button" class="btn btn-primary" @click="changeRoomFloor(i)">{{i}} 층</button>
         <dl>
           <dt v-for="(room, i) in floor" :key="i">
             <div v-if="room.floor==section.room.floor">
-              <button type="button" class="btn btn-success">{{room.room_number}}호 {{room.name}} ({{room.seat_count}}석)</button>
+              <button type="button" class="btn btn-default" @click="chooseRoom(room)">{{room.room_number}} {{room.name}} ({{room.seat_count}}석)</button>
             </div>
           </dt>
         </dl>  

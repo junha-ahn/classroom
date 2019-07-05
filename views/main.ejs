@@ -26,11 +26,11 @@
         <dl>
           <dt v-for="(campus, i) in campuses" :key="i">
             <div class="btn-group-vertical" role="group">
-              <button type="button" class="btn btn-default"  @click="clickCampus(campus.campus_id)">{{campus.name}}</button>
+              <button type="button" class="btn btn-primary"  @click="clickCampus(campus.campus_id)">{{campus.name}}</button>
               <dl>
                 <dt v-for="(building, j) in campus.building_results" :key="j">
                   <div v-if="campus_id==building.campus_id">
-                    <button v-if="building.is_active==1" type="button" class="btn btn-success" @click="locationHref('/reservation/'+ building.building_id)" >
+                    <button v-if="building.is_active==1" type="button" class="btn btn-default" @click="locationHref('/reservation/'+ building.building_id)" >
                       {{building.name}}
                     </button>
                     <button v-else type="button" class="btn btn-default" @click="alertBuildingMsg">
