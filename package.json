@@ -19,6 +19,7 @@
   "homepage": "https://github.com/junha-ahn/classroom#readme",
   "dependencies": {
     "bcrypt": "^3.0.6",
+    "connect-redis": "^3.4.1",
     "cookie-parser": "^1.4.4",
     "cross-env": "^5.2.0",
     "dotenv": "^8.0.0",

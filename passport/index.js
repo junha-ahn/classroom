@@ -10,6 +10,7 @@ module.exports = (passport) => {
       user_type : user.user_type,
       campus_id : user.campus_id,
       building_id : user.building_id,
+      department_id : user.department_id,
     })
   });
   passport.deserializeUser(async (user, done) => {

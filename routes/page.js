@@ -28,12 +28,13 @@ router.get('/group', async (req, res, next) => {
     building_id,
   } = req.query;
 
-  department_id = department_id || req.user ? req.user.department_id : null;
-  building_id = building_id || req.user ? req.user.building_id : null;
+  department_id = department_id ? department_id  : (req.user) ? req.user.department_id : null;
+  building_id = building_id ? building_id : (req.user) ? req.user.building_id : null;
 
   let connection;
   try {
     connection = await db_func.getDBConnection();
+    
     let {
       results,
       list_count,
@@ -42,7 +43,7 @@ router.get('/group', async (req, res, next) => {
       page_length,
       department_id,
       building_id,
-    })
+    });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
 

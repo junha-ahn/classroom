@@ -103,8 +103,8 @@
       }, 
       watch: {
         query: function(query) {
-          alert('api/group' + global.serializeQuery(this.query))
-          location.href= 'api/group' + global.serializeQuery(this.query);
+          alert('group' + global.serializeQuery(this.query))
+          location.href= '/group' + global.serializeQuery(this.query);
         },
       }
     })

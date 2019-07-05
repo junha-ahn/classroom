@@ -7,6 +7,7 @@ const session = require('express-session');
 const passport = require('passport');
 const helmet = require('helmet');
 const hpp = require('hpp');
+const RedisStore = require('connect-redis')(session);
 
 const pageRoute = require(path.join(__dirname, '/routes/page'));
 const authRoute = require(path.join(__dirname, '/routes/auth'));
@@ -41,6 +42,12 @@ app.use(session({
     httpOnly: true,
     secure: false
   },
+  store : (process.env.NODE_ENV == 'development') ? 
+  undefined : new RedisStore({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    logErrors: true,
+  })
 }));
 
 app.use(express.static(__dirname + '/public'));
