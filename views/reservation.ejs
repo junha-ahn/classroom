@@ -23,7 +23,7 @@
 
     <main>
       <template v-if="page_step=='intro'">
-        <div class="panel panel-primary" @click="chageStep('create', 'room')">
+        <div class="panel panel-primary" @click="chageStep('room')">
           <div class="panel-heading">
             교실 예약
           </div>
@@ -32,7 +32,7 @@
           </div>
         </div>
 
-        <div class="panel panel-primary" @click="chageStep('create', 'time')">
+        <div class="panel panel-primary" @click="chageStep('time')">
           <div class="panel-heading">
             시간 예약
           </div>
@@ -69,11 +69,11 @@
           </div>
         </div>
         <div>
-          <dl>
-            <dt v-for="(room, i) in rooms" :key="i">
+          <ol>
+            <li v-for="(room, i) in rooms" :key="i">
               {{room.name}}
-            </dt>
-          </dl>
+            </li>
+          </ol>
         </div>
       </template>
       <template v-if="page_step=='time'">
@@ -95,7 +95,7 @@
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           query : <%-JSON.stringify(query) %>,
-          page_step : 'room',
+          page_step : 'intro',
           page_type : null,
           section : {
             room : {
@@ -107,6 +107,7 @@
 
             },
           },
+          rooms: [],
         }
       },
       methods: {
@@ -126,25 +127,7 @@
         chageStep: function(page_step) {
           this.page_step = page_step;
         },
-        getRoom() {
-          global.ajax({
-            url: '/api/room',
-            type: 'POST',
-            data: app.loginForm,
-            query: {
-              building_id : this.query.building_id,
-            }
-          },
-          function(data, status) {
-            alert(data.message);
-          },
-          function(message, status, data) {
-            alert(message);
-          });
-        },
-      },
-      computed: {
-        rooms: function() {
+        getRoom: function() {
           global.ajax({
             url: '/api/room',
             type: 'GET',
@@ -154,12 +137,29 @@
             }
           },
           function(data, status) {
-            console.log(data.results);
-            return data.results
+            app.rooms = data.results
           },
           function(message, status, data) {
             alert(message);
-          });
+          })
+        }
+      },
+      mounted() {
+        
+      },
+      watch: {
+        page_step: function(page_step) {
+          if (page_step == 'room') {
+            switch (this.section[this.page_step].menu_step) {
+              case 1:
+                this.getRoom();
+                break;
+              default:
+                break;
+            }
+          } else {
+
+          }
         },
       }
     })
