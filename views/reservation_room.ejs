@@ -1,0 +1,45 @@
+<div class="btn-group btn-group-justified" role="group" aria-label="...">
+  <div class="btn-group" role="group">
+    <button type="button" :class="classObjectMenu(1)" :click="chageMenuStep(1)">1. 강의실 선택</button>
+  </div>
+  <div class="btn-group" role="group">
+    <button type="button" :class="classObjectMenu(2)" :click="chageMenuStep(2)">2. 날짜 선택</button>
+  </div>
+  <div class="btn-group" role="group">
+    <button type="button" :class="classObjectMenu(3)" :click="chageMenuStep(3)">3. 시간 선택</button>
+  </div>
+  <div class="btn-group" role="group">
+    <button type="button" :class="classObjectMenu(4)" :click="chageMenuStep(4)">4. 상세 내용 입력</button>
+  </div>
+  <div class="btn-group" role="group">
+    <button type="button" :class="classObjectMenu(5)" :click="chageMenuStep(5)">5. 예약 내용 확인</button>
+  </div>
+</div>
+
+<div>
+  <button type="button" class="btn btn-default">교실</button>
+  <button type="button" class="btn"></button>
+  <br/>
+  <button type="button" class="btn btn-default">날짜</button>
+  <button type="button" class="btn"></button>
+  <br/>
+  <button type="button" class="btn btn-default">시간</button>
+  <button type="button" class="btn"></button>
+</div>
+<h1>임시 구분 선 ============</h1>
+<div>
+  <dl>
+    <dt v-for="(floor, i) in rooms" :key="i">
+      <div class="btn-group-vertical" role="group" aria-label="...">
+        <button type="button" class="btn btn-default" @click="changeRoomFloor(i)">{{i}} 층</button>
+        <dl>
+          <dt v-for="(room, i) in floor" :key="i">
+            <div v-if="room.floor==section.room.floor">
+              <button type="button" class="btn btn-success">{{room.room_number}}호 {{room.name}} ({{room.seat_count}}석)</button>
+            </div>
+          </dt>
+        </dl>  
+      </div>
+    </dt>
+  </dl>
+</div>

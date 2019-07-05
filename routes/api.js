@@ -9,8 +9,8 @@ const foo = require('../global/foo');
 router.get('/room', async (req, res, next) => {
   const {
     building_id,
-  } = req.body;
-
+    sort_by_floor
+  } = req.query;
   let connection;
   try {
     connection = await db_func.getDBConnection();
@@ -19,9 +19,10 @@ router.get('/room', async (req, res, next) => {
       list_count,
     } = await select_func.getRoom(connection, {
       building_id,
+      sort_key: 'room_number',
     });
     res.status(200).json({
-      results,
+      results : sort_by_floor ? roomSortByFloor(results) : results,
       list_count,
     })
   } catch (error) {
@@ -65,5 +66,16 @@ router.get('/group', async (req, res, next) => {
     db_func.release(connection);
   }
 });
+
+function roomSortByFloor(room_results) {
+  let rooms = {};
+  for (let i in room_results) {
+    if (!rooms[room_results[i].floor]) {
+      rooms[room_results[i].floor] = []
+    }
+    rooms[room_results[i].floor].push(room_results[i]);
+  }
+  return rooms;
+}
 
 module.exports = router;
