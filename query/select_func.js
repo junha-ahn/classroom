@@ -3,7 +3,7 @@ const squel = require('squel');
 const db_func = require('../global/db_func.js');
 
 let self = {
-  getUser: (connection, object) => {
+  user: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -73,7 +73,7 @@ let self = {
       }
     });
   },
-  getViewTableUser: (connection, object) => {
+  viewTableUser: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -146,7 +146,7 @@ let self = {
       }
     });
   },
-  getViewTableAdmin: (connection, object) => {
+  viewTableAdmin: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -219,7 +219,105 @@ let self = {
       }
     });
   },
-  getStudyGroup: (connection, object) => {
+  studyGroup: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          study_group_id,
+          department_id,
+          building_id,
+          user_id,
+          is_mine,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+        sort_key = (sort_key) ? sort_key : 'study_group_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('study_group')
+            .where(squel.case()
+              .when('? IS NULL', study_group_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.study_group_id = ?', study_group_id)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.department_id = ?', department_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.user_id = ?', user_id)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('study_group')
+            .where(squel.case()
+              .when('? IS NULL', study_group_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.study_group_id = ?', study_group_id)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.department_id = ?', department_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.user_id = ?', user_id)))
+            .field('study_group.*')
+            .order(`study_group.${sort_key}`, sort_type)
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('study_group')
+            .left_join('study_group_user', null, `study_group_user.study_group_id = study_group.study_group_id AND study_group_user.user_id = ${user_id}`)
+            .where(squel.case()
+              .when('? IS NULL', study_group_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.study_group_id = ?', study_group_id)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.department_id = ?', department_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
+              .else(squel.expr().and('study_group.user_id = ?', user_id)))
+            .field('study_group.*')
+            .order(`study_group.${sort_key}`, sort_type)
+            .toParam();
+        }
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  viewTableStudyGroup: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -269,6 +367,8 @@ let self = {
             .toParam();
           queryString = squel.select()
             .from('study_group')
+            .join('user', null, 'user.user_id = study_group.user_id')
+            .join('person', null, 'person.user_id = user.user_id')
             .left_join('study_group_user', null, `study_group_user.study_group_id = study_group.study_group_id AND study_group_user.user_id = ${user_id}`)
             .where(squel.case()
               .when('? IS NULL', study_group_id)
@@ -290,11 +390,13 @@ let self = {
               .when('? != 1', is_join)
               .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
               .else(squel.expr().and('study_group_user.user_id IS NOT NULL')))
+            
             .field('study_group.*')
             .field(squel.case()
               .when('study_group.user_id = ?', user_id)
               .then('1').else('0'), 'is_mine')
             .field('IF(study_group_user.user_id IS NOT NULL, 1 ,0)', 'is_join')
+            .field('person.name', 'representative_name')
             .order(`study_group.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -302,6 +404,8 @@ let self = {
         } else {
           queryString = squel.select()
             .from('study_group')
+            .join('user', null, 'user.user_id = study_group.user_id')
+            .join('person', null, 'person.user_id = user.user_id')
             .left_join('study_group_user', null, `study_group_user.study_group_id = study_group.study_group_id AND study_group_user.user_id = ${user_id}`)
             .where(squel.case()
               .when('? IS NULL', study_group_id)
@@ -328,6 +432,7 @@ let self = {
               .when('study_group.user_id = ?', user_id)
               .then('1').else('0'), 'is_mine')
             .field('IF(study_group_user.user_id IS NOT NULL, 1 ,0)', 'is_join')
+            .field('person.name', 'representative_name')
             .order(`study_group.${sort_key}`, sort_type)
             .toParam();
         }
@@ -342,7 +447,7 @@ let self = {
       }
     });
   },
-  getViewTableStudyGroupPerson: (connection, object) => {
+  viewTableStudyGroupPerson: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -410,7 +515,7 @@ let self = {
       }
     });
   },
-  getDepartment: (connection, object) => {
+  department: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -467,7 +572,7 @@ let self = {
       }
     });
   },
-  getCampus: (connection, object) => {
+  campus: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -524,7 +629,7 @@ let self = {
       }
     });
   },
-  getBuilding: (connection, object) => {
+  building: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -594,7 +699,7 @@ let self = {
       }
     });
   },
-  getRoom: (connection, object) => {
+  room: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -676,7 +781,7 @@ let self = {
       }
     });
   },
-  getNotification: (connection, object) => {
+  notification: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;

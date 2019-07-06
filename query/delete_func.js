@@ -4,7 +4,7 @@ const db_func = require('../global/db_func.js');
 const constant = require('../global/constant.js');
 
 let self = {
-  deleteStudyGroupUser: (connection, object) => {
+  studyGroupUser: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let {

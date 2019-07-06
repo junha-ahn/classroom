@@ -2,7 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const db_func = require('../global/db_func');
-const select_func = require('../query/select_func');
+
+const  {
+  select_func,
+  update_func,
+  insert_func,
+  delete_func,
+} = require('../query/index');
+
 
 const info = require('../global/info');
 const foo = require('../global/foo');
@@ -39,7 +46,7 @@ router.get('/group/lookup', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.getStudyGroup(connection, {
+    } = await select_func.studyGroup(connection, {
       page,
       page_length,
       department_id,
@@ -76,7 +83,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
   try {
     connection = await db_func.getDBConnection();
     
-    let groupObject = await select_func.getStudyGroup(connection, {
+    let groupObject = await select_func.viewTableStudyGroup(connection, {
       study_group_id,
       user_id : (req.user) ? req.user.user_id : null,
     });
@@ -84,7 +91,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.getViewTableStudyGroupPerson(connection, {
+    } = await select_func.viewTableStudyGroupPerson(connection, {
       study_group_id,
     });
     foo.cleaningList(results, req.user, true);

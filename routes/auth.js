@@ -9,8 +9,14 @@ const {
 } = require('../global/middlewares');
 
 const db_func = require('../global/db_func');
-const select_func = require('../query/select_func');
-const insert_func = require('../query/insert_func');
+
+const  {
+  select_func,
+  update_func,
+  insert_func,
+  delete_func,
+} = require('../query/index');
+
 
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
   const {
@@ -25,12 +31,12 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
   let connection;
   try {
     connection = await db_func.getDBConnection();
-    let email_is_unique = (await select_func.getUser(connection, {
+    let email_is_unique = (await select_func.user(connection, {
       email
     })).results[0] ? false : true;
     if (email_is_unique) {
       let hashed_password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
-      await insert_func.insertUser(connection, {
+      await insert_func.user(connection, {
         email,
         hashed_password,
         campus_id,

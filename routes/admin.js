@@ -2,7 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const db_func = require('../global/db_func');
-const select_func = require('../query/select_func');
+
+const  {
+  select_func,
+} = require('../query/index');
+
 
 const info = require('../global/info');
 const foo = require('../global/foo');

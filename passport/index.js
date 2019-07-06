@@ -1,8 +1,5 @@
 const local = require('./localStrategy');
 
-const db_func = require('../global/db_func');
-const select_func = require('../query/select_func');
-
 module.exports = (passport) => {
   passport.serializeUser((user, done) => {
     done(null, {

@@ -4,7 +4,7 @@ const db_func = require('../global/db_func.js');
 const constant = require('../global/constant.js');
 
 let self = {
-  insertUser: (connection, object) => {
+  user: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let {
@@ -28,7 +28,7 @@ let self = {
           .toParam();
         let insert_result = await db_func.sendQueryToDB(connection, userString, true);
         let user_id = insert_result.insertId;
-        await self.insertPerson(connection, {
+        await self.person(connection, {
           isTransaction : true,
           user_id,
           campus_id,
@@ -57,7 +57,7 @@ let self = {
       }
     });
   },
-  insertPerson: (connection, object) => {
+  person: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let {
@@ -85,7 +85,7 @@ let self = {
       }
     });
   },
-  insertStudyGroupUser: (connection, object) => {
+  studyGroupUser: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let {

@@ -3,9 +3,12 @@ const router = express.Router();
 
 const db_func = require('../global/db_func');
 
-const select_func = require('../query/select_func');
-const insert_func = require('../query/insert_func');
-const delete_func = require('../query/delete_func');
+const  {
+  select_func,
+  update_func,
+  insert_func,
+  delete_func,
+} = require('../query/index');
 
 const foo = require('../global/foo');
 
@@ -25,7 +28,7 @@ router.get('/room', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.getRoom(connection, {
+    } = await select_func.room(connection, {
       building_id,
       sort_key: 'room_number',
     });
@@ -40,7 +43,7 @@ router.get('/room', async (req, res, next) => {
   }
 });
 
-router.get('/group', async (req, res, next) => {
+router.get('/study_group', async (req, res, next) => {
   const {
     page,
     page_length,
@@ -54,7 +57,7 @@ router.get('/group', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.getStudyGroup(connection, {
+    } = await select_func.studyGroup(connection, {
       page,
       page_length,
       department_id,
@@ -75,6 +78,33 @@ router.get('/group', async (req, res, next) => {
   }
 });
 
+router.put('/study_group/:study_group_id', async (req, res, next) => {
+  let study_group_id = req.params.study_group_id;
+  let {
+    name,
+    description,
+  } = req.body;
+
+  let connection;
+  try {
+    connection = await db_func.getDBConnection();
+
+    let update_result = await update_func.studyGroup(connection, {
+      study_group_id,
+      user_id : req.user.user_id,
+      name,
+      description,
+    })
+    foo.setRes(res, update_result, {
+      message : '성공했습니다'
+    })
+  } catch (error) {
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
+});
+
 router.post('/study_group/join/:study_group_id', isLoggedIn, async (req, res, next) => {
   let study_group_id = req.params.study_group_id;
 
@@ -84,7 +114,7 @@ router.post('/study_group/join/:study_group_id', isLoggedIn, async (req, res, ne
     let {
       results,
       list_count,
-    } = await select_func.getStudyGroup(connection, {
+    } = await select_func.studyGroup(connection, {
       study_group_id,
       user_id : req.user.user_id,
     })
@@ -97,7 +127,7 @@ router.post('/study_group/join/:study_group_id', isLoggedIn, async (req, res, ne
         message: '이미 가입한 그룹입니다'
       })
     } else {
-      let insert_result = await insert_func.insertStudyGroupUser(connection, {
+      let insert_result = await insert_func.studyGroupUser(connection, {
         study_group_id,
         user_id : req.user.user_id,
       })
@@ -111,7 +141,6 @@ router.post('/study_group/join/:study_group_id', isLoggedIn, async (req, res, ne
     db_func.release(connection);
   }
 });
-
 router.delete('/study_group/join/:study_group_id', isLoggedIn, async (req, res, next) => {
   let study_group_id = req.params.study_group_id;
 
@@ -119,7 +148,7 @@ router.delete('/study_group/join/:study_group_id', isLoggedIn, async (req, res, 
   try {
     connection = await db_func.getDBConnection();
 
-    let delete_result = await delete_func.deleteStudyGroupUser(connection, {
+    let delete_result = await delete_func.studyGroupUser(connection, {
       study_group_id,
       user_id : req.user.user_id,
     })

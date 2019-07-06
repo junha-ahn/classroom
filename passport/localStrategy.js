@@ -2,7 +2,9 @@ const localStorage = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 
 const db_func = require('../global/db_func');
-const select_func = require('../query/select_func');
+const  {
+  select_func,
+} = require('../query/index');
 
 module.exports = (passport) => {
   passport.use(new localStorage({
@@ -14,7 +16,7 @@ module.exports = (passport) => {
       connection = await db_func.getDBConnection();
       let {
         results
-      } = await select_func.getViewTableUser(connection, {
+      } = await select_func.viewTableUser(connection, {
         email,
       });
       if (results[0]) {

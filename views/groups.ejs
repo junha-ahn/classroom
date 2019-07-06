@@ -17,7 +17,7 @@
 <body>
   <div id="app">
     <header>
-      <% include ./header %>
+      <% include ./sub/header %>
     </header>
 
     <main>
@@ -37,18 +37,18 @@
       </select>
       <table class="table table-hover">
         <thead>
-          <th>이름</th>
           <th>학과</th>
           <th>학습관</th>
+          <th>이름</th>
           <th>생성일</th>
           <th>가입</th>
           <th>자세히보기</th>
         </thead>
         <tbody>
           <tr v-for="(study_group, i) in results" :key="i">
-            <td>{{study_group.name}}</td>
             <td>{{study_group.department_name}}</td>
             <td>{{study_group.building_name}}</td>
+            <td>{{study_group.name}}</td>
             <td>{{study_group.date_created}}</td>
             <td>
               <button type="button" class="btn btn-primary" v-if="study_group.is_join != 1" @click="joinStudyGroup(study_group.study_group_id, true)"> 가입 </button>
@@ -82,7 +82,7 @@
     </main>
     
     <footer>
-      <% include ./footer %>
+      <% include ./sub/footer %>
     </footer>
   </div>
 

@@ -4,7 +4,7 @@ const db_func = require('../global/db_func.js');
 const constant = require('../global/constant.js');
 
 let self = {
-  updatePerson: (connection, object) => {
+  person: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let {
@@ -31,7 +31,28 @@ let self = {
       }
     });
   },
-  
+  studyGroup: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          study_group_id,
+          user_id,
+          name,
+          description,
+        } = object;
+        let studyGroupString = squel.update()
+          .table('study_group')
+          .set('name', name)
+          .set('description', description)
+          .where('study_group_id = ?', study_group_id)
+          .where('user_id = ?', user_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, studyGroupString));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }
 
 module.exports = self;

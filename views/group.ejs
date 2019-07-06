@@ -17,28 +17,13 @@
 <body>
   <div id="app">
     <header>
-      <% include ./header %>
+      <% include ./sub/header %>
     </header>
 
     <main>
-      <button type="button" class="btn btn-primary">학과</button>
-      <button type="button" class="btn btn-default">{{group.department_name}}</button>
-      <br/>
-      <button type="button" class="btn btn-primary">학습관</button>
-      <button type="button" class="btn btn-default">{{group.building_name}}</button>
-      <br/>
-      <button type="button" class="btn btn-primary">이름</button>
-      <button type="button" class="btn btn-default">{{group.name}}</button>
-      <br/>
-      <button type="button" class="btn btn-primary">설명</button>
-      <button type="button" class="btn btn-default">{{group.description}}</button>
-      <br/>
-      <button type="button" class="btn btn-primary">생성일</button>
-      <button type="button" class="btn btn-default">{{group.date_created}}</button>
-      <br/>
-      <button type="button" class="btn btn-warning" v-if="group.is_mine==1">수정</button>
-      
-      <h2>가입한 사람</h2>
+      <template>
+        <group-input v-bind:group="group" mod="GET"></word-relay>
+      </template>
 
       <table class="table table-hover">
         <thead>
@@ -59,10 +44,11 @@
     </main>
     
     <footer>
-      <% include ./footer %>
+      <% include ./sub/footer %>
     </footer>
   </div>
 
+  <% include ./component/group_input %>
   <script>
     var global = makeGlobal();
     var group = <%-JSON.stringify(group) %>;
