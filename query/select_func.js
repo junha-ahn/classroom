@@ -154,6 +154,7 @@ let self = {
         let countString
         let {
           user_id,
+          user_type,
           email,
           page,
           page_length,
@@ -173,6 +174,10 @@ let self = {
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user.user_id = ?', user_id)))
             .where(squel.case()
+              .when('? IS NULL', user_type)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_type = ?', user_type)))
+            .where(squel.case()
               .when('? IS NULL', email)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user.email = ?', email)))
@@ -185,6 +190,10 @@ let self = {
               .when('? IS NULL', user_id)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user.user_id = ?', user_id)))
+            .where(squel.case()
+              .when('? IS NULL', user_type)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_type = ?', user_type)))
             .where(squel.case()
               .when('? IS NULL', email)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
@@ -201,6 +210,10 @@ let self = {
               .when('? IS NULL', user_id)
               .then(squel.expr().and('user_id IS NOT NULL'))
               .else(squel.expr().and('user_id = ?', user_id)))
+            .where(squel.case()
+              .when('? IS NULL', user_type)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_type = ?', user_type)))
             .where(squel.case()
               .when('? IS NULL', email)
               .then(squel.expr().and('user_id IS NOT NULL'))
