@@ -1,4 +1,5 @@
 const squel = require('squel');
+// squel  ORM 같은거 ?? 
 
 const db_func = require('../global/db_func.js');
 

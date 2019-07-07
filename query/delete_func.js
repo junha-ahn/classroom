@@ -1,3 +1,9 @@
+/**
+ * Test
+ * 
+ */
+
+
 const squel = require('squel');
 
 const db_func = require('../global/db_func.js');
