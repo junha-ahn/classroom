@@ -23,7 +23,7 @@ let self = {
           .where('user_id = ?',user_id)
           .where('study_group_id = ?', study_group_id)
           .toParam();
-        let delete_result = await db_func.sendQueryToDB(connection, userString, true);
+        let delete_result = await db_func.sendQueryToDB(connection, userString);
         resolve(delete_result);
       } catch (error) {
         reject(error);

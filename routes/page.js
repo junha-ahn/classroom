@@ -46,7 +46,7 @@ router.get('/group/lookup', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.studyGroup(connection, {
+    } = await select_func.viewTableStudyGroup(connection, {
       page,
       page_length,
       department_id,
@@ -57,7 +57,6 @@ router.get('/group/lookup', async (req, res, next) => {
     });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
-
     res.render('groups', foo.getResJson(req.user, {
       results,
       list_count,
@@ -88,6 +87,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
       user_id : (req.user) ? req.user.user_id : null,
     });
     foo.cleaningList(groupObject.results);
+    let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
     let {
       results,
       list_count,
@@ -96,7 +96,11 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
     });
     foo.cleaningList(results, req.user, true);
     res.render('group', foo.getResJson(req.user, {
-      group: groupObject.results[0],
+      group: {
+        ...groupObject.results[0],
+        department_results: info.department_results,
+        building_results,
+      },
       results,
     }));
   } catch (error) {

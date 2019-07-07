@@ -1,4 +1,7 @@
 function makeGlobal() {
+  var message = {
+    NEED_LOGIN : '로그인이 필요합니다'
+  }
   var serializeQuery =  function(query) {
     if (!query)
       return '';
@@ -40,6 +43,7 @@ function makeGlobal() {
   return {
     serializeQuery: serializeQuery,
     ajax: ajax,
+    message : message,
   }
 }
 

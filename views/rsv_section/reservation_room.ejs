@@ -1,4 +1,4 @@
-<div class="btn-group btn-group-justified" role="group" aria-label="...">
+<div class="btn-group btn-group-justified" role="group">
   <div class="btn-group" role="group">
     <button type="button" :class="classObjectMenu(1)" :click="chageMenuStep(1)">1. 강의실 선택</button>
   </div>
@@ -18,7 +18,7 @@
 
 <div>
   <button type="button" class="btn btn-default">교실</button>
-  <button type="button" class="btn"></button>
+  <button type="button" class="btn">{{section.room.room_number}} {{section.room.room_name}}</button>
   <br/>
   <button type="button" class="btn btn-default">날짜</button>
   <button type="button" class="btn"></button>
@@ -28,18 +28,23 @@
 </div>
 <h1>임시 구분 선 ============</h1>
 <div>
-  <dl>
-    <dt v-for="(floor, i) in rooms" :key="i">
-      <div class="btn-group-vertical" role="group" aria-label="...">
-        <button type="button" class="btn btn-primary" @click="changeRoomFloor(i)">{{i}} 층</button>
-        <dl>
-          <dt v-for="(room, i) in floor" :key="i">
-            <div v-if="room.floor==section.room.floor">
-              <button type="button" class="btn btn-default" @click="chooseRoom(room)">{{room.room_number}} {{room.name}} ({{room.seat_count}}석)</button>
-            </div>
-          </dt>
-        </dl>  
-      </div>
-    </dt>
-  </dl>
+  <template v-if="section.room.menu_step==1">
+    <dl>
+      <dt v-for="(floor, i) in rooms" :key="i">
+        <div class="btn-group-vertical" role="group" aria-label="...">
+          <button type="button" class="btn btn-primary" @click="changeRoomFloor(i)">{{i}} 층</button>
+          <dl>
+            <dt v-for="(room, i) in floor" :key="i">
+              <div v-if="room.floor==section.room.floor">
+                <button type="button" class="btn btn-default" @click="chooseRoom(room)">{{room.room_number}}, {{room.name}} ({{room.seat_count}}석)</button>
+              </div>
+            </dt>
+          </dl>  
+        </div>
+      </dt>
+    </dl>
+  </template>
+  <template v-else-if="section.room.menu_step==2">
+    <h1>환영합니다~</h1>
+  </template>
 </div>

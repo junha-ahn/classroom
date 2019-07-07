@@ -23,10 +23,10 @@
 
     <main>
       <template v-if="page_step=='intro'">
-        <% include ./reservation_intro %>
+        <% include ./rsv_section/reservation_intro %>
       </template>
       <template v-else-if="page_step=='room'">
-        <% include ./reservation_room %>
+        <% include ./rsv_section/reservation_room %>
       </template>
       <template v-if="page_step=='time'">
       </template>
@@ -87,8 +87,10 @@
           this.section.room.floor = (this.section.room.floor == floor) ? null : floor;
         },
         chooseRoom: function(room) {
-          this.section.room.room_name = room.room_number + room.name;
+          this.section.room.room_number = room.room_number;
+          this.section.room.room_name =  room.name;
           this.formData.room_id = room.room_id;
+          this.section.room.menu_step = 2;
         },
         getRoom: function() {
           global.ajax({

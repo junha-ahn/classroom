@@ -238,7 +238,7 @@ let self = {
         } = object;
         sort_key = (sort_key) ? sort_key : 'study_group_id';
         sort_type = (sort_type == false) ? false : true;
-
+        is_mine = is_mine || 0;
         if (page && page_length) {
           countString = squel.select()
             .from('study_group')
@@ -391,7 +391,6 @@ let self = {
               .when('? != 1', is_join)
               .then(squel.expr().and('study_group.study_group_id IS NOT NULL'))
               .else(squel.expr().and('study_group_user.user_id IS NOT NULL')))
-            
             .field('study_group.*')
             .field(squel.case()
               .when('study_group.user_id = ?', user_id)
