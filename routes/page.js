@@ -19,12 +19,45 @@ const {
   isNotLoggedIn
 } = require('../global/middlewares');
 
+
+router.get('/login', isNotLoggedIn, async (req, res, next) => {
+  res.render('login', foo.getResJson(req.user, {
+
+  }));
+});
+router.get('/join', isNotLoggedIn, async (req, res, next) => {
+  res.render('join', foo.getResJson(req.user, {
+    department_results: info.department_results,
+    campus_results: info.campus_results,
+    buildings: info.buildings,
+  }));
+});
+
 router.get('/', async (req, res, next) => {
   res.render('main', foo.getResJson(req.user, {
     campuses: info.campuses,
     campus_id : req.user ? req.user.campus_id : 0,
   }));
 });
+
+router.get('/reservation/:building_id', async (req, res, next) => {
+  let building_id = req.params.building_id;
+  let building = info.buildings[building_id];
+  
+  if (!building[0]) {
+    res.render('error', foo.getResJson(req.user, {
+
+    }));
+  } else {
+    res.render('reservation', foo.getResJson(req.user, {
+      query: req.query,
+    }));
+  }
+});
+router.get('/reservation/single/:room_reservation_id', async (req, res, next) => {
+  res.status(404).send('개발중')
+});
+
 
 router.get('/group/lookup', async (req, res, next) => {
   let {
@@ -74,7 +107,6 @@ router.get('/group/lookup', async (req, res, next) => {
     db_func.release(connection);
   }
 });
-
 router.get('/group/single/:study_group_id', async (req, res, next) => {
   let study_group_id = req.params.study_group_id || null;
 
@@ -110,33 +142,15 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
   }
 });
 
-router.get('/reservation/:building_id', async (req, res, next) => {
-  let building_id = req.params.building_id;
-  let building = info.buildings[building_id];
-  
-  if (!building[0]) {
-    res.render('error', foo.getResJson(req.user, {
+router.get('/mypage', isLoggedIn, async (req, res, next) => {
+  res.render('mypage', foo.getResJson(req.user, {
 
-    }));
-  } else {
-    res.render('reservation', foo.getResJson(req.user, {
-      query: req.query,
-    }));
-  }
+  }))
 });
+router.get('/myaccount', isLoggedIn, async (req, res, next) => {
+  res.render('myaccount', foo.getResJson(req.user, {
 
-router.get('/login', isNotLoggedIn, async (req, res, next) => {
-  res.render('login', foo.getResJson(req.user, {
-
-  }));
-});
-
-router.get('/join', isNotLoggedIn, async (req, res, next) => {
-  res.render('join', foo.getResJson(req.user, {
-    department_results: info.department_results,
-    campus_results: info.campus_results,
-    buildings: info.buildings,
-  }));
+  }))
 });
 
 module.exports = router;
