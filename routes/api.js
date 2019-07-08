@@ -130,7 +130,6 @@ router.post('/study_group/join/:study_group_id', isLoggedIn, async (req, res, ne
     connection = await db_func.getDBConnection();
     let {
       results,
-      list_count,
     } = await select_func.studyGroup(connection, {
       study_group_id,
       user_id: req.user.user_id,
@@ -190,7 +189,7 @@ router.put('/person/:person_id', isLoggedIn, checkReqInfo, async (req, res, next
     student_number,
   } = req.body;
   is_student = is_student ? 1 : 0;
-  if (campus_id == undefined || department_id == undefined || building_id == undefined || is_student == undefined || name == undefined) {
+  if (campus_id == undefined || building_id == undefined || is_student == undefined || name == undefined) {
     res.status(401).json({
       message: '필수값을 입력해주세요'
     })
@@ -200,7 +199,6 @@ router.put('/person/:person_id', isLoggedIn, checkReqInfo, async (req, res, next
       connection = await db_func.getDBConnection();
       let {
         results,
-        list_count,
       } = await select_func.studyGroup(connection, {
         person_id,
         user_id: req.user.user_id,
@@ -338,7 +336,7 @@ router.put('/room/:room_id', isAdmin, checkReqInfo, async (req, res, next) => {
     rsv_cancel_min_day,
   } = req.body;
 
-  if (building_id == undefined || room_category_id == undefined || auth_rsv_create == undefined ||
+  if (room_category_id == undefined || auth_rsv_create == undefined ||
     auth_rsv_cancel == undefined || name == undefined || room_number == undefined ||
     floor == undefined || is_require_rsv_accept == undefined || is_require_cancel_accept == undefined) {
     res.status(401).json({

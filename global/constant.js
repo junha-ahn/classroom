@@ -1,8 +1,8 @@
 const MANAGER_FIELD_NAME_OBJECT = {
-  user: 'can_manager_user',
-  person: 'can_manager_person',
-  room: 'can_manager_room',
-  user: 'can_manager_user',
+  user: 'can_manage_user',
+  person: 'can_manage_person',
+  room: 'can_manage_room',
+  usage: 'can_manage_usage',
 };
 
 module.exports = {
