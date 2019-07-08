@@ -119,7 +119,7 @@ let self = {
       }
 
       if (is_personal) {
-        if (!user || user.user_type != constant.ADMIN_TYPE) {
+        if (!user || user.user_type != info.ADMIN_TYPE) {
           array[i].name = array[i].name ? array[i].name.slice(0,1) + ('*'.repeat(array[i].name.length - 1)) : null;
           array[i].phone = array[i].phone ? '비공개' : undefined;
           array[i].student_number = array[i].student_number ? '비공개' : undefined
@@ -129,7 +129,7 @@ let self = {
   },
   getResJson: (user, json) => {
     json.is_user = (user) ? true : false;
-    json.is_admin = (user && user.user_type == constant.ADMIN_TYPE) ? true : false;
+    json.is_admin = (user && user.user_type == info.ADMIN_TYPE) ? true : false;
     return {
       ...json,
     }

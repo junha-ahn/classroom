@@ -1,4 +1,4 @@
-const constant = require('./constant')
+const info = require('./info')
 
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -11,7 +11,7 @@ exports.isLoggedIn = (req, res, next) => {
 }
 exports.isAdmin = (req, res, next) => {
   if (req.isAuthenticated()) {
-    if (req.user.user_type == constant.ADMIN_TYPE) {
+    if (req.user.user_type == info.ADMIN_TYPE) {
       next()
     } else {
       res.status(403).json({
