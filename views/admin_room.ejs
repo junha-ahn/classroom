@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script type="text/javascript" src="/javascripts/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+</head>
+
+<body>
+
+  <div id="app">
+    <header>
+      <% include ./sub/header %>
+    </header>
+
+    <main>
+      <% include ./sub/admin_menu %>
+
+      <h1>교실상세페이지</h1>
+      <div>
+        <div>
+          <ul>
+            <li style="width:30%">호수</li>
+            <li>101호</li>
+          </ul>
+          <ul>
+            <li style="width:30%">층</li>
+            <li>1</li>
+          </ul>
+          <ul>
+            <li style="width:30%">교실명</li>
+            <li>공용강의실</li>
+          </ul>
+          <ul>
+            <li style="width:30%">좌석수</li>
+            <li>10</li>
+          </ul>
+          <ul>
+            <li style="width:30%">예약권한</li>
+            <li>회원</li>
+          </ul>
+          <ul>
+            <li style="width:30%">예약취소권한</li>
+            <li>관리자</li>
+          </ul>
+          <ul>
+            <li style="width:30%">예약승인</li>
+            <li>자동승인</li>
+          </ul>
+          <ul>
+            <li style="width:30%">예약취소승인</li>
+            <li>수동승인</li>
+          </ul>
+          <ul>
+            <li style="width:30%">예약가능일자</li>
+            <li>1일전</li>
+          </ul>
+          <ul>
+            <li style="width:30%">예약취소가능일자</li>
+            <li>3일전</li>
+          </ul>
+        </div>
+        <button type="button" class="btn btn-primary">수정하기</button>
+      </div>
+    </main>
+
+    <footer>
+      <% include ./sub/footer %>
+    </footer>
+  </div>
+
+  <script>
+    var global = makeGlobal();
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          page_name: 'admin',
+          admin_menu_name: 'room',
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+        }
+      },
+      methods: {
+
+      }
+    })
+  </script>
+
+</body>
+
+</html>
