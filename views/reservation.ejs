@@ -63,7 +63,8 @@
           rooms: {},
           formData:{
             room_id:null,
-          }
+          },
+          tmp:'클릭전',
         }
       },
       methods: {
@@ -90,7 +91,9 @@
           this.section.room.room_number = room.room_number;
           this.section.room.room_name =  room.name;
           this.formData.room_id = room.room_id;
-          this.section.room.menu_step = 2;
+          this.section.room.menu_step = 2; // 문제!
+          console.log(this.section.room.menu_step)
+          console.log(this.section.room)
         },
         getRoom: function() {
           global.ajax({

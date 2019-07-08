@@ -4,13 +4,13 @@
       <form class="form-lnline" v-on:submit="onSubmitForm">
       <label>학과</label>
       <select class="form-control" v-model="group.department_id" @change="onChange()">
-        <option v-for="(department, i) in group.department_results" v-bind:value="department.department_id" :selected="group.department_id == department.department_id" :key="i" :disabled="mod != 'POST'">
+        <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="group.department_id == department.department_id" :key="i" :disabled="mod != 'POST'">
           {{ department.name }}
         </option>
       </select>
       <label>학습관</label>
       <select class="form-control" v-model="group.building_id" @change="onChange()">
-        <option v-for="(building, j) in group.building_results" v-bind:value="building.building_id" :key="j" :disabled="mod != 'POST'">
+        <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j" :disabled="mod != 'POST'">
           {{ building.name }}
         </option>
       </select>
@@ -49,7 +49,7 @@
         </div>
       </form>
     `,
-    props: ['mod', 'group'],
+    props: ['mod', 'group', 'department_results', 'building_results'],
     data: function () {
       return {
         mod: this.mod,
@@ -64,7 +64,7 @@
           data: null,
         },
         function(data, status) {
-          app.group.is_join = is_join;
+          window.location.href = group.study_group_id;
         },
         function(message, status, data) {
           alert(message);

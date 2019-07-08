@@ -22,27 +22,8 @@
 
     <main>
       <template>
-        <group-input v-bind:group="group" v-bind:department_results="department_results" v-bind:building_results="building_results" mod="GET"></group-input>
+        <group-input v-bind:group="formData" v-bind:department_results="department_results" v-bind:building_results="building_results" mod="POST"></group-input>
       </template>
-
-      <table class="table table-hover">
-        <thead>
-          <th>이름</th>
-          <th>학번</th>
-          <th>전화번호</th>
-          <th>가입일</th>
-        </thead>
-        <tbody>
-          <tr v-for="(person, i) in results" :key="i">
-            <td>{{person.name}}</td>
-            <td>{{person.student_number}}</td>
-            <td>{{person.phone}}</td>
-            <td>{{person.date_joined}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-    
     <footer>
       <% include ./sub/footer %>
     </footer>
@@ -51,8 +32,6 @@
   <% include ./component/group_input %>
   <script>
     var global = makeGlobal();
-    var group = <%-JSON.stringify(group) %>;
-    var results = <%-JSON.stringify(results) %>;
     var department_results = <%-JSON.stringify(department_results) %>;
     var building_results = <%-JSON.stringify(building_results) %>;
 
@@ -63,10 +42,9 @@
           page_name: 'group',
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
-          group,
           department_results,
           building_results,
-          results,
+          formData : {},
         }
       },
     })

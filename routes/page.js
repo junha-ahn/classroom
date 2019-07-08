@@ -128,12 +128,10 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
     });
     foo.cleaningList(results, req.user, true);
     res.render('group', foo.getResJson(req.user, {
-      group: {
-        ...groupObject.results[0],
-        department_results: info.department_results,
-        building_results,
-      },
+      group: groupObject.results[0],
       results,
+      department_results: info.department_results,
+      building_results,
     }));
   } catch (error) {
     next(error);
@@ -141,6 +139,14 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
     db_func.release(connection);
   }
 });
+router.get('/group/write', async (req, res, next) => {
+  
+  res.render('group_write', foo.getResJson(req.user, {
+    department_results: info.department_results,
+    building_results : req.user ? info.buildings[req.user.campus_id] : info.building_results,
+  }));
+});
+
 
 router.get('/mypage', isLoggedIn, async (req, res, next) => {
   res.render('mypage', foo.getResJson(req.user, {
