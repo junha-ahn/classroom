@@ -64,10 +64,29 @@ app.use(express.static(__dirname + '/public'));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', pageRoute);
-app.use('/admin', adminPageRoute);
 app.use('/auth', authRoute);
 app.use('/api', apiRoute);
+
+
+app.use((req,res,next) => {  
+  let pagenames = req.originalUrl
+    .split('?')[0]
+    .split('/')
+    .filter(Boolean);
+
+  if (!pagenames.length) {
+    pagenames.unshift('main')
+  }
+
+  if (!isNaN(pagenames[pagenames.length - 1])) {
+    pagenames.pop();
+  }
+  res.locals.pagename = pagenames.join('_');
+  next();
+});
+
+app.use('/', pageRoute);
+app.use('/admin', adminPageRoute);
 
 app.use(function (error, req, res, next) {
   res.status(error.status || 500);

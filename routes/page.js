@@ -19,7 +19,6 @@ const {
   isNotLoggedIn
 } = require('../global/middlewares');
 
-
 router.get('/login', isNotLoggedIn, async (req, res, next) => {
   res.render('login', foo.getResJson(req.user, {
 
