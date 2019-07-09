@@ -17,6 +17,8 @@ const apiRoute = require(path.join(__dirname, '/routes/api'));
 const passportConfig = require('./passport');
 const foo = require('./global/foo.js');
 
+const nodeSassMiddleware = require('node-sass-middleware');
+
 
 passportConfig(passport);
 
@@ -50,6 +52,12 @@ app.use(session({
       logErrors: true,
     })
 }));
+
+app.use(nodeSassMiddleware({
+  src: path.join(__dirname, '/views/style'),
+  dest: path.join(__dirname, '/public/stylesheets'),
+  prefix: '/stylesheets',
+}))
 
 app.use(express.static(__dirname + '/public'));
 

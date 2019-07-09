@@ -46,7 +46,6 @@
     </dl>
   </template>
   <template v-else-if="section.room.menu_step==2">
-    <calendar v-bind:holiday_results="holiday_results"></calendar>
-    <% include ../component/calendar %>
+    <vuejs-datepicker :language="ko"></vuejs-datepicker>
   </template>
 </div>

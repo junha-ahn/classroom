@@ -12,6 +12,8 @@
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <script src="https://unpkg.com/vuejs-datepicker"></script>
+  <script src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/ko.js"></script>
 </head>
 
 <body>
@@ -43,6 +45,7 @@
       el: '#app',
       data: function () {
         return {
+          ko: vdp_translation_ko.js,
           page_name: 'reservation',
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
@@ -136,6 +139,9 @@
           })
         },
         // TIME
+      },
+      components: {
+        vuejsDatepicker
       },
     })
   </script>
