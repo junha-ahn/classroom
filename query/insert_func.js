@@ -13,6 +13,7 @@ let self = {
           hashed_password,
           campus_id,
           building_id,
+          department_id,
           name,
           phone,
           student_number,
@@ -33,6 +34,7 @@ let self = {
           user_id,
           campus_id,
           building_id,
+          department_id,
           name,
           phone,
           student_number,
@@ -65,6 +67,7 @@ let self = {
           user_id,
           campus_id,
           building_id,
+          department_id,
           name,
           phone,
           student_number,
@@ -74,6 +77,7 @@ let self = {
           .set('user_id', user_id)
           .set('campus_id', campus_id)
           .set('building_id', building_id)
+          .set('department_id', department_id)
           .set('name', name)
           .set('phone', phone)
           .set('student_number', student_number)
