@@ -1,0 +1,25 @@
+<script src="https://unpkg.com/vuejs-datepicker"></script>
+<script src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/ko.js"></script>
+
+<script type="text/x-template" id="datepicker-template">
+</script>
+
+<script>
+  Vue.component('custom-datepicker', {
+    template: '#datepicker-template',
+    props: [],
+    data: function () {
+      return {
+        ko: vdp_translation_ko.js,
+      }
+    }, 
+    methods: {
+      customFormatter(date) {
+        return '2019-1-1';
+      },
+    },
+    components: {
+      vuejsDatepicker
+    },
+  })
+</script>

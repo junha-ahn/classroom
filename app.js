@@ -45,7 +45,7 @@ app.use(session({
     httpOnly: true,
     secure: false
   },
-  store: (process.env.REDIS_ENABLE == 1) ?
+  store: (process.env.REDIS_ENABLE != 1) ?
     undefined : new RedisStore({
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,

@@ -14,15 +14,12 @@
     </footer>
   </div>
 
-  <script src="https://unpkg.com/vuejs-datepicker"></script>
-  <script src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/ko.js"></script>
   <script>
     var global = makeGlobal();
     var app = new Vue({
       el: '#app',
       data: function () {
         return {
-          ko: vdp_translation_ko.js,
           header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
@@ -117,9 +114,6 @@
           })
         },
         // TIME
-      },
-      components: {
-        vuejsDatepicker
       },
     })
   </script>

@@ -46,6 +46,7 @@
     </dl>
   </template>
   <template v-else-if="section.room.menu_step==2">
-    <vuejs-datepicker :language="ko"></vuejs-datepicker>
+    <custom-datepicker></custom-datepicker>
+    <% include ../component/datepicker %>
   </template>
 </div>

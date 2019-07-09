@@ -5,7 +5,8 @@ const passport = require('passport');
 
 const {
   isLoggedIn,
-  isNotLoggedIn
+  isNotLoggedIn,
+  checkReqInfo,
 } = require('../global/middlewares');
 
 const db_func = require('../global/db_func');
@@ -18,7 +19,7 @@ const  {
 } = require('../query/index');
 
 
-router.post('/join', isNotLoggedIn, async (req, res, next) => {
+router.post('/join', isNotLoggedIn, checkReqInfo, async (req, res, next) => {
   const {
     email,
     password,

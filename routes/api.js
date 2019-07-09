@@ -18,6 +18,7 @@ const {
   isLoggedIn,
   isNotLoggedIn,
   isAdmin,
+  checkReqInfo,
 } = require('../global/middlewares');
 
 router.get('/study_group', async (req, res, next) => {
@@ -411,23 +412,6 @@ router.get('/holiday', async (req, res, next) => {
   }
 });
 
-function checkReqInfo(req, res, next) {
-  if (req.body.department_id != null && info.department_object[req.body.department_id] == undefined) {
-    res.status(401).json({
-      message: '학과를 다시 선택해주세요'
-    })
-  } else if (req.body.campus_id != null && info.campus_object[req.body.campus_id] == undefined) {
-    res.status(401).json({
-      message: '캠퍼스를 다시 선택해주세요'
-    })
-  } else if (req.body.building_id != null && info.building_object[req.body.building_id] == undefined) {
-    res.status(401).json({
-      message: '건물을 다시 선택해주세요'
-    })
-  } else {
-    next();
-  }
-}
 function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {

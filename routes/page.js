@@ -3,16 +3,15 @@ const router = express.Router();
 
 const db_func = require('../global/db_func');
 
-const  {
+const info = require('../global/info');
+const foo = require('../global/foo');
+
+const {
   select_func,
   update_func,
   insert_func,
   delete_func,
 } = require('../query/index');
-
-
-const info = require('../global/info');
-const foo = require('../global/foo');
 
 const {
   isLoggedIn,
@@ -35,7 +34,7 @@ router.get('/join', isNotLoggedIn, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   res.render('main', foo.getResJson(req.user, {
     campuses: info.campuses,
-    campus_id : req.user ? req.user.campus_id : 0,
+    campus_id: req.user ? req.user.campus_id : 0,
   }));
 });
 
@@ -46,12 +45,12 @@ router.get('/reservation/:building_id', async (req, res, next) => {
     if (!building) {
       res.render('error', foo.getResJson(req.user, {
         error_name: "건물을 찾을수 없습니다",
-        message : "다시 확인해주세요"
+        message: "다시 확인해주세요"
       }));
     } else {
       res.render('reservation', foo.getResJson(req.user, {
         query: req.query,
-        params : req.params,
+        params: req.params,
       }));
     }
   } catch (error) {
@@ -73,13 +72,13 @@ router.get('/group/lookup', async (req, res, next) => {
     is_join,
   } = req.query;
   page_length = page_length || 10;
-  department_id = department_id ? department_id  : (req.user) ? req.user.department_id : null;
-  building_id = building_id ? building_id : (req.user) ? req.user.building_id : null;
+  department_id = department_id ? department_id : (req.user) ? req.user.department_id : null;
+  building_id = building_id ? building_id : (req.user) ? req.user.building_id || 0: null;
 
   let connection;
   try {
     connection = await db_func.getDBConnection();
-    
+
     let {
       results,
       list_count,
@@ -90,7 +89,7 @@ router.get('/group/lookup', async (req, res, next) => {
       building_id,
       is_mine,
       is_join,
-      user_id : (req.user) ? req.user.user_id : null,
+      user_id: (req.user) ? req.user.user_id : null,
     });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
@@ -117,10 +116,10 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
   let connection;
   try {
     connection = await db_func.getDBConnection();
-    
+
     let groupObject = await select_func.viewTableStudyGroup(connection, {
       study_group_id,
-      user_id : (req.user) ? req.user.user_id : null,
+      user_id: (req.user) ? req.user.user_id : null,
     });
     foo.cleaningList(groupObject.results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
@@ -143,11 +142,12 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
     db_func.release(connection);
   }
 });
-router.get('/group/write', async (req, res, next) => {
-  
+router.get('/group/write', isLoggedIn, async (req, res, next) => {
   res.render('group_write', foo.getResJson(req.user, {
     department_results: info.department_results,
-    building_results : req.user ? info.buildings[req.user.campus_id] : info.building_results,
+    building_results: req.user ? info.buildings[req.user.campus_id] : info.building_results,
+    department_id: req.user ? req.user.department_id || 0: 0,
+    building_id: req.user ? req.user.building_id || 0 : 0,
   }));
 });
 

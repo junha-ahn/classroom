@@ -1,59 +1,60 @@
+<script type="text/x-template" id="input-template">
+  <form class="form-lnline" v-on:submit="onSubmitForm">
+    <label>학과</label>
+    <select class="form-control" v-model="group.department_id">
+      <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
+        :selected="group.department_id == department.department_id" :key="i" :disabled="mod != 'POST'">
+        {{ department.name }}
+      </option>
+    </select>
+    <label>학습관</label>
+    <select class="form-control" v-model="group.building_id">
+      <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j"
+        :disabled="mod != 'POST'">
+        {{ building.name }}
+      </option>
+    </select>
+    <div class="form-group" v-if="mod!='POST'">
+      <label class="col-sm-2 control-label">대표</label>
+      <div class="col-sm-10">
+        <p class="form-control-static">{{group.representative_name}}</p>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">이름</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" v-model="group.name" :disabled="mod == 'GET'">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">설명</label>
+      <div class="col-sm-10">
+        <textarea class="form-control" rows="3" v-model="group.description" :disabled="mod == 'GET'"></textarea>
+      </div>
+    </div>
+    <div class="form-group" v-if="mod!='POST'">
+      <label class="col-sm-2 control-label">생성일</label>
+      <div class="col-sm-10">
+        <p class="form-control-static">{{group.date_created}}</p>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
+    <div v-if="mod=='GET'">
+      <button type="button" class="btn btn-primary" v-if="group.is_join != 1"
+        @click="joinStudyGroup(group.study_group_id, true)"> 가입 </button>
+      <button type="button" class="btn btn-danger" v-else @click="joinStudyGroup(group.study_group_id, false)"> 가입취소
+      </button>
+    </div>
+    <div v-if="group.is_mine==1">
+      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="changeMod($event, 'PUT')">수정</button>
+      <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
+    </div>
+  </form>
+</script>
+
 <script>
   Vue.component('group-input', {
-    template: `
-      <form class="form-lnline" v-on:submit="onSubmitForm">
-        <label>학과</label>
-        <select class="form-control" v-model="group.department_id">
-          <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
-            :selected="group.department_id == department.department_id" :key="i" :disabled="mod != 'POST'">
-            {{ department.name }}
-          </option>
-        </select>
-        <label>학습관</label>
-        <select class="form-control" v-model="group.building_id">
-          <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j"
-            :disabled="mod != 'POST'">
-            {{ building.name }}
-          </option>
-        </select>
-        <div class="form-group" v-if="mod!='POST'">
-          <label class="col-sm-2 control-label">대표</label>
-          <div class="col-sm-10">
-            <p class="form-control-static">{{group.representative_name}}</p>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">이름</label>
-          <div class="col-sm-10">
-              <input type="text" class="form-control" v-model="group.name" :disabled="mod == 'GET'">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">설명</label>
-              <div class="col-sm-10">
-                <textarea class="form-control" rows="3" v-model="group.description" :disabled="mod == 'GET'"></textarea>
-                </div>
-              </div>
-              <div class="form-group" v-if="mod!='POST'">
-                <label class="col-sm-2 control-label">생성일</label>
-                <div class="col-sm-10">
-                  <p class="form-control-static">{{group.date_created}}</p>
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
-                <div v-if="mod=='GET'">
-                  <button type="button" class="btn btn-primary" v-if="group.is_join != 1"
-                    @click="joinStudyGroup(group.study_group_id, true)"> 가입 </button>
-                  <button type="button" class="btn btn-danger" v-else
-                    @click="joinStudyGroup(group.study_group_id, false)"> 가입취소 </button>
-                </div>
-                <div v-if="group.is_mine==1">
-                  <button type="button" class="btn btn-warning" v-if="mod=='GET'"
-                    @click="changeMod($event, 'PUT')">수정</button>
-                  <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
-                </div>
-      </form>
-    `,
+    template: '#input-template',
     props: ['mod', 'group', 'department_results', 'building_results'],
     data: function () {
       return {
