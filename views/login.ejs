@@ -22,6 +22,8 @@
     </header>
 
     <main>
+      <button type="button" @click="_user">유저 채우기</button>
+      <button type="button" @click="_admin">관리자 채우기</button>
       <form v-on:submit="login">
         <div class="form-inline">
           <label>이메일 주소</label>
@@ -56,6 +58,14 @@
         }
       },
       methods: {
+        _user : function() {
+          this.loginForm.email = "email@email.com"
+          this.loginForm.password = "password"
+        },
+        _admin : function() {
+          this.loginForm.email = "admin@email.com"
+          this.loginForm.password = "password"
+        },
         logout: function () {
           global.ajax({
             url: '/auth/logout',
