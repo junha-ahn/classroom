@@ -54,6 +54,7 @@
               menu_step : 1,
               floor:null,
               room_name: null,
+              room_number : null,
             },
             time : {
               menu_step : 1,
@@ -64,7 +65,6 @@
           formData:{
             room_id:null,
           },
-          tmp:'클릭전',
         }
       },
       methods: {
@@ -88,12 +88,14 @@
           this.section.room.floor = (this.section.room.floor == floor) ? null : floor;
         },
         chooseRoom: function(room) {
+          this.section.room.menu_step = 2 // 문제!
           this.section.room.room_number = room.room_number;
           this.section.room.room_name =  room.name;
           this.formData.room_id = room.room_id;
-          this.section.room.menu_step = 2; // 문제!
-          console.log(this.section.room.menu_step)
           console.log(this.section.room)
+          console.log('menu_step : ',this.section.room.menu_step)
+          console.log(this.section.room)
+          console.log('menu_step : ',this.section.room.menu_step)
         },
         getRoom: function() {
           global.ajax({
@@ -119,6 +121,9 @@
             switch (this.section[this.page_step].menu_step) {
               case 1:
                 this.getRoom();
+                break;
+              case 2:
+                console.log('hi!!')
                 break;
               default:
                 break;

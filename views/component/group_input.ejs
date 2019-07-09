@@ -82,8 +82,10 @@
       onSubmitForm: function(e) {
         e.preventDefault();
         var mod = this.mod;
-        let need_location_href = mod == 'POST' ? true : false
-        this.mod = 'GET';
+        let need_location_href = mod == 'POST' ? true : false;
+        if (!need_location_href) {
+          this.mod = 'GET';
+        }
         var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.group.study_group_id : '');
         global.ajax({
           url: url,
