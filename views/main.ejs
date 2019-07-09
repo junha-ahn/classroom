@@ -1,4 +1,5 @@
 <% include ./sub/header %>
+  <h1>개발용 건물 : 인천지역대학</h1>
       <div class="campuses">
         <dl>
           <dt v-for="(campus, i) in campuses" :key="i">
@@ -7,10 +8,7 @@
               <dl>
                 <dt v-for="(building, j) in campus.building_results" :key="j">
                   <div v-if="campus_id==building.campus_id">
-                    <button v-if="building.is_active==1" type="button" class="btn btn-default" @click="locationHref('/reservation/'+ building.building_id)" >
-                      {{building.name}}
-                    </button>
-                    <button v-else type="button" class="btn btn-default" @click="alertBuildingMsg">
+                    <button type="button" class="btn btn-default" @click="locationHref('/reservation/'+ building.building_id)" >
                       {{building.name}}
                     </button>
                   </div>
@@ -33,10 +31,10 @@
       el: '#app',
       data: function () {
         return {
-          page_name: 'main',
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
-          page_name: 'main',
+          header_menu_name: 'main',
           campuses : <%-JSON.stringify(campuses) %>,
           campus_id: <%- campus_id %>,
         }

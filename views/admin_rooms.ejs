@@ -68,8 +68,8 @@
       el: '#app',
       data: function () {
         return {
-          page_name: 'admin',
-          admin_menu_name: 'room',
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
           is_user: <%- is_user %> ,
           is_admin: <%- is_admin %> ,
         }

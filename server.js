@@ -1,5 +1,5 @@
-require('dotenv/config');
-require('./global/setting')();
+require('dotenv').config();
+require('./global/make')();
 
 let http = require('http');
 let app = require('./app');

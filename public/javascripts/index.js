@@ -2,6 +2,28 @@ function makeGlobal() {
   var message = {
     NEED_LOGIN : '로그인이 필요합니다'
   }
+  var header_name_by_class = {
+    'main' : 'main',
+    'group_lookup' : 'group',
+    'group_single' : 'group',
+    'group_write' : 'group',
+    'mypage' : 'mypage',
+    'login' : 'login',
+    'admin_user_lookup' : 'admin',
+    'admin_room_lookup' : 'admin',
+    'admin_reservation_lookup' : 'admin',
+  };
+  var admin_name_by_class = {
+    'admin_user_lookup' : 'user',
+    'admin_room_lookup' : 'room',
+    'admin_reservation_lookup' : 'reservation',
+  };
+  var getHeaderMenuName = function (page_class_name) {
+    return header_name_by_class[page_class_name];
+  };
+  var getAdminMenuName = function (page_class_name) {
+    return admin_name_by_class[page_class_name];
+  };
   var serializeQuery =  function(query) {
     if (!query)
       return '';
@@ -43,6 +65,8 @@ function makeGlobal() {
   return {
     serializeQuery: serializeQuery,
     ajax: ajax,
+    getHeaderMenuName: getHeaderMenuName,
+    getAdminMenuName: getAdminMenuName,
     message : message,
   }
 }

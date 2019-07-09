@@ -1,35 +1,52 @@
-module.exports = () => {
-  let global_data = require('./info');
+(async () => {
+  require('dotenv').config();
+  const squel = require('squel');
+  const fs = require('fs');
+  const path = require('path');
 
-  let department_results = global_data.department_results;
-  let campus_results = global_data.campus_results;
-  let building_results = global_data.building_results;
-   
-  global_data.campuses = []; 
-  global_data.buildings = {}; 
+  const db_func = require('./db_func');
 
-  global_data.campus_object = {}; 
-  global_data.building_object = {}; 
-  global_data.department_object = {}; 
-
-  for (let i in department_results) {
-    global_data.department_object[department_results[i].department_id] = department_results[i];
+  let connection;
+  try {
+    connection = await db_func.getDBConnection();
+    let campus_results = await db_func.sendQueryToDB(connection,
+      (squel.select()
+        .from('campus')
+        .toParam()))
+    let building_results = await db_func.sendQueryToDB(connection,
+      (squel.select()
+        .from('building')
+        .toParam()))
+    let department_results = await db_func.sendQueryToDB(connection,
+      (squel.select()
+        .from('department')
+        .toParam()))
+    let room_category_results = await db_func.sendQueryToDB(connection,
+      (squel.select()
+        .from('room_category')
+        .toParam()))
+    let room_rsv_category_results = await db_func.sendQueryToDB(connection,
+      (squel.select()
+        .from('room_rsv_category')
+        .toParam()))
+        
+    let data = {
+      campus_results,
+      building_results,
+      department_results,
+      room_category_results,
+      room_rsv_category_results,
+    };
+    
+    fs.writeFile(path.join('./global/db_data.json'), JSON.stringify(data), function(err) {
+      if (err) throw err;
+        process.exit(0)
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    process.exit(1)
+  } finally {
+    db_func.release(connection);
   }
-
-  for (let i in building_results) {
-    global_data.building_object[building_results[i].building_id] = building_results[i];
-    if (!global_data.buildings[building_results[i].campus_id]) {
-      global_data.buildings[building_results[i].campus_id] = [];
-    }
-    global_data.buildings[building_results[i].campus_id].push(building_results[i]);
-  }
-
-  for (let i in campus_results) {
-    global_data.campus_object[campus_results[i].campus_id] = campus_results[i];
-    global_data.campuses.push({
-      ...campus_results[i],
-      building_results: global_data.buildings[campus_results[i].campus_id],
-    });
-  }
-
-};
+})();

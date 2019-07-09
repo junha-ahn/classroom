@@ -42,16 +42,16 @@ router.get('/', async (req, res, next) => {
 router.get('/reservation/:building_id', async (req, res, next) => {
   try {
     let building_id = req.params.building_id;
-    let building = info.buildings[building_id];
-
-    console.log('building_id', building_id)
-    if (!building || !building[0]) {
+    let building = info.building_object[building_id];
+    if (!building) {
       res.render('error', foo.getResJson(req.user, {
-  
+        error_name: "건물을 찾을수 없습니다",
+        message : "다시 확인해주세요"
       }));
     } else {
       res.render('reservation', foo.getResJson(req.user, {
         query: req.query,
+        params : req.params,
       }));
     }
   } catch (error) {

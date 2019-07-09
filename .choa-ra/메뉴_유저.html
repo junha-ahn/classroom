@@ -25,17 +25,17 @@
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li :class="{active: page_name=='main'}"><a href="/">Home</a></li>
-              <li :class="{active: page_name=='group'}"><a href="/group/lookup?page=1">Group</a></li>
+              <li :class="{active: header_menu_name=='main'}"><a href="/">Home</a></li>
+              <li :class="{active: header_menu_name=='group'}"><a href="/group/lookup?page=1">Group</a></li>
             </ul>
             <ul v-if="is_user==false" class="nav navbar-nav navbar-right">
-              <li :class="{active: page_name=='login'}"><a href="/login">로그인</a></li>
-              <li :class="{active: page_name=='join'}"><a href="/join">가입하기</a></li>
+              <li :class="{active: header_menu_name=='login'}"><a href="/login">로그인</a></li>
+              <li :class="{active: header_menu_name=='join'}"><a href="/join">가입하기</a></li>
             </ul>
             <ul v-if="is_user==true" class="nav navbar-nav navbar-right">
-              <li v-if="is_admin==true" :class="{active: page_name=='admin'}"><a href="/admin">관리자</a>
+              <li v-if="is_admin==true" :class="{active: header_menu_name=='admin'}"><a href="/admin">관리자</a>
               </li>
-              <li :class="{active: page_name=='mypage'}"><a href="/mypage">마이페이지</a></li>
+              <li :class="{active: header_menu_name=='mypage'}"><a href="/mypage">마이페이지</a></li>
               <li><a href="/auth/logout">로그아웃</a></li>
             </ul>
           </div>

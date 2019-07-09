@@ -14,6 +14,8 @@
     </footer>
   </div>
 
+  <script src="https://unpkg.com/vuejs-datepicker"></script>
+  <script src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/ko.js"></script>
   <script>
     var global = makeGlobal();
     var app = new Vue({
@@ -21,10 +23,11 @@
       data: function () {
         return {
           ko: vdp_translation_ko.js,
-          page_name: 'reservation',
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           query : <%-JSON.stringify(query) %>,
+          params : <%-JSON.stringify(params) %>,
           page_step : 'intro',
           page_type : null,
           section : {
@@ -84,12 +87,12 @@
             type: 'GET',
             data: null,
             query: {
-              building_id : this.query.building_id,
+              building_id : this.params.building_id,
               sort_by_floor: 1,
             }
           },
           function(data, status) {
-            app.rooms = data.results
+            app.rooms = data.results;
           },
           function(message, status, data) {
             alert(message);
