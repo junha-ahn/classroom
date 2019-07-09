@@ -53,11 +53,11 @@ let self = {
             .from('user')
             .where(squel.case()
               .when('? IS NULL', user_id)
-              .then(squel.expr().and('user_id IS NOT NULL'))
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user_id = ?', user_id)))
             .where(squel.case()
               .when('? IS NULL', email)
-              .then(squel.expr().and('user_id IS NOT NULL'))
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('email = ?', email)))
             .order(`user.${sort_key}`, sort_type)
             .toParam();
@@ -208,16 +208,16 @@ let self = {
             .left_join('user_authority', null, 'user_authority.user_id = user.user_id')
             .where(squel.case()
               .when('? IS NULL', user_id)
-              .then(squel.expr().and('user_id IS NOT NULL'))
-              .else(squel.expr().and('user_id = ?', user_id)))
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_id = ?', user_id)))
             .where(squel.case()
               .when('? IS NULL', user_type)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user.user_type = ?', user_type)))
             .where(squel.case()
               .when('? IS NULL', email)
-              .then(squel.expr().and('user_id IS NOT NULL'))
-              .else(squel.expr().and('email = ?', email)))
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.email = ?', email)))
             .order(`user.${sort_key}`, sort_type)
             .toParam();
         }
@@ -568,8 +568,8 @@ let self = {
             .from('department')
             .where(squel.case()
               .when('? IS NULL', department_id)
-              .then(squel.expr().and('department_id IS NOT NULL'))
-              .else(squel.expr().and('department_id = ?', department_id)))
+              .then(squel.expr().and('department.department_id IS NOT NULL'))
+              .else(squel.expr().and('department.department_id = ?', department_id)))
             .order(`department.${sort_key}`, sort_type)
             .toParam();
         }
@@ -625,8 +625,8 @@ let self = {
             .from('campus')
             .where(squel.case()
               .when('? IS NULL', campus_id)
-              .then(squel.expr().and('campus_id IS NOT NULL'))
-              .else(squel.expr().and('campus_id = ?', campus_id)))
+              .then(squel.expr().and('campus.campus_id IS NOT NULL'))
+              .else(squel.expr().and('campus.campus_id = ?', campus_id)))
             .order(`campus.${sort_key}`, sort_type)
             .toParam();
         }
@@ -668,7 +668,7 @@ let self = {
               .else(squel.expr().and('building.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', campus_id)
-              .then(squel.expr().and('building.campus_id IS NOT NULL'))
+              .then(squel.expr().and('building.building_id IS NOT NULL'))
               .else(squel.expr().and('building.campus_id = ?', campus_id)))
             .field('COUNT(*)', 'list_count')
             .toParam();
@@ -680,7 +680,7 @@ let self = {
               .else(squel.expr().and('building.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', campus_id)
-              .then(squel.expr().and('building.campus_id IS NOT NULL'))
+              .then(squel.expr().and('building.building_id IS NOT NULL'))
               .else(squel.expr().and('building.campus_id = ?', campus_id)))
             .order(`building.${sort_key}`, sort_type)
             .limit(page_length)
@@ -691,11 +691,11 @@ let self = {
             .from('building')
             .where(squel.case()
               .when('? IS NULL', building_id)
-              .then(squel.expr().and('building_id IS NOT NULL'))
-              .else(squel.expr().and('building_id = ?', building_id)))
+              .then(squel.expr().and('building.building_id IS NOT NULL'))
+              .else(squel.expr().and('building.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', campus_id)
-              .then(squel.expr().and('building.campus_id IS NOT NULL'))
+              .then(squel.expr().and('building.building_id IS NOT NULL'))
               .else(squel.expr().and('building.campus_id = ?', campus_id)))
             .order(`building.${sort_key}`, sort_type)
             .toParam();
@@ -739,11 +739,11 @@ let self = {
               .else(squel.expr().and('room.room_id = ?', room_id)))
             .where(squel.case()
               .when('? IS NULL', building_id)
-              .then(squel.expr().and('room.building_id IS NOT NULL'))
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', room_category_id)
-              .then(squel.expr().and('room.room_category_id IS NOT NULL'))
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.room_category_id = ?', room_category_id)))
             .field('COUNT(*)', 'list_count')
             .toParam();
@@ -755,11 +755,11 @@ let self = {
               .else(squel.expr().and('room.room_id = ?', room_id)))
             .where(squel.case()
               .when('? IS NULL', building_id)
-              .then(squel.expr().and('room.building_id IS NOT NULL'))
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', room_category_id)
-              .then(squel.expr().and('room.room_category_id IS NOT NULL'))
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.room_category_id = ?', room_category_id)))
             .order(`room.${sort_key}`, sort_type)
             .limit(page_length)
@@ -770,17 +770,99 @@ let self = {
             .from('room')
             .where(squel.case()
               .when('? IS NULL', room_id)
-              .then(squel.expr().and('room_id IS NOT NULL'))
-              .else(squel.expr().and('room_id = ?', room_id)))
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
+              .else(squel.expr().and('room.room_id = ?', room_id)))
             .where(squel.case()
               .when('? IS NULL', building_id)
-              .then(squel.expr().and('room.building_id IS NOT NULL'))
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', room_category_id)
-              .then(squel.expr().and('room.room_category_id IS NOT NULL'))
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.room_category_id = ?', room_category_id)))
             .order(`room.${sort_key}`, sort_type)
+            .toParam();
+        }
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  holiday: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          holiday_id,
+          building_id,
+          room_id,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+
+        sort_key = (sort_key) ? sort_key : 'holiday_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('holiday')
+            .where(squel.case()
+              .when('? IS NULL', holiday_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.holiday_id = ?', holiday_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.room_id = ?', room_id)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('holiday')
+            .where(squel.case()
+              .when('? IS NULL', holiday_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.holiday_id = ?', holiday_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.room_id = ?', room_id)))
+            .order(`holiday.${sort_key}`, sort_type)
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('holiday')
+            .where(squel.case()
+              .when('? IS NULL', holiday_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.holiday_id = ?', holiday_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.room_id = ?', room_id)))
+            .order(`holiday.${sort_key}`, sort_type)
             .toParam();
         }
         let results = await db_func.sendQueryToDB(connection, queryString);
@@ -832,7 +914,7 @@ let self = {
               .else(squel.expr().and('notification.notification_id = ?', notification_id)))
             .where(squel.case()
               .when('? IS NULL', receiver_id)
-              .then(squel.expr().and('notification.receiver_id IS NOT NULL'))
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
             .order(`notification.${sort_key}`, sort_type)
             .limit(page_length)
@@ -843,11 +925,11 @@ let self = {
             .from('notification')
             .where(squel.case()
               .when('? IS NULL', notification_id)
-              .then(squel.expr().and('notification_id IS NOT NULL'))
-              .else(squel.expr().and('notification_id = ?', notification_id)))
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.notification_id = ?', notification_id)))
             .where(squel.case()
               .when('? IS NULL', receiver_id)
-              .then(squel.expr().and('notification.receiver_id IS NOT NULL'))
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
             .order(`notification.${sort_key}`, sort_type)
             .toParam();

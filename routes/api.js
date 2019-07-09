@@ -383,6 +383,34 @@ router.put('/room/:room_id', isAdmin, checkReqInfo, async (req, res, next) => {
   }
 });
 
+router.get('/holiday', async (req, res, next) => {
+  let {
+    building_id,
+    room_id,
+  } = req.query;
+
+  let connection;
+  try {
+    connection = await db_func.getDBConnection();
+    let {
+      results,
+      list_count,
+    } = await select_func.holiday(connection, {
+      room_id,
+      building_id,
+      sort_key: 'holiday_date',
+    });
+    res.status(200).json({
+      results,
+      list_count,
+    })
+  } catch (error) {
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
+});
+
 function checkReqInfo(req, res, next) {
   if (req.body.department_id != null && info.department_object[req.body.department_id] == undefined) {
     res.status(401).json({

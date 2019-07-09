@@ -41,17 +41,22 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/reservation/:building_id', async (req, res, next) => {
-  let building_id = req.params.building_id;
-  let building = info.buildings[building_id];
-  
-  if (!building[0]) {
-    res.render('error', foo.getResJson(req.user, {
+  try {
+    let building_id = req.params.building_id;
+    let building = info.buildings[building_id];
 
-    }));
-  } else {
-    res.render('reservation', foo.getResJson(req.user, {
-      query: req.query,
-    }));
+    console.log('building_id', building_id)
+    if (!building || !building[0]) {
+      res.render('error', foo.getResJson(req.user, {
+  
+      }));
+    } else {
+      res.render('reservation', foo.getResJson(req.user, {
+        query: req.query,
+      }));
+    }
+  } catch (error) {
+    next(error)
   }
 });
 router.get('/reservation/single/:room_reservation_id', async (req, res, next) => {

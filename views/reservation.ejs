@@ -62,6 +62,7 @@
             },
           },
           rooms: {},
+          holiday_results : [],
           formData:{
             room_id:null,
           },
@@ -82,20 +83,22 @@
           }
         },
         chageStep: function(page_step) {
+          if (page_step == 'room') {
+            this.getRoom();
+          } else {
+
+          }
           this.page_step = page_step;
         },
+        // ROOM
         changeRoomFloor: function(floor) {
           this.section.room.floor = (this.section.room.floor == floor) ? null : floor;
         },
         chooseRoom: function(room) {
-          this.section.room.menu_step = 2 // 문제!
           this.section.room.room_number = room.room_number;
           this.section.room.room_name =  room.name;
           this.formData.room_id = room.room_id;
-          console.log(this.section.room)
-          console.log('menu_step : ',this.section.room.menu_step)
-          console.log(this.section.room)
-          console.log('menu_step : ',this.section.room.menu_step)
+          this.getHoliday();
         },
         getRoom: function() {
           global.ajax({
@@ -114,25 +117,26 @@
             alert(message);
           })
         },
-      },
-      watch: {
-        page_step: function(page_step) {
-          if (page_step == 'room') {
-            switch (this.section[this.page_step].menu_step) {
-              case 1:
-                this.getRoom();
-                break;
-              case 2:
-                console.log('hi!!')
-                break;
-              default:
-                break;
+        getHoliday: function() {
+          global.ajax({
+            url: '/api/holiday',
+            type: 'GET',
+            data: null,
+            query: {
+              building_id : this.query.building_id,
+              room_id: this.formData.room_id,
             }
-          } else {
-
-          }
+          },
+          function(data, status) {
+            app.holiday_results = data.results;
+            app.section.room.menu_step = 2;
+          },
+          function(message, status, data) {
+            alert(message);
+          })
         },
-      }
+        // TIME
+      },
     })
   </script>
 

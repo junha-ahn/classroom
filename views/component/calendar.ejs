@@ -1,0 +1,34 @@
+<script>
+  Vue.component('calendar', {
+    template: `
+    <!-- include the calendar js and css files -->
+    <script src="zabuto_calendar.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="zabuto_calendar.min.css">
+
+    <!-- define the calendar element -->
+    <div id="my-calendar"></div>
+
+    <!-- initialize the calendar on ready -->
+    <script type="application/javascript">
+      $(document).ready(function () {
+        $("#my-calendar").zabuto_calendar({
+          language: "en"
+          year:2019,
+          month:7,
+          show_previous: false,
+          show_next: 1,
+        });
+      });
+    </script>
+    `,
+    props: ['holiday_results'],
+    data: function () {
+      return {
+        holiday_results: this.holiday_results,
+      }
+    }, 
+    methods: {
+
+    },
+  })
+</script>
