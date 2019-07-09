@@ -51,6 +51,19 @@
           if (this.page_step == 'room') {
             if (this.section[this.page_step].menu_step > menu_step) {
               this.section[this.page_step].menu_step = menu_step;
+              switch (menu_step) {
+                case 1:
+                  this.section.room.room_name = null;
+                  this.section.room.room_number = null;
+                  this.section.room.floor = null;
+                  this.formData.room_id = null;
+                  break;
+              
+                default:
+                  break;
+              }
+            } else {
+              alert('이전 단계로 이동만 가능합니다');
             }
           }
         },
