@@ -1,6 +1,10 @@
 *.pem
 *.ppk
 
+# css
+
+public/stylesheets/
+
 # Logs
 logs
 *.log
