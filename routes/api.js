@@ -396,7 +396,7 @@ router.get('/holiday', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.holiday(connection, {
+    } = await select_func.viewTableRoomHoliday(connection, {
       room_id,
       building_id,
       sort_key: 'holiday_date',

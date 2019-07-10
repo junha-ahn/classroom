@@ -1,12 +1,20 @@
 <% include ./sub/header %>
-      <template v-if="page_step=='intro'">
-        <% include ./rsv_section/reservation_intro %>
+      <template v-if="page_step=='I'">
+        <% include ./rsv_section/intro %>
       </template>
-      <template v-else-if="page_step=='room'">
-        <% include ./rsv_section/reservation_room %>
-      </template>
-      <template v-if="page_step=='time'">
-      </template>
+
+      <template v-else>
+        <% include ./rsv_section/menu %>
+        <% include ./rsv_section/left_info %>
+
+        <template v-if="menu_step=='room'">
+          <% include ./rsv_section/room %>
+        </template>
+        <template v-if="menu_step=='date'">
+          <% include ./rsv_section/date %>
+        </template>
+      </template> 
+
     </main>
     
     <footer>
@@ -26,71 +34,71 @@
           is_admin: <%- is_admin %>,
           query : <%-JSON.stringify(query) %>,
           params : <%-JSON.stringify(params) %>,
-          page_step : 'intro',
-          page_type : null,
-          section : {
-            room : {
-              menu_step : 1,
-              floor:null,
-              room_name: null,
-              room_number : null,
-            },
-            time : {
-              menu_step : 1,
-
-            },
+          
+          page_step : 'I',
+          menu_step : null,
+          menu_step_info : {
+            'room' : '강의실 선택',
+            'date' : '날짜 선택',
+            'time' : '시간 선택',
+            'detail' : '상세정보 입력',
+            'last' : '내용 확인',
           },
-          rooms: {},
-          holiday_results : [],
+          menu_steps : {
+            'R' : ['room', 'date', 'time', 'detail', 'last'],
+            'DT' : ['date', 'time', 'room' ,'detail', 'last'],
+          },
+          
+          info : {
+            floor : null,
+            room_name : null,
+            room_number : null,
+          },
           formData:{
             room_id:null,
+            date:null,
           },
+
+          rooms: {},
+          holiday_results : [],
         }
       },
       methods: {
         chageMenuStep: function (menu_step) {
-          if (this.page_step == 'room') {
-            if (this.section[this.page_step].menu_step > menu_step) {
-              this.section[this.page_step].menu_step = menu_step;
-              switch (menu_step) {
-                case 1:
-                  this.section.room.room_name = null;
-                  this.section.room.room_number = null;
-                  this.section.room.floor = null;
-                  this.formData.room_id = null;
-                  break;
-              
-                default:
-                  break;
-              }
-            } else {
-              alert('이전 단계로 이동만 가능합니다');
-            }
-          }
+          this.menu_step = menu_step;
         },
         classObjectMenu: function (menu_step) {
           return {
-            'btn btn-primary': this.section[this.page_step].menu_step == menu_step,
-            'btn btn-default': this.section[this.page_step].menu_step != menu_step,
+            'btn btn-primary': this.menu_step == menu_step,
+            'btn btn-default': this.menu_step != menu_step,
           }
         },
-        chageStep: function(page_step) {
-          if (page_step == 'room') {
-            this.getRoom();
+        chagePageStep: function(page_step) {
+          if (page_step == 'R') {
+            this.menu_step = 'room';
           } else {
-
+            this.menu_step = 'date';
           }
           this.page_step = page_step;
         },
+        nextMenuStep: function() {
+          var now_menu_step = this.menu_step;
+          var menu_step_array = this.menu_steps[this.page_step];
+          for (var i = 0; i < menu_step_array.length; i ++ ) {
+            if(now_menu_step == menu_step_array[i]) {
+              this.menu_step = menu_step_array[parseInt(i) + 1];
+            }
+          }
+        },
         // ROOM
         changeRoomFloor: function(floor) {
-          this.section.room.floor = (this.section.room.floor == floor) ? null : floor;
+          this.info.floor = (this.info.floor == floor) ? null : floor;
         },
         chooseRoom: function(room) {
-          this.section.room.room_number = room.room_number;
-          this.section.room.room_name =  room.name;
+          this.info.room_number = room.room_number;
+          this.info.room_name =  room.name;
           this.formData.room_id = room.room_id;
-          this.getHoliday();
+          this.nextMenuStep();
         },
         getRoom: function() {
           global.ajax({
@@ -109,26 +117,32 @@
             alert(message);
           })
         },
-        getHoliday: function() {
-          global.ajax({
-            url: '/api/holiday',
-            type: 'GET',
-            data: null,
-            query: {
-              building_id : this.query.building_id,
-              room_id: this.formData.room_id,
-            }
-          },
-          function(data, status) {
-            app.holiday_results = data.results;
-            app.section.room.menu_step = 2;
-          },
-          function(message, status, data) {
-            alert(message);
-          })
-        },
+        // DATE
+        
         // TIME
+
+        // DETAIL
+
+        // LAST
       },
+      watch: {
+        menu_step: function (menu_step) {
+          switch (menu_step) {
+            case 'room':
+              this.info.floor = null;
+              this.info.room_name = null;
+              this.info.room_number = null;
+              this.formData.room_id = null;
+              this.formData.date = null;
+              this.getRoom();
+              break;
+            case 'date':
+              this.formData.date = null;
+            default:
+              break;
+          }
+        },
+      }
     })
   </script>
 

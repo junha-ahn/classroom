@@ -2,24 +2,70 @@
 <script type="text/javascript" src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/ko.js"></script>
 
 <script type="text/x-template" id="datepicker-template">
-  <div>
-    <vuejs-datepicker :language="ko"></vuejs-datepicker>
-    <h1>하이fsads!!</h1>
-  </div>
+  <vuejs-datepicker :value="state.default_date" @selectedDisabled="selectedDisabled" :highlighted="state.highlighted" :disabled-dates="state.disabledDates" @selected="selected" v-model="selected_date" v-bind:inline="lnline" :format="customFormatter" :language="ko"></vuejs-datepicker>
 </script>
 
 <script>
   Vue.component('custom-datepicker', {
     template: '#datepicker-template',
-    props: [],
+    props: ['inline', 'default_date', 'building_id', 'room_id'],
     data: function () {
       return {
-        ko: vdp_translation_ko.js
+        ko: vdp_translation_ko.js,
+        lnline: this.inline,
+        selected_date: null,
+        building_id: this.building_id,
+        room_id: this.room_id,
+        holiday_results: [],
+        state: {
+          default_date: this.default_date,
+          disabledDates: {
+            days: [0,1],
+            dates: this.disbeld_dates,
+          },
+          highlighted: {
+            days: [6, 0], 
+            includeDisabled: true // Highlight disabled dates
+          },
+        },
       }
     },
     methods: {
-      customFormatter(date) {
-        return '2019-1-1';
+      selected: function(date) {
+        console.log('selected : ', date)
+      },
+      selectedDisabled: function(object) {
+        console.log(object);
+        alert('비활성화 상태입니다')
+      },
+      customFormatter: function(date) {
+        return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
+      },
+    },
+    computed: {
+      disbeld_dates: function() {
+        console.log('disbeld_dates !!!')
+        global.ajax({
+          url: '/api/holiday',
+          type: 'GET',
+          data: null,
+          query: {
+            building_id : this.building_id,
+            room_id: this.room_id,
+          }
+        },
+        function(data, status) {
+          var holiday_results = data.results;
+
+          var dates = [];
+          for (var i = 0; i < holiday_results; i++) {
+            dates.push(new Date(holiday_results[i].holiday_date))
+          }
+          return dates;
+        },
+        function(message, status, data) {
+          alert(message);
+        })
       },
     },
     components: {
