@@ -9,3 +9,14 @@
 }
 
 */
+
+.vdp-datepicker__calendar .cell {
+  &.sun {
+    background-color: transparent !important;
+    color: red !important;
+  }
+  &.sat {
+    background-color: transparent !important;
+    color: blue !important;
+  }
+}

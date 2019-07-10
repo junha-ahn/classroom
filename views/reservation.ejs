@@ -11,7 +11,13 @@
           <% include ./rsv_section/room %>
         </template>
         <template v-if="menu_step=='date'">
-          <% include ./rsv_section/date %>
+          <custom-datepicker
+            inline="false"
+            :default_date="new Date()"
+            :building_id="params.building_id"
+            :room_id="formData.room_id"
+            :on-selected="onSelected"
+          />
         </template>
       </template> 
 
@@ -34,7 +40,7 @@
           is_admin: <%- is_admin %>,
           query : <%-JSON.stringify(query) %>,
           params : <%-JSON.stringify(params) %>,
-          
+          date: null,
           page_step : 'I',
           menu_step : null,
           menu_step_info : {
@@ -118,7 +124,9 @@
           })
         },
         // DATE
-        
+        onSelected: function(date) {
+          this.formData.date = date;
+        },
         // TIME
 
         // DETAIL

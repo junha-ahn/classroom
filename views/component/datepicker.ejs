@@ -2,37 +2,52 @@
 <script type="text/javascript" src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/ko.js"></script>
 
 <script type="text/x-template" id="datepicker-template">
-  <vuejs-datepicker :value="state.default_date" @selectedDisabled="selectedDisabled" :highlighted="state.highlighted" :disabled-dates="state.disabledDates" @selected="selected" v-model="selected_date" v-bind:inline="lnline" :format="customFormatter" :language="ko"></vuejs-datepicker>
+  <div>
+    <vuejs-datepicker
+      :value="state.default_date"
+      @selectedDisabled="selectedDisabled"
+      :highlighted="state.highlighted"
+      :disabled-dates="state.disabledDates"
+      @selected="selected"
+      v-model="selected_date"
+      :inline="inline"
+      :format="customFormatter"
+      :language="ko"
+    />
+  </div>
 </script>
 
 <script>
   Vue.component('custom-datepicker', {
     template: '#datepicker-template',
-    props: ['inline', 'default_date', 'building_id', 'room_id'],
-    data: function () {
-      return {
-        ko: vdp_translation_ko.js,
-        lnline: this.inline,
-        selected_date: null,
-        building_id: this.building_id,
-        room_id: this.room_id,
-        holiday_results: [],
-        state: {
-          default_date: this.default_date,
-          disabledDates: {
-            days: [0,1],
-            dates: this.disbeld_dates,
-          },
-          highlighted: {
-            days: [6, 0], 
-            includeDisabled: true // Highlight disabled dates
-          },
-        },
-      }
+    props: {
+      inline: Boolean,
+      default_date: Date,
+      building_id: Number,
+      room_id: Number,
+      onSelected: Function,
     },
+    data: function(){ return {
+      ko: vdp_translation_ko.js,
+      selected_date: null,
+      room_id: this.room_id,
+      holiday_results: [],
+      state: {
+        default_date: this.default_date,
+        disabledDates: {
+          days: [0,1],
+          dates: this.disbeld_dates,
+        },
+        highlighted: {
+          days: [6, 0], 
+          includeDisabled: true // Highlight disabled dates
+        },
+      },
+
+    }},
     methods: {
       selected: function(date) {
-        console.log('selected : ', date)
+        this.onSelected(date)
       },
       selectedDisabled: function(object) {
         console.log(object);
