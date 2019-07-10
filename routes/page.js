@@ -38,7 +38,7 @@ router.get('/', async (req, res, next) => {
   }));
 });
 
-router.get('/reservation/:building_id', async (req, res, next) => {
+router.get('/reservation/intro/:building_id', async (req, res, next) => {
   try {
     let building_id = req.params.building_id;
     let building = info.building_object[building_id];
@@ -48,7 +48,54 @@ router.get('/reservation/:building_id', async (req, res, next) => {
         message: "다시 확인해주세요"
       }));
     } else {
+      res.render('reservation_intro', foo.getResJson(req.user, {
+        query: req.query,
+        params: req.params,
+      }));
+    }
+  } catch (error) {
+    next(error)
+  }
+});
+router.get('/reservation/:building_id', async (req, res, next) => {
+  try {
+    let {
+      page_step
+    } = req.query;
+    let building_id = req.params.building_id;
+    let building = info.building_object[building_id];
+    if (page_step == undefined || (page_step != 'R' && page_step != 'DT')) {
+      res.render('error', foo.getResJson(req.user, {
+        error_name: "페이지를 찾을수 없습니다",
+        message: "다시 확인해주세요"
+      }));
+    } else if (!building) {
+      res.render('error', foo.getResJson(req.user, {
+        error_name: "건물을 찾을수 없습니다",
+        message: "다시 확인해주세요"
+      }));
+    } else {
       res.render('reservation', foo.getResJson(req.user, {
+        query: req.query,
+        params: req.params,
+        page_step,
+      }));
+    }
+  } catch (error) {
+    next(error)
+  }
+});
+router.get('/reservation/lookup/:building_id', async (req, res, next) => {
+  try {
+    let building_id = req.params.building_id;
+    let building = info.building_object[building_id];
+    if (!building) {
+      res.render('error', foo.getResJson(req.user, {
+        error_name: "건물을 찾을수 없습니다",
+        message: "다시 확인해주세요"
+      }));
+    } else {
+      res.render('reservation_lookup', foo.getResJson(req.user, {
         query: req.query,
         params: req.params,
       }));

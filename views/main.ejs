@@ -8,7 +8,7 @@
               <dl>
                 <dt v-for="(building, j) in campus.building_results" :key="j">
                   <div v-if="campus_id==building.campus_id">
-                    <button type="button" class="btn btn-default" @click="locationHref('/reservation/'+ building.building_id)" >
+                    <button type="button" class="btn btn-default" @click="locationHref('/reservation/intro/'+ building.building_id)" >
                       {{building.name}}
                     </button>
                   </div>

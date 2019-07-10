@@ -1,9 +1,5 @@
 <% include ./sub/header %>
-      <template v-if="page_step=='I'">
-        <% include ./rsv_section/intro %>
-      </template>
-
-      <template v-else>
+      <template v-if="page_step=='R'">
         <% include ./rsv_section/menu %>
         <% include ./rsv_section/left_info %>
 
@@ -12,7 +8,7 @@
         </template>
         <template v-if="menu_step=='date'">
           <custom-datepicker
-            inline="false"
+            :inline="true"
             :default_date="new Date()"
             :building_id="params.building_id"
             :room_id="formData.room_id"
@@ -41,7 +37,7 @@
           query : <%-JSON.stringify(query) %>,
           params : <%-JSON.stringify(params) %>,
           date: null,
-          page_step : 'I',
+          page_step : '<%- page_step %>',
           menu_step : null,
           menu_step_info : {
             'room' : '강의실 선택',
@@ -59,6 +55,7 @@
             floor : null,
             room_name : null,
             room_number : null,
+            date: null,
           },
           formData:{
             room_id:null,
@@ -126,6 +123,7 @@
         // DATE
         onSelected: function(date) {
           this.formData.date = date;
+          this.info.date = global.parseDateFromDB(date);
         },
         // TIME
 
@@ -142,14 +140,20 @@
               this.info.room_number = null;
               this.formData.room_id = null;
               this.formData.date = null;
+              this.info.date = null;
               this.getRoom();
               break;
             case 'date':
               this.formData.date = null;
+              this.info.date = null;
+              break;
             default:
               break;
           }
         },
+      },
+      created: function() {
+        this.menu_step = this.menu_steps[this.page_step][0];
       }
     })
   </script>

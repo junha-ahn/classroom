@@ -2,6 +2,15 @@ function makeGlobal() {
   var message = {
     NEED_LOGIN : '로그인이 필요합니다'
   }
+  var parseDateFromDB = function(string_from_db) {
+    let date = new Date(string_from_db);
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    let string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day);
+    return string;
+  }
   var header_name_by_class = {
     'main' : 'main',
     'group_lookup' : 'group',
@@ -63,6 +72,7 @@ function makeGlobal() {
     });
   };
   return {
+    parseDateFromDB : parseDateFromDB,
     serializeQuery: serializeQuery,
     ajax: ajax,
     getHeaderMenuName: getHeaderMenuName,
