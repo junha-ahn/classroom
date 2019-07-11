@@ -16,6 +16,9 @@
           maximum-view="day"
         ></custom-datepicker>
       </template>
+      <template v-if="menu_step=='time'">
+
+      </template>
 
     </main>
     
@@ -64,6 +67,7 @@
 
           rooms: {},
           holiday_results : [],
+          available_time_results: [],
         }
       },
       methods: {
@@ -146,6 +150,7 @@
           }
         },
         getRoom: function() {
+          var __this = this;
           global.ajax({
             url: '/api/room',
             type: 'GET',
@@ -156,18 +161,43 @@
             }
           },
           function(data, status) {
-            app.rooms = data.results;
+            __this.setRooms(data.results);
           },
           function(message, status, data) {
             alert(message);
           })
         },
+        setRooms: function(data) {
+          this.rooms = data;
+        },
         // DATE
         onSelected: function(date) {
           this.formData.date = date;
           this.info.date = global.parseDateFromDB(date);
+          this.nextMenuStep();
         },
         // TIME
+        getAvailableTime: function() {
+          global.ajax({
+            url: '/api/available_time',
+            type: 'GET',
+            data: null,
+            query: {
+              building_id : this.params.building_id,
+              room_id : this.formData.room_id,
+              day_of_week : this.formData.date.getDay(),
+            }
+          },
+          function(data, status) {
+            __this.setAvailableTimeResults(data.results);
+          },
+          function(message, status, data) {
+            alert(message);
+          })
+        },
+        setAvailableTimeResults: function (data) {
+          this.available_time_results = data;
+        },
 
         // DETAIL
 

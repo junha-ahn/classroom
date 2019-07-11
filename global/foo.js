@@ -36,52 +36,9 @@ let self = {
     ip = (ip) ? ip.replace(/:/g, "") : ip;
     return ip;
   },
-  makeErrContext: (category, status, detail) => {
-    let max = (detail && detail.max != null) ? detail.max : null;
-    let message = {
-      0: {
-        0: `다른 것을 선택해주세요`,
-        404: `대상의 상위존재를 찾을 수 없습니다`,
-      },
-      1: {
-        0: `삭제 상태입니다`,
-        1: `블라인드 상태입니다`,
-        2: `블라인드 상태입니다`,
-        3: `비밀 상태입니다, 본인 또는 관리자 계정으로 로그인해주세요`,
-        404: `대상을 찾을 수 없습니다`,
-      },
-      3: {
-        0: `운영자로 로그인 해주세요`,
-        10: `로그인 해주세요`,
-        100: `운영자 일부만 사용 가능합니다`,
-        110: `운영자와 회원 일부만 사용 가능합니다`,
-      },
-      5: {
-        1: `${max}분부터 수정/삭제 불가능합니다`,
-        2: `자식이 ${max}개부터 수정/삭제 불가능합니다`,
-        3: `댓글 ${max}개부터 수정/삭제 불가능합니다`,
-        4: `${max}단계부터 작성 불가능합니다 (답글/대댓글)`,
-        5: `답글/대댓글은 한 단계에서 ${max}까지 작성 가능합니다`,
-        6: `임시 닉네임을 입력해주세요`,
-        7: `카테고리를 다시 선택해주세요`,
-        8: `해당 글의 작성자가 답글을 비허용 했습니다`,
-      },
-      7: {
-        0: `운영자나 해당 회원으로 로그인 해주세요`,
-        1: `해당 회원으로 로그인 해주세요`,
-        2: `비밀번호를 입력해주세요`,
-        3: `비밀번호가 일치하지 않습니다`,
-      },
-    }
-    return {
-      category,
-      status,
-      message: message[category][status],
-      detail
-    };
-  },
   parseDateTimeFromDB: (string_from_db) => {
     let target_date = new Date(string_from_db);
+    target_date = target_date.setHours(target_date.getHours() - 9);
     let target_year = target_date.getFullYear();
     let target_month = target_date.getMonth() + 1;
     let target_day = target_date.getDate();
@@ -94,6 +51,7 @@ let self = {
   },
   parseDateFromDB: (string_from_db) => {
     let target_date = new Date(string_from_db);
+    target_date = target_date.setHours(target_date.getHours() - 9);
     let target_year = target_date.getFullYear();
     let target_month = target_date.getMonth() + 1;
     let target_day = target_date.getDate();
@@ -130,7 +88,7 @@ let self = {
 
       if (is_personal) {
         if (!user || user.user_type != info.ADMIN_TYPE) {
-          array[i].name = array[i].name ? array[i].name.slice(0,1) + ('*'.repeat(array[i].name.length - 1)) : null;
+          array[i].name = array[i].name ? array[i].name.slice(0, 1) + ('*'.repeat(array[i].name.length - 1)) : null;
           array[i].phone = array[i].phone ? '비공개' : undefined;
           array[i].student_number = array[i].student_number ? '비공개' : undefined
         }
@@ -141,7 +99,7 @@ let self = {
     let permission_results = info.permission_results;
     let type_name = (!user) ? 'non_user' : (user.user_type == info.ADMIN_TYPE) ? 'admin' : 'user';
     for (let i in permission_results) {
-      if (permission_results[i].permission_id == auth) 
+      if (permission_results[i].permission_id == auth)
         if (permission_results[i][`${type_name}_is_allow`] == 1)
           return true;
     }

@@ -43,46 +43,36 @@
         state: {
           default_date: this.default_date,
           disabledDates: {
+            to: (this.couldSelecteBeforeToday == true) ? new Date() : null,
             ranges: [],
           },
           highlighted: {
-            days: [6, 0], 
-            includeDisabled: false // Highlight disabled dates
+            dates: [
+              
+            ],
+            includeDisabled: true // Highlight disabled dates
           },
         },
       }
     },
     methods: {
-      selected: function(date, event) {
-        //preventDefault
-
-        /*
-        1. 이벤트 객체?? 를 받은 다음에 중지 시키는법.
-        2. 직접 selected 클래스를 추가하는법
-        */
-        console.log('couldSelecteBeforeToday : ',this.couldSelecteBeforeToday)
-        console.log(date, event)
-        var now = global.resetTime((new Date()));
-        date = global.resetTime(date)
-        console.log('::', global.parseDateTimeFromDB(date))
-        if (this.shoudSelecteBeforeToday == true && date < now) {
-           cosnole.log('넌 노노!')
-        } else {
-          this.onSelected(date)
-        }
+      selected: function(seleted_date) {
+        this.onSelected(global.resetTime(seleted_date));
       },
       selectedDisabled: function(object) {
         var selected_date = global.resetTime(new Date(object.timestamp))
         var holiday_results = this.holiday_results;
+        var message = null;
         for (var i = 0; i < holiday_results.length; i++) {
           var start_date = global.resetTime(new Date(holiday_results[i].start_date));
           if (start_date <= selected_date) {
             var end_date =global.resetTime(new Date(holiday_results[i].end_date));
             if (end_date >= selected_date) {
-              alert('[ '+ holiday_results[i].name+ ' ] \n'+ '다른 날짜를 선택해주세요');
+              message = '[ '+ holiday_results[i].name+ ' ] \n'+ '다른 날짜를 선택해주세요'
             }
           }
         }
+        alert(message ? message : '날짜를 다시 확인해주세요 (당일 예약은 불가능합니다)');
       },
       changedMonth: function(object) {
         var date = null;
@@ -115,6 +105,7 @@
             room_id: this.room_id,
             year: this.year,
             month: this.month,
+            need_dates: true,
           },
         },
         function(data, status) {

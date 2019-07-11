@@ -391,11 +391,12 @@ router.get('/holiday', async (req, res, next) => {
     room_id,
     year,
     month,
+    need_dates,
   } = req.query;
 
   if (month && !year) {
     res.status(401).json({
-      message : "년월을 함께 입력해주세요"
+      message: "년월을 함께 입력해주세요"
     })
   } else {
     let connection;
@@ -410,6 +411,43 @@ router.get('/holiday', async (req, res, next) => {
         year,
         month,
         sort_key: 'start_date',
+      });
+      let dates = need_dates ? getDates(results) : []
+      res.status(200).json({
+        results,
+        dates,
+        list_count,
+      })
+    } catch (error) {
+      next(error);
+    } finally {
+      db_func.release(connection);
+    }
+  }
+});
+router.get('/available_time', async (req, res, next) => {
+  let {
+    building_id,
+    room_id,
+    day_of_the_week,
+  } = req.query;
+
+  if (building_id == undefined && day_of_the_week == undefined) {
+    res.status(401).json({
+      message: "필수 항목을 입력해주세요"
+    })
+  } else {
+    let connection;
+    try {
+      connection = await db_func.getDBConnection();
+      let {
+        results,
+        list_count,
+      } = await select_func.available_time(connection, {
+        building_id,
+        room_id,
+        day_of_the_week,
+        sort_key: 'start_time',
       });
       res.status(200).json({
         results,
@@ -433,6 +471,7 @@ function roomSortByFloor(room_results) {
   }
   return rooms;
 }
+
 function checkAdminManager(connection, object) {
   return new Promise(async (resolve, reject) => {
     let {
@@ -458,4 +497,31 @@ function checkAdminManager(connection, object) {
   })
 }
 
+function getDates(holiday_results) {
+  let dates = [];
+  for (let i in holiday_results) {
+    console.log(holiday_results[i].start_date, holiday_results[i].end_date, dates);
+  }
+  return dates;
+}
+
+function getDateRange(startDate, endDate, listDate) {
+  var dateMove = new Date(startDate);
+  var strDate = startDate;
+  if (startDate == endDate) {
+    var strDate = dateMove.toISOString().slice(0, 10);
+    listDate.push(strDate);
+  } else {
+    console.log('==============')
+    while (strDate <= endDate) {
+      var strDate = dateMove.toISOString().slice(0, 10);
+      listDate.push(strDate);
+      console.log(strDate , ' ~ ', endDate)
+      dateMove.setDate(dateMove.getDate() + 1);
+      console.log(dateMove)
+    }
+  }
+  console.log('listDate :::: ',listDate)
+  return listDate;
+}
 module.exports = router;

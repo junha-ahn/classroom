@@ -27,5 +27,9 @@
   }
   &.disabled {
     color: #b5bac4 !important;
+    &.highlighted {
+      background-color: transparent !important;
+      color: red !important;
+    }
   }
 }

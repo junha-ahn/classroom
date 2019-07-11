@@ -58,10 +58,11 @@
         },
         login: function(e) {
           e.preventDefault();
+          var __this = this;
           global.ajax({
             url: '/auth/login',
             type: 'POST',
-            data: app.loginForm
+            data: __this.loginForm
           },
           function(data, status) {
             alert(data.message);

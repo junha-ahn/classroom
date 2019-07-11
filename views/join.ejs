@@ -89,10 +89,11 @@
         },
         join: function (e) {
           e.preventDefault();
+          var __this = this;
           global.ajax({
               url: '/auth/join',
               type: 'POST',
-              data: app.joinForm
+              data: __this.joinForm
             },
             function (data, status) {
               alert(data.message);

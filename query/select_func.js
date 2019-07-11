@@ -977,6 +977,88 @@ let self = {
       }
     });
   },
+  available_time: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          available_time_id,
+          building_id,
+          room_id,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+
+        sort_key = (sort_key) ? sort_key : 'available_time_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('available_time')
+            .where(squel.case()
+              .when('? IS NULL', available_time_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.available_time_id = ?', available_time_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.room_id = ?', room_id)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('available_time')
+            .where(squel.case()
+              .when('? IS NULL', available_time_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.available_time_id = ?', available_time_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.room_id = ?', room_id)))
+            .order(`available_time.${sort_key}`, sort_type)
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('available_time')
+            .where(squel.case()
+              .when('? IS NULL', available_time_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.available_time_id = ?', available_time_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.room_id = ?', room_id)))
+            .order(`available_time.${sort_key}`, sort_type)
+            .toParam();
+        }
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   notification: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {

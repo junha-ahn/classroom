@@ -106,13 +106,14 @@
           }
         },
         joinStudyGroup: function(study_group_id, is_join) {
+          var __this = this;
           global.ajax({
             url: '/api/study_group/join/'+study_group_id,
             type: is_join ? 'POST' : 'DELETE',
             data: null,
           },
           function(data, status) {
-            app.refresh();
+            __this.refresh();
           },
           function(message, status, data) {
             alert(message);
