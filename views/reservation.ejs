@@ -8,10 +8,10 @@
       <template v-if="menu_step=='date'">
         <custom-datepicker
           :inline="true"
-          :could-selecte-before-today="true"
           :default_date="new Date()"
           :building_id="params.building_id"
           :room_id="formData.room_id"
+          :min_date="info.min_date"
           :on-selected="onSelected"
           maximum-view="day"
         ></custom-datepicker>
@@ -55,6 +55,7 @@
           },
           
           info : {
+            min_date: new Date(),
             floor : null,
             room_name : null,
             room_number : null,
@@ -123,8 +124,17 @@
           var now_menu_step = this.menu_step;
           var menu_step_array = this.menu_steps[this.method];
           for (var i = 0; i < menu_step_array.length; i ++ ) {
-            if(now_menu_step == menu_step_array[i]) {
+            if(now_menu_step == menu_step_array[i] && i != menu_step_array.length - 1) {
               this.menu_step = menu_step_array[parseInt(i) + 1];
+            }
+          }
+        },
+        prevMenuStep: function() {
+          var now_menu_step = this.menu_step;
+          var menu_step_array = this.menu_steps[this.method];
+          for (var i = 0; i < menu_step_array.length; i ++ ) {
+            if (now_menu_step == menu_step_array[i]  && i != 0) {
+              this.menu_step = menu_step_array[parseInt(i) - 1];
             }
           }
         },
@@ -143,6 +153,10 @@
 
             alert(message);
           } else {
+            var min_date = global.resetTime(new Date());
+            min_date.setDate(min_date.getDate() + room.rsv_apply_min_day);
+            this.info.min_date = min_date;
+
             this.info.room_number = room.room_number;
             this.info.room_name =  room.name;
             this.formData.room_id = room.room_id;
@@ -186,11 +200,16 @@
             query: {
               building_id : this.params.building_id,
               room_id : this.formData.room_id,
-              day_of_week : this.formData.date.getDay(),
+              day_of_the_week : this.formData.date.getDay(),
             }
           },
           function(data, status) {
-            __this.setAvailableTimeResults(data.results);
+            if (data.results.length == 0) {
+              __this.prevMenuStep();
+              alert('예약 가능한 시간이 없습니다.')
+            } else {
+              __this.setAvailableTimeResults(data.results);
+            }
           },
           function(message, status, data) {
             alert(message);
@@ -241,6 +260,7 @@
         resetDate: function() {
           this.formData.date = null;
           this.info.date = null;
+          this.info.min_date = new Date();
         },
         resetTime: function() {
           this.formData.time_array = null;

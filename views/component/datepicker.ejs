@@ -16,7 +16,7 @@
       :open-date="state.default_date"
       :maximum-view="maximumView"
       v-model="selected_date"
-    />
+    ></vuejs-datepicker>
   </div>
 </script>
 
@@ -25,9 +25,9 @@
     template: '#datepicker-template',
     props: {
       inline: Boolean,
-      couldSelecteBeforeToday: Boolean,
       maximumView: String,
       default_date: Date,
+      min_date: Date,
       building_id: Number,
       room_id: Number,
       onSelected: Function,
@@ -42,8 +42,9 @@
         month: this.default_date.getMonth() + 1,
         state: {
           default_date: this.default_date,
+          //selete_min_day
           disabledDates: {
-            to: (this.couldSelecteBeforeToday == true) ? new Date() : null,
+            to: this.min_date || null,
             ranges: [],
           },
           highlighted: {
@@ -72,7 +73,7 @@
             }
           }
         }
-        alert(message ? message : '날짜를 다시 확인해주세요 (당일 예약은 불가능합니다)');
+        alert(message ? message : '예약은 ' + global.parseDate(this.min_date) + ' 이후로 가능합니다');
       },
       changedMonth: function(object) {
         var date = null;
@@ -143,7 +144,7 @@
         })
       },
     },
-    created: function() {
+    mounted: function() {
       this.getHoliday();
     },
     components: {
