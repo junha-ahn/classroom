@@ -127,6 +127,16 @@ let self = {
       }
     }
   },
+  checkPermission: (user, auth) => {
+    let permission_results = info.permission_results;
+    let type_name = (!user) ? 'non_user' : (user.user_type == info.ADMIN_TYPE) ? 'admin' : 'user';
+    for (let i in permission_results) {
+      if (permission_results[i].permission_id == auth) 
+        if (permission_results[i][`${type_name}_is_allow`] == 1)
+          return true;
+    }
+    return false;
+  },
   getResJson: (user, json) => {
     json.is_user = (user) ? true : false;
     json.is_admin = (user && user.user_type == info.ADMIN_TYPE) ? true : false;

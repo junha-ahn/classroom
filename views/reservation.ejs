@@ -129,10 +129,21 @@
           this.info.floor = (this.info.floor == floor) ? null : floor;
         },
         chooseRoom: function(room) {
-          this.info.room_number = room.room_number;
-          this.info.room_name =  room.name;
-          this.formData.room_id = room.room_id;
-          this.nextMenuStep();
+          if (room.available_for_rsv_create != true) {
+            var message = '예약 불가능 상태입니다.'
+            if (!this.user) {
+              message += '\n로그인 후 다시 확인해주세요.' 
+            } else {
+              message +=  '\n관리자로 로그인 해 주세요'
+            } 
+
+            alert(message);
+          } else {
+            this.info.room_number = room.room_number;
+            this.info.room_name =  room.name;
+            this.formData.room_id = room.room_id;
+            this.nextMenuStep();
+          }
         },
         getRoom: function() {
           global.ajax({
