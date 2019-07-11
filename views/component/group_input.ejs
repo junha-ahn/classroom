@@ -46,7 +46,7 @@
       </button>
     </div>
     <div v-if="group.is_mine==1">
-      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="changeMod($event, 'PUT')">수정</button>
+      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
       <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
     </div>
   </form>
@@ -76,17 +76,17 @@
           alert(message);
         })
       },
-      changeMod : function(e, mod) {
-        e.preventDefault();
+      setMod: function(mod, e) {
+        if (e) {
+          e.preventDefault();
+        }
         this.mod = mod;
       },
       onSubmitForm: function(e) {
         e.preventDefault();
+        var __this = this;
         var mod = this.mod;
         let need_location_href = mod == 'POST' ? true : false;
-        if (!need_location_href) {
-          this.mod = 'GET';
-        }
         var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.group.study_group_id : '');
         global.ajax({
           url: url,
@@ -97,6 +97,8 @@
           alert(data.message);
           if (need_location_href) {
             location.href='/group/lookup?page=1'
+          } else {
+            __this.setMod('GET');
           }
         },
         function (message, status, data) {
