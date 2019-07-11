@@ -8,23 +8,23 @@ function makeGlobal() {
     return date;
   }
   var parseDateFromDB = function(string_from_db) {
-    let date = new Date(string_from_db);
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day);
+    var date = new Date(string_from_db);
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day);
     return string;
   }
   var parseDateTimeFromDB = function(string_from_db) {
-    let date = new Date(string_from_db);
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
+    var date = new Date(string_from_db);
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
 
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
 
-    let string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day)
+    var string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day)
       + ' ' + ((hours<10)? ("0"+hours): hours) + ':' + ((minutes<10)? ("0"+minutes): minutes);
     return string;
   }

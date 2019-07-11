@@ -123,11 +123,11 @@
           var ranges = [];
           var dates = [];
           for (var i = 0; i < holiday_results.length; i++) {
-            var from = new Date(holiday_results[i].start_date)
-            var to = new Date(holiday_results[i].end_date)
+            var from = global.resetTime(new Date(holiday_results[i].start_date))
+            var to = global.resetTime(new Date(holiday_results[i].end_date))
             ranges.push({
               from: from,
-              to: to.setDate(to.getDate() + 1),
+              to:to.setDate(to.getDate() + 1),
             });
           }
           __this.setDisbeldDates(ranges);
@@ -141,7 +141,7 @@
       this.getHoliday();
     },
     components: {
-      vuejsDatepicker
+      vuejsDatepicker: vuejsDatepicker,
     },
   })
 </script>

@@ -14,7 +14,7 @@
           :room_id="formData.room_id"
           :on-selected="onSelected"
           maximum-view="month"
-        />
+        ></custom-datepicker>
       </template>
 
     </main>
@@ -94,10 +94,9 @@
             }
           }
 
-          console.log(this.menu_step, ':::',menu_step , is_next)
           return {
-            is_next,
-            is_now,
+            is_next : is_next,
+            is_now : is_now,
           };
         },
         menuClass: function (menu_step) {
