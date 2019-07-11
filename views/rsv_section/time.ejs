@@ -1,6 +1,6 @@
 <dl>
   <dt v-for="(time, i) in formData.time_array" :key="i">
-      <button type="button" :class="time.is_seleted ? 'btn btn-primary' : 'btn btn-default'" @click="clickTimeBlock(time)">
+      <button type="button" :class="timeBlockClass(time)" @click="clickTimeBlock(time)">
         {{time.start_time}}  ~ {{time.end_time}}
       </button>
   </dt>

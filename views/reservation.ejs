@@ -204,11 +204,15 @@
             }
           },
           function(data, status) {
-            if (data.results.length == 0) {
+            var results = data.results;
+            for (var i = 0; i < results.length; i++) {
+              results[i].is_seleted = 0;
+            }
+            if (results.length == 0) {
               __this.prevMenuStep();
               alert('예약 가능한 시간이 없습니다.')
             } else {
-              __this.setAvailableTimeResults(data.results);
+              __this.setAvailableTimeResults(results);
             }
           },
           function(message, status, data) {
@@ -238,9 +242,8 @@
             time_array[index].is_seleted = 0;
           }
         },
-        timeBlockClass: function (is_seleted) {
-          console.log('클래스!!', is_seleted)
-          if (!is_seleted) {
+        timeBlockClass: function (_time) {
+          if (!_time.is_seleted) {
             return 'btn btn-default'
           } else {
             return 'btn btn-primary'
