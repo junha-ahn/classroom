@@ -244,6 +244,19 @@
         },
         timeBlockClass: function (_time) {
           if (!_time.is_seleted) {
+            var start_time = this.info.start_time;
+            var end_time = this.info.end_time;
+            if (!start_time) {
+              this.info.start_time = _time.start_time;
+            } else {
+              start_time = new Date(start_time);
+              console.log(start_time)
+            }
+            if (!end_time) {
+              this.info.end_time = _time.end_time;
+            } else {
+
+            }
             return 'btn btn-default'
           } else {
             return 'btn btn-primary'
