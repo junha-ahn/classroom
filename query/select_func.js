@@ -893,6 +893,8 @@ let self = {
           sort_type
         } = object;
 
+        year = year ? parseInt(year) : null;
+        month = month ? parseInt(month) : null;
         sort_key = (sort_key) ? sort_key : 'holiday_id';
         sort_type = (sort_type == false) ? false : true;
 
@@ -911,6 +913,11 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.room_id = ? OR holiday.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL OR ? IS NULL', year, month)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and(`( YEAR(holiday.start_date) = ${year} AND MONTH(holiday.start_date) = ${month} ) 
+                OR ( YEAR(holiday.end_date) = ${year} AND MONTH(holiday.end_date) = ${month} )`)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -927,6 +934,11 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.room_id = ? OR holiday.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL OR ? IS NULL', year, month)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and(`( YEAR(holiday.start_date) = ${year} AND MONTH(holiday.start_date) = ${month} ) 
+                OR ( YEAR(holiday.end_date) = ${year} AND MONTH(holiday.end_date) = ${month} )`)))
             .order(`holiday.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -946,6 +958,11 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.room_id = ? OR holiday.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL OR ? IS NULL', year, month)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and(`( YEAR(holiday.start_date) = ${year} AND MONTH(holiday.start_date) = ${month} ) 
+                OR ( YEAR(holiday.end_date) = ${year} AND MONTH(holiday.end_date) = ${month} )`)))
             .order(`holiday.${sort_key}`, sort_type)
             .toParam();
         }

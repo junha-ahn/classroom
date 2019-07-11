@@ -14,6 +14,7 @@
       :language="ko"
       :monday-first="true"
       :value="state.default_date"
+      :open-date="state.default_date"
       :maximum-view="maximumView"
       v-model="selected_date"
     />
@@ -37,6 +38,8 @@
         selected_date: null,
         room_id: this.room_id,
         holiday_results: [],
+        year: this.default_date.getFullYear(),
+        month: this.default_date.getMonth() + 1,
         state: {
           default_date: this.default_date,
           disabledDates: {
@@ -73,9 +76,9 @@
         } else {
           date = new Date(object);
         }
-        var year = date.getFullYear();
-        var month = parseInt(date.getMonth()) + 1;
-        
+        this.year = date.getFullYear();
+        this.month = parseInt(date.getMonth()) + 1;
+        this.getHoliday();
       },
       customFormatter: function(date) {
         return global.parseDateFromDB(date);
@@ -86,37 +89,42 @@
       setDisbeldDates: function(ranges) {
         this.state.disabledDates.ranges = ranges;
       },
+      getHoliday: function() {
+        let __this = this;
+        global.ajax({
+          url: '/api/holiday',
+          type: 'GET',
+          data: null,
+          query: {
+            building_id : this.building_id,
+            room_id: this.room_id,
+            year: this.year,
+            month: this.month,
+          },
+        },
+        function(data, status) {
+          var holiday_results = data.results;
+          __this.setHolidayResults(holiday_results)
+
+          var ranges = [];
+          var dates = [];
+          for (var i = 0; i < holiday_results.length; i++) {
+            var from = new Date(holiday_results[i].start_date)
+            var to = new Date(holiday_results[i].end_date)
+            ranges.push({
+              from: from,
+              to: to.setDate(to.getDate() + 1),
+            });
+          }
+          __this.setDisbeldDates(ranges);
+        },
+        function(message, status, data) {
+          alert(message);
+        })
+      },
     },
     created: function() {
-      let __this = this;
-      global.ajax({
-        url: '/api/holiday',
-        type: 'GET',
-        data: null,
-        query: {
-          building_id : this.building_id,
-          room_id: this.room_id,
-        },
-      },
-      function(data, status) {
-        var holiday_results = data.results;
-        __this.setHolidayResults(holiday_results)
-
-        var ranges = [];
-        var dates = [];
-        for (var i = 0; i < holiday_results.length; i++) {
-          var from = new Date(holiday_results[i].start_date)
-          var to = new Date(holiday_results[i].end_date)
-          ranges.push({
-            from: from,
-            to: to.setDate(to.getDate() + 1),
-          });
-        }
-        __this.setDisbeldDates(ranges);
-      },
-      function(message, status, data) {
-        alert(message);
-      })
+      this.getHoliday();
     },
     components: {
       vuejsDatepicker
