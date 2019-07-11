@@ -104,6 +104,12 @@ let self = {
   },
   cleaningList: (array, user, is_personal) => {
     for (let i in array) {
+      if (array[i].auth_rsv_create != undefined) {
+        array[i].available_for_rsv_create = self.checkPermission(user, array[i].auth_rsv_create);
+      }
+      if (array[i].auth_rsv_cancel != undefined) {
+        array[i].available_for_rsv_cancel = self.checkPermission(user, array[i].auth_rsv_cancel);
+      }
       array[i].date_created = array[i].date_created ? self.parseDateFromDB(array[i].date_created) : array[i].date_created;
       array[i].date_joined = array[i].date_joined ? self.parseDateFromDB(array[i].date_joined) : array[i].date_joined;
       array[i].date_last_updated = array[i].date_last_updated ? self.parseDateFromDB(array[i].date_last_updated) : array[i].date_last_updated;
@@ -117,6 +123,10 @@ let self = {
       if (array[i].department_id) {
         array[i].department_name = info.department_object[array[i].department_id].name;
       }
+      if (array[i].room_category_id) {
+        array[i].room_category_name = info.room_category_object[array[i].room_category_id].name;
+      }
+
 
       if (is_personal) {
         if (!user || user.user_type != info.ADMIN_TYPE) {

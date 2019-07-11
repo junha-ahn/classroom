@@ -245,8 +245,9 @@ router.get('/room', async (req, res, next) => {
       building_id,
       sort_key: 'room_number',
     });
+    foo.cleaningList(results, req.user);
     res.status(200).json({
-      results: sort_by_floor ? roomSortByFloor(results, req.user) : results,
+      results: sort_by_floor ? roomSortByFloor(results) : results,
       list_count,
     })
   } catch (error) {
@@ -422,11 +423,9 @@ router.get('/holiday', async (req, res, next) => {
   }
 });
 
-function roomSortByFloor(room_results, user) {
+function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {
-    room_results[i].available_for_rsv_create = foo.checkPermission(user, room_results[i].auth_rsv_create);
-    room_results[i].available_for_rsv_cancel = foo.checkPermission(user, room_results[i].auth_rsv_cancel);
     if (!rooms[room_results[i].floor]) {
       rooms[room_results[i].floor] = []
     }
