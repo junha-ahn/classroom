@@ -10,30 +10,33 @@
 
 */
 
-// 캘린터
-.vdp-datepicker__calendar .cell {
-  color: black !important;
-  font-weight: bold  !important;
-  &.day {
-
-  }
-  &.today {
-    border: 1px solid blue !important;
-  }
-  &.sun {
-    background-color: transparent !important;
-    color: red !important;
-  }
-  &.sat {
-    background-color: transparent !important;
-    color: blue !important;
-  }
-  &.disabled {
-    color: #b5bac4 !important;
-    &.highlighted {
-      background-color: transparent;
+// 예약 페이지
+.reservation {
+  // 캘린터
+  .vdp-datepicker__calendar .cell {
+    color: black !important;
+    font-weight: bold  !important;
+    &.day {
+  
+    }
+    &.today {
+      border: 1px solid blue !important;
+    }
+    &.sun {
+      background-color: transparent !important;
       color: red !important;
-      border: 1px solid #E4E5E5;
+    }
+    &.sat {
+      background-color: transparent !important;
+      color: blue !important;
+    }
+    &.disabled {
+      color: #b5bac4 !important;
+      &.highlighted {
+        background-color: transparent;
+        color: red !important;
+        border: 1px solid #E4E5E5;
+      }
     }
   }
 }
