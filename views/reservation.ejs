@@ -1,22 +1,21 @@
 <% include ./sub/header %>
-      <template v-if="page_step=='R'">
-        <% include ./rsv_section/menu %>
-        <% include ./rsv_section/left_info %>
+      <% include ./rsv_section/menu %>
+      <% include ./rsv_section/left_info %>
 
-        <template v-if="menu_step=='room'">
-          <% include ./rsv_section/room %>
-        </template>
-        <template v-if="menu_step=='date'">
-          <custom-datepicker
-            :inline="true"
-            :default_date="new Date()"
-            :building_id="params.building_id"
-            :room_id="formData.room_id"
-            :on-selected="onSelected"
-            maximum-view="month"
-          />
-        </template>
-      </template> 
+      <template v-if="menu_step=='room'">
+        <% include ./rsv_section/room %>
+      </template>
+      <template v-if="menu_step=='date'">
+        <custom-datepicker
+          :inline="true"
+          :could-selecte-before-today="true"
+          :default_date="new Date()"
+          :building_id="params.building_id"
+          :room_id="formData.room_id"
+          :on-selected="onSelected"
+          maximum-view="month"
+        />
+      </template>
 
     </main>
     
@@ -69,12 +68,44 @@
       },
       methods: {
         chageMenuStep: function (menu_step) {
-          this.menu_step = menu_step;
+          var _obj = this.checkMenuStep(menu_step);
+          var is_next = _obj.is_next;
+          if (is_next) {
+            alert('다음 단계를 선택할 수 없습니다')
+          } else {
+            this.menu_step = menu_step;
+          }
         },
-        classObjectMenu: function (menu_step) {
+        checkMenuStep: function(menu_step) {
+          var menu_step_array = this.menu_steps[this.page_step];
+          var is_find = false;
+          var is_next = false;
+          var is_now = false;
+          if (this.menu_step == menu_step) {
+            is_now = true;
+          } else {
+            for (var i = 0; i < menu_step_array.length; i ++) {
+              if (this.menu_step == menu_step_array[i]) {
+                is_find = true;
+              }
+              if (menu_step == menu_step_array[i] && is_find) {
+                is_next = true
+              }
+            }
+          }
+
+          console.log(this.menu_step, ':::',menu_step , is_next)
           return {
-            'btn btn-primary': this.menu_step == menu_step,
-            'btn btn-default': this.menu_step != menu_step,
+            is_next,
+            is_now,
+          };
+        },
+        menuClass: function (menu_step) {
+          var _obj = this.checkMenuStep(menu_step);
+          return {
+            'btn btn-primary': _obj.is_now,
+            'btn btn-default': !_obj.is_next,
+            'btn btn-default disabled': _obj.is_next,
           }
         },
         chagePageStep: function(page_step) {
@@ -155,6 +186,7 @@
       },
       created: function() {
         this.menu_step = this.menu_steps[this.page_step][0];
+        console.log(this.menu_step)
       }
     })
   </script>

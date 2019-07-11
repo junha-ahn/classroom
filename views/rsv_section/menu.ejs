@@ -1,3 +1,3 @@
 <div class="btn-group" role="group" v-for="(menu_step, i) in menu_steps[page_step]" :key="i">
-  <button type="button" :class="classObjectMenu(menu_steps[page_step][i])" @click="chageMenuStep(menu_steps[page_step][i])">{{i + 1}}. {{menu_step_info[menu_step]}}</button>
+  <button type="button" :class="menuClass(menu_steps[page_step][i])" @click="chageMenuStep(menu_steps[page_step][i])">{{i + 1}}. {{menu_step_info[menu_step]}}</button>
 </div>

@@ -13,7 +13,6 @@
       :format="customFormatter"
       :language="ko"
       :monday-first="true"
-      :value="state.default_date"
       :open-date="state.default_date"
       :maximum-view="maximumView"
       v-model="selected_date"
@@ -26,6 +25,7 @@
     template: '#datepicker-template',
     props: {
       inline: Boolean,
+      couldSelecteBeforeToday: Boolean,
       maximumView: String,
       default_date: Date,
       building_id: Number,
@@ -53,8 +53,22 @@
       }
     },
     methods: {
-      selected: function(date) {
-        this.onSelected(date)
+      selected: function(date, event) {
+        //preventDefault
+
+        /*
+        1. 이벤트 객체?? 를 받은 다음에 중지 시키는법.
+        2. 직접 selected 클래스를 추가하는법
+        */
+        console.log(date, event)
+        var now = global.resetTime((new Date()));
+        date = global.resetTime(date)
+        console.log('::', global.parseDateTimeFromDB(date))
+        if (this.shoudSelecteBeforeToday == true && date < now) {
+           cosnole.log('넌 노노!')
+        } else {
+          this.onSelected(date)
+        }
       },
       selectedDisabled: function(object) {
         var selected_date = global.resetTime(new Date(object.timestamp))
