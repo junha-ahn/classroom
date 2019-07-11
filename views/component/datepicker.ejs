@@ -86,13 +86,21 @@
         this.getHoliday();
       },
       customFormatter: function(date) {
-        return global.parseDateFromDB(date);
+        date = new Date(date);
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day);
+        return string;
       },
       setHolidayResults: function(value) {
         this.holiday_results = value;
       },
       setDisbeldDates: function(ranges) {
         this.state.disabledDates.ranges = ranges;
+      },
+      setHighlighted: function(dates) {
+        this.state.highlighted.dates = dates;
       },
       getHoliday: function() {
         let __this = this;
@@ -110,6 +118,7 @@
         },
         function(data, status) {
           var holiday_results = data.results;
+          var __dates = data.dates;
           __this.setHolidayResults(holiday_results)
 
           var ranges = [];
@@ -122,7 +131,12 @@
               to:to.setDate(to.getDate() + 1),
             });
           }
+          for (var i = 0; i < __dates.length; i++) {
+            dates.push(new Date(__dates[i]));
+          }
+          
           __this.setDisbeldDates(ranges);
+          __this.setHighlighted(dates);
         },
         function(message, status, data) {
           alert(message);

@@ -428,7 +428,6 @@ router.get('/holiday', async (req, res, next) => {
 router.get('/available_time', async (req, res, next) => {
   let {
     building_id,
-    room_id,
     day_of_the_week,
   } = req.query;
 
@@ -445,7 +444,6 @@ router.get('/available_time', async (req, res, next) => {
         list_count,
       } = await select_func.available_time(connection, {
         building_id,
-        room_id,
         day_of_the_week,
         sort_key: 'start_time',
       });
@@ -500,28 +498,24 @@ function checkAdminManager(connection, object) {
 function getDates(holiday_results) {
   let dates = [];
   for (let i in holiday_results) {
-    console.log(holiday_results[i].start_date, holiday_results[i].end_date, dates);
+    getDateRange(foo.parseDate(holiday_results[i].start_date), foo.parseDate(holiday_results[i].end_date), dates);
   }
   return dates;
 }
 
 function getDateRange(startDate, endDate, listDate) {
-  var dateMove = new Date(startDate);
-  var strDate = startDate;
+  let dateMove = new Date(startDate);
+  let strDate = startDate;
   if (startDate == endDate) {
-    var strDate = dateMove.toISOString().slice(0, 10);
+    strDate = dateMove.toISOString().slice(0, 10);
     listDate.push(strDate);
   } else {
-    console.log('==============')
-    while (strDate <= endDate) {
-      var strDate = dateMove.toISOString().slice(0, 10);
+    while (strDate < endDate) {
+      strDate = dateMove.toISOString().slice(0, 10);
       listDate.push(strDate);
-      console.log(strDate , ' ~ ', endDate)
       dateMove.setDate(dateMove.getDate() + 1);
-      console.log(dateMove)
     }
   }
-  console.log('listDate :::: ',listDate)
   return listDate;
 }
 module.exports = router;

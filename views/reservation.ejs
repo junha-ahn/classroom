@@ -17,7 +17,7 @@
         ></custom-datepicker>
       </template>
       <template v-if="menu_step=='time'">
-
+        <% include ./rsv_section/time %>
       </template>
 
     </main>
@@ -63,11 +63,11 @@
           formData:{
             room_id:null,
             date:null,
+            time_array: [],
           },
 
           rooms: {},
           holiday_results : [],
-          available_time_results: [],
         }
       },
       methods: {
@@ -173,11 +173,12 @@
         // DATE
         onSelected: function(date) {
           this.formData.date = date;
-          this.info.date = global.parseDateFromDB(date);
+          this.info.date = global.parseDate(date);
           this.nextMenuStep();
         },
         // TIME
         getAvailableTime: function() {
+          var __this = this;
           global.ajax({
             url: '/api/available_time',
             type: 'GET',
@@ -196,30 +197,72 @@
           })
         },
         setAvailableTimeResults: function (data) {
-          this.available_time_results = data;
+          this.formData.time_array = data;
         },
-
+        getTimeArrayIndex: function(available_time_id) {
+          var time_array = this.formData.time_array;
+          for (var i = 0; i < time_array.length; i++) {
+            if (time_array[i].available_time_id == available_time_id) {
+              return i
+            }
+          }
+        },
+        clickTimeBlock: function(_time) {
+          // 이미 존재하는 경우,
+          // 존재하지 않는 경우,
+          // 스타일 컨트롤
+          var time_array = this.formData.time_array;
+          var index = this.getTimeArrayIndex(_time.available_time_id);
+          if (!time_array[index].is_seleted) {
+            time_array[index].is_seleted = 1;
+          } else {
+            time_array[index].is_seleted = 0;
+          }
+        },
+        timeBlockClass: function (is_seleted) {
+          console.log('클래스!!', is_seleted)
+          if (!is_seleted) {
+            return 'btn btn-default'
+          } else {
+            return 'btn btn-primary'
+          }
+        },
         // DETAIL
 
         // LAST
+        
+        // =====================
+        resetRoom: function() {
+          this.info.floor = null;
+          this.info.room_name = null;
+          this.info.room_number = null;
+          this.formData.room_id = null;
+        },
+        resetDate: function() {
+          this.formData.date = null;
+          this.info.date = null;
+        },
+        resetTime: function() {
+          this.formData.time_array = null;
+          this.info.start_time = null;
+          this.info.end_time = null;
+        },
       },
       watch: {
         menu_step: function (menu_step) {
           switch (menu_step) {
             case 'room':
-              this.info.floor = null;
-              this.info.room_name = null;
-              this.info.room_number = null;
-              this.formData.room_id = null;
-              this.formData.date = null;
-              this.info.date = null;
               this.getRoom();
+
+              this.resetRoom();
+              this.resetDate();
+              this.resetTime();
               break;
             case 'date':
-              this.formData.date = null;
-              this.info.date = null;
+              this.resetDate();
               break;
             default:
+              this.getAvailableTime();
               break;
           }
         },

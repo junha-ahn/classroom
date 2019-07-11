@@ -7,16 +7,22 @@ function makeGlobal() {
     date.setMinutes(0);
     return date;
   }
-  var parseDateFromDB = function(string_from_db) {
-    var date = new Date(string_from_db);
+  var parseDate = function(date_string, is_seoul_tz) {
+    var date = new Date(date_string);
+    if (is_seoul_tz) {
+      date.setHours(date.getHours() - 9);
+    }
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
     var day = date.getDate();
     var string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day);
     return string;
   }
-  var parseDateTimeFromDB = function(string_from_db) {
-    var date = new Date(string_from_db);
+  var parseDateTime = function(date_string, is_seoul_tz) {
+    var date = new Date(date_string);
+    if (is_seoul_tz) {
+      date.setHours(date.getHours() - 9);
+    }
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
     var day = date.getDate();
@@ -90,8 +96,8 @@ function makeGlobal() {
   };
   return {
     resetTime : resetTime,
-    parseDateFromDB : parseDateFromDB,
-    parseDateTimeFromDB : parseDateTimeFromDB,
+    parseDate : parseDate,
+    parseDateTime : parseDateTime,
     serializeQuery: serializeQuery,
     ajax: ajax,
     getHeaderMenuName: getHeaderMenuName,

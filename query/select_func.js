@@ -986,6 +986,7 @@ let self = {
           available_time_id,
           building_id,
           room_id,
+          day_of_the_week,
           page,
           page_length,
           sort_key,
@@ -1010,6 +1011,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
               .else(squel.expr().and('available_time.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', day_of_the_week)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -1025,6 +1030,10 @@ let self = {
             .where(squel.case()
               .when('? IS NULL', room_id)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .where(squel.case()
+                .when('? IS NULL', day_of_the_week)
+                .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+                .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
               .else(squel.expr().and('available_time.room_id = ?', room_id)))
             .order(`available_time.${sort_key}`, sort_type)
             .limit(page_length)
@@ -1045,6 +1054,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
               .else(squel.expr().and('available_time.room_id = ?', room_id)))
+              .where(squel.case()
+                .when('? IS NULL', day_of_the_week)
+                .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+                .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
             .order(`available_time.${sort_key}`, sort_type)
             .toParam();
         }
