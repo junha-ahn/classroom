@@ -60,11 +60,11 @@ router.get('/reservation/intro/:building_id', async (req, res, next) => {
 router.get('/reservation/:building_id', async (req, res, next) => {
   try {
     let {
-      page_step
+      method
     } = req.query;
     let building_id = req.params.building_id;
     let building = info.building_object[building_id];
-    if (page_step == undefined || (page_step != 'R' && page_step != 'DT')) {
+    if (method == undefined || (method != 'R' && method != 'DT')) {
       res.render('error', foo.getResJson(req.user, {
         error_name: "페이지를 찾을수 없습니다",
         message: "다시 확인해주세요"
@@ -78,7 +78,7 @@ router.get('/reservation/:building_id', async (req, res, next) => {
       res.render('reservation', foo.getResJson(req.user, {
         query: req.query,
         params: req.params,
-        page_step,
+        method,
       }));
     }
   } catch (error) {
