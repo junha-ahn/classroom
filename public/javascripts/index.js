@@ -2,13 +2,30 @@ function makeGlobal() {
   var message = {
     NEED_LOGIN : '로그인이 필요합니다'
   }
+  var resetTime = function(date) {
+    date.setHours(0);
+    date.setMinutes(0);
+    return date;
+  }
   var parseDateFromDB = function(string_from_db) {
     let date = new Date(string_from_db);
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
     let day = date.getDate();
-
     let string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day);
+    return string;
+  }
+  var parseDateTimeFromDB = function(string_from_db) {
+    let date = new Date(string_from_db);
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    let string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day)
+      + ' ' + ((hours<10)? ("0"+hours): hours) + ':' + ((minutes<10)? ("0"+minutes): minutes);
     return string;
   }
   var header_name_by_class = {
@@ -72,7 +89,9 @@ function makeGlobal() {
     });
   };
   return {
+    resetTime : resetTime,
     parseDateFromDB : parseDateFromDB,
+    parseDateTimeFromDB : parseDateTimeFromDB,
     serializeQuery: serializeQuery,
     ajax: ajax,
     getHeaderMenuName: getHeaderMenuName,

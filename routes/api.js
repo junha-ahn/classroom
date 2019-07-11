@@ -388,27 +388,37 @@ router.get('/holiday', async (req, res, next) => {
   let {
     building_id,
     room_id,
+    year,
+    month,
   } = req.query;
 
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-    let {
-      results,
-      list_count,
-    } = await select_func.viewTableRoomHoliday(connection, {
-      room_id,
-      building_id,
-      sort_key: 'holiday_date',
-    });
-    res.status(200).json({
-      results,
-      list_count,
+  if (month && !year) {
+    res.status(401).json({
+      message : "년월을 함께 입력해주세요"
     })
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
+  } else {
+    let connection;
+    try {
+      connection = await db_func.getDBConnection();
+      let {
+        results,
+        list_count,
+      } = await select_func.viewTableRoomHoliday(connection, {
+        room_id,
+        building_id,
+        year,
+        month,
+        sort_key: 'start_date',
+      });
+      res.status(200).json({
+        results,
+        list_count,
+      })
+    } catch (error) {
+      next(error);
+    } finally {
+      db_func.release(connection);
+    }
   }
 });
 

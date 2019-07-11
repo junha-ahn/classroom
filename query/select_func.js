@@ -885,6 +885,8 @@ let self = {
           holiday_id,
           building_id,
           room_id,
+          year,
+          month,
           page,
           page_length,
           sort_key,

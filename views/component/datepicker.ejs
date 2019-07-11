@@ -4,15 +4,18 @@
 <script type="text/x-template" id="datepicker-template">
   <div>
     <vuejs-datepicker
-      :value="state.default_date"
       @selectedDisabled="selectedDisabled"
+      @changedMonth="changedMonth"
+      @selected="selected"
       :highlighted="state.highlighted"
       :disabled-dates="state.disabledDates"
-      @selected="selected"
-      v-model="selected_date"
       :inline="inline"
       :format="customFormatter"
       :language="ko"
+      :monday-first="true"
+      :value="state.default_date"
+      :maximum-view="maximumView"
+      v-model="selected_date"
     />
   </div>
 </script>
@@ -22,44 +25,66 @@
     template: '#datepicker-template',
     props: {
       inline: Boolean,
+      maximumView: String,
       default_date: Date,
       building_id: Number,
       room_id: Number,
       onSelected: Function,
     },
-    data: function(){ return {
-      ko: vdp_translation_ko.js,
-      selected_date: null,
-      room_id: this.room_id,
-      holiday_results: [],
-      state: {
-        default_date: this.default_date,
-        disabledDates: {
-          from: new Date(2020, 0, 26),
-          dates: [],
+    data: function(){ 
+      return {
+        ko: vdp_translation_ko.js,
+        selected_date: null,
+        room_id: this.room_id,
+        holiday_results: [],
+        state: {
+          default_date: this.default_date,
+          disabledDates: {
+            ranges: [],
+          },
+          highlighted: {
+            days: [6, 0], 
+            includeDisabled: false // Highlight disabled dates
+          },
         },
-        highlighted: {
-          days: [6, 0], 
-          includeDisabled: true // Highlight disabled dates
-        },
-      },
-
-    }},
+      }
+    },
     methods: {
       selected: function(date) {
         this.onSelected(date)
       },
       selectedDisabled: function(object) {
-        alert('비활성화 상태입니다')
+        var selected_date = global.resetTime(new Date(object.timestamp))
+        var holiday_results = this.holiday_results;
+        for (var i = 0; i < holiday_results.length; i++) {
+          var start_date = global.resetTime(new Date(holiday_results[i].start_date));
+          if (start_date <= selected_date) {
+            var end_date =global.resetTime(new Date(holiday_results[i].end_date));
+            if (end_date >= selected_date) {
+              alert('[ '+ holiday_results[i].name+ ' ] \n'+ '다른 날짜를 선택해주세요');
+            }
+          }
+        }
+      },
+      changedMonth: function(object) {
+        var date = null;
+        if (object.timestamp) {
+          date = new Date(object.timestamp);
+        } else {
+          date = new Date(object);
+        }
+        var year = date.getFullYear();
+        var month = parseInt(date.getMonth()) + 1;
+        
       },
       customFormatter: function(date) {
         return global.parseDateFromDB(date);
       },
-      _chageHolidayResults: function(value) {
+      setHolidayResults: function(value) {
         this.holiday_results = value;
       },
-      _chageDisbeldDates: function(value) {
-        this.state.disabledDates.dates = value;
+      setDisbeldDates: function(ranges) {
+        this.state.disabledDates.ranges = ranges;
       },
     },
     created: function() {
@@ -75,13 +100,19 @@
       },
       function(data, status) {
         var holiday_results = data.results;
-        __this._chageHolidayResults(holiday_results)
+        __this.setHolidayResults(holiday_results)
 
+        var ranges = [];
         var dates = [];
         for (var i = 0; i < holiday_results.length; i++) {
-          dates.push(new Date(holiday_results[i].holiday_date));
+          var from = new Date(holiday_results[i].start_date)
+          var to = new Date(holiday_results[i].end_date)
+          ranges.push({
+            from: from,
+            to: to.setDate(to.getDate() + 1),
+          });
         }
-        __this._chageDisbeldDates(dates);
+        __this.setDisbeldDates(ranges);
       },
       function(message, status, data) {
         alert(message);

@@ -14,9 +14,6 @@
 .vdp-datepicker__calendar .cell {
   color: black !important;
   font-weight: bold  !important;
-  &.disabled {
-    color: gray !important;
-  }
   &.today {
     border: 1px solid black;
   }
@@ -27,5 +24,8 @@
   &.sat {
     background-color: transparent !important;
     color: blue !important;
+  }
+  &.disabled {
+    color: #b5bac4 !important;
   }
 }
