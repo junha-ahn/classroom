@@ -64,6 +64,22 @@ let self = {
 
     return target_string;
   },
+  parseTimeString: (time_string, show_meridiem) => {
+    let res_string = '';
+    if (time_string) {
+      time_string = time_string.substring(0, 5);
+      let getTime = time_string.substring(0, 2);
+
+      if (show_meridiem) {
+        res_string += getTime < 12 ? '오전 ' : '오후 ';
+        res_string += `${getTime == 12 ? getTime : getTime%12}:${time_string.substring(3,5)}`;
+        
+      } else {
+        res_string = time_string;
+      }
+    }
+    return res_string || '(미지정)';
+  },
   cleaningList: (array, user, is_personal) => {
     for (let i in array) {
       if (array[i].auth_rsv_create != undefined) {

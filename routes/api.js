@@ -447,9 +447,22 @@ router.get('/available_time', async (req, res, next) => {
         day_of_the_week,
         sort_key: 'start_time',
       });
+      let is_active = false;
+
+      for (let i in results) {
+        results[i].is_seleted = 0;
+        results[i].is_active = 1;
+        results[i].start_time_string = foo.parseTimeString(results[i].start_time, true)
+        results[i].end_time_string = foo.parseTimeString(results[i].end_time, true)
+        if (results[i].is_active) {
+          is_active = true;
+        }
+      }
+
       res.status(200).json({
         results,
         list_count,
+        is_active,
       })
     } catch (error) {
       next(error);

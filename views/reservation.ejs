@@ -205,10 +205,8 @@
           },
           function(data, status) {
             var results = data.results;
-            for (var i = 0; i < results.length; i++) {
-              results[i].is_seleted = 0;
-            }
-            if (results.length == 0) {
+
+            if (!data.is_active) {
               __this.prevMenuStep();
               alert('예약 가능한 시간이 없습니다.')
             } else {
@@ -246,14 +244,18 @@
           if (!_time.is_seleted) {
             var start_time = this.info.start_time;
             var end_time = this.info.end_time;
+            // 1. 시간 대소 비교
+            // 2. 연속 선택 
+            // - 강제 연속 선택 (네이버)
+            // - 시작과 끝 사이는 연속 선택...
+            // - 연속 선택 여부 체크
             if (!start_time) {
-              this.info.start_time = _time.start_time;
+              this.info.start_time = _time;
             } else {
-              start_time = new Date(start_time);
-              console.log(start_time)
+              start_time = _time;
             }
             if (!end_time) {
-              this.info.end_time = _time.end_time;
+              this.info.end_time = _time;
             } else {
 
             }
@@ -288,14 +290,15 @@
         menu_step: function (menu_step) {
           switch (menu_step) {
             case 'room':
-              this.getRoom();
-
               this.resetRoom();
               this.resetDate();
               this.resetTime();
+
+              this.getRoom();
               break;
             case 'date':
               this.resetDate();
+              this.resetTime();
               break;
             default:
               this.getAvailableTime();
