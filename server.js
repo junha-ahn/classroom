@@ -7,5 +7,5 @@ let server = http.Server(app);
 let port = process.argv[2] || process.env.PORT;
 
 server.listen(port, function () {
-  console.log('HTTP Server Running :',port);
+  console.log('http://localhost:'+port);
 });
