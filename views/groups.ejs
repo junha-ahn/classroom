@@ -1,18 +1,21 @@
 <% include ./sub/header %>
-      <label>학과</label>
-      <select class="form-control" v-model="query.department_id" @change="onChange()">
-        <option v-bind:value="0" :selected="query.department_id===0">전체</option>
-        <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="query.department_id == department.department_id" :key="i">
-          {{ department.name }}
-        </option>
-      </select>
-      <label>학습관</label>
-      <select class="form-control" v-model="query.building_id" @change="onChange()">
-        <option v-bind:value="0" :selected="query.building_id===0">전체</option>
-        <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
-          {{ building.name }}
-        </option>
-      </select>
+      <div class="lookup_select"> 
+        <label>학과</label>
+        <select class="form-control" v-model="query.department_id" @change="onChange()">
+          <option v-bind:value="0" :selected="query.department_id===0">전체</option>
+          <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="query.department_id == department.department_id" :key="i">
+            {{ department.name }}
+          </option>
+        </select>
+
+        <label>학습관</label>
+        <select class="form-control" v-model="query.building_id" @change="onChange()">
+          <option v-bind:value="0" :selected="query.building_id===0">전체</option>
+          <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
+            {{ building.name }}
+          </option>
+        </select>
+      </div>
       <table class="table table-hover">
         <thead>
           <th>학과</th>
@@ -49,14 +52,15 @@
           </li>
         </ul>
       </nav>
-      <div v-if="is_user">
+      <div class="lookup_button" v-if="is_user">
         <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 그룹</button>
         <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 그룹</button>
 
         <button type="button" class="btn btn-primary" v-if="query.is_join==1" @click="clickIsJoin(0)">가입한 그룹</button>
         <button type="button" class="btn btn-default" v-else @click="clickIsJoin(1)">가입한 그룹</button>
+        <button type="button" class="btn btn-primary" @click="gotoWrite">생성</button>
       </div>
-      <button type="button" class="btn btn-primary" @click="gotoWrite">생성</button>
+      
     </main>
     
     <footer>

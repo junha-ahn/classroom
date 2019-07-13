@@ -1,42 +1,185 @@
-/*
+// SASS 스타일적용페이지
 
-메인 페이지 내, 버튼 배경 색상 변경 예제
+// ★전체스타일적용!★
 
-.main {
-  button {
-    background-color: black
+div {
+ // border: 1px solid red;
+}
+
+body {
+  font-size:1.8vmin!important;
+}
+
+thead {
+  tr {
+    height: 50px;
+
+    th {
+      font-size: 2vmin;
+      vertical-align: middle !important;
+    }
   }
 }
 
-*/
-
-// 예약 페이지
-.reservation {
-  // 캘린터
-  .vdp-datepicker__calendar .cell {
-    color: black !important;
-    font-weight: bold  !important;
-    &.day {
-  
-    }
-    &.today {
-      border: 1px solid blue !important;
-    }
-    &.sun {
-      background-color: transparent !important;
-      color: red !important;
-    }
-    &.sat {
-      background-color: transparent !important;
-      color: blue !important;
-    }
-    &.disabled {
-      color: #b5bac4 !important;
-      &.highlighted {
-        background-color: transparent;
-        color: red !important;
-        border: 1px solid #E4E5E5;
+.table {
+  tbody {
+    tr {
+      td {
+        font-size: 1.8vmin;
+        vertical-align: middle !important;
       }
     }
   }
+}
+
+//----------------------------------------------------
+
+//@media screen and (max-width:768px){}
+
+//----------------------------------------------------
+
+
+.main {
+  main {
+    h1 {
+      font-size: 4vmin;
+      text-align: center;
+      padding: 1.2%;
+      font-weight: 600;
+    }
+
+    .campuses {
+      width: 100%;
+
+      dl {
+        text-align: center;
+
+        dt {
+          div {
+            width: 50% !important;
+
+            .btn.btn-primary {
+              line-height: 1.5;
+              font-size: 3vmin;
+            }
+
+
+            button {
+              width: 100% !important;
+            }
+
+            dl {
+              dt {
+                div {
+                  width: 100% !important;
+
+                  button {
+                    font-size: 2vmin;
+                    padding: 3%;
+                    margin: 0.5% 0;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+//.group_lookup 
+
+.group_lookup {
+  main {
+    margin: 0 4%;
+    .btn {
+      font-size:1.8vmin!important;
+    }
+    select {
+      font-size:1.8vmin!important;
+    }
+    nav {
+      text-align: center;
+    
+    }
+    .lookup_button {
+      float: right;
+    }
+    .lookup_select {
+      text-align: center;
+      margin-bottom:1%;
+
+      label {
+        margin-bottom: 0 !important;
+        margin: 2% 1% !important;
+        font-size: 2.5vmin;
+      }
+
+      .form-control {
+        display: inline-block !important;
+        width: 30% !important;
+
+        option {}
+      }
+    }
+
+    .table {
+
+      text-align: center;
+
+      thead {
+        tr {
+          background: #337ab7;
+
+          th {
+            text-align: center;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+// 예약 페이지
+.reservation {
+
+  // 캘린터
+  main {
+
+    .vdp-datepicker__calendar .cell {
+      color: black !important;
+      font-weight: bold !important;
+
+      &.day {}
+
+      &.today {
+        border: 1px solid blue !important;
+      }
+
+      &.sun {
+        background-color: transparent !important;
+        color: red !important;
+      }
+
+      &.sat {
+        background-color: transparent !important;
+        color: blue !important;
+      }
+
+      &.disabled {
+        color: #b5bac4 !important;
+
+        &.highlighted {
+          background-color: transparent;
+          color: red !important;
+          border: 1px solid #E4E5E5;
+        }
+      }
+    }
+  }
+
 }
