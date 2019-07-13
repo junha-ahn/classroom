@@ -509,10 +509,51 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
     let connection;
     try {
       connection = await db_func.getDBConnection();
-      
-      res.status(401).json({
-        message : '처리중!'
-      })
+      let {
+        results
+      } = await select_func.room(connection, {
+        building_id,
+        room_id,
+      });
+
+      if (!results[0]) {
+        res.status(401).json({
+          message: '강의실을 다시 선택해주세요'
+        })
+      } else if(!foo.checkPermission(req.user, results[0].auth_rsv_create)) {
+        res.status(401).json({
+          message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
+        })
+      } else {
+        // rsv_apply_min_day 체크
+        // start ~ end 예약 체크
+        let start_datetime;
+        let end_datetime;
+  
+        let rsv_status = (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS;
+  
+        await db_func.beginTransaction(connection);
+        let insert_result = await insert_func.room(connection, {
+          isTransaction: true,
+          rsv_status,
+          room_rsv_category_id : 1,
+          department_id,
+          study_group_id,
+          user_id : req.user ? req.user.user_id : null,
+          start_datetime,
+          end_datetime,
+          student_count,
+          non_student_count,
+          representative_name,
+          representative_phone,
+          description,
+        });
+  
+        await db_func.commit(connection);
+        foo.setRes(res, insert_result, {
+          message: '성공했습니다'
+        })
+      }
     } catch (error) {
       next(error);
     } finally {

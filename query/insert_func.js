@@ -176,7 +176,7 @@ let self = {
         let {
           isTransaction,
           rsv_status,
-          rsv_category_id,
+          room_rsv_category_id,
           department_id,
           study_group_id,
           user_id,
@@ -191,7 +191,7 @@ let self = {
         let queryString = squel.insert()
           .into('room_rsv')
           .set('rsv_status', rsv_status)
-          .set('rsv_category_id', rsv_category_id)
+          .set('room_rsv_category_id', room_rsv_category_id)
           .set('department_id', department_id)
           .set('auth_rsv_cancel', auth_rsv_cancel)
           .set('study_group_id', study_group_id)
