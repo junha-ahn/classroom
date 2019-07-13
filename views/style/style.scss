@@ -3,9 +3,8 @@
 // ★전체스타일적용!★
 
 div {
- // border: 1px solid red;
+  border: 1px solid red;
 }
-
 body {
   font-size:1.8vmin!important;
 }
@@ -41,6 +40,7 @@ thead {
 
 .main {
   main {
+    margin: 0 4%;
     h1 {
       font-size: 4vmin;
       text-align: center;
@@ -88,7 +88,6 @@ thead {
   }
 }
 
-//.group_lookup 
 
 .group_lookup {
   main {
@@ -142,6 +141,11 @@ thead {
   }
 }
 
+.reservation_intro {
+  main {
+    margin: 0 4%;
+  }
+}
 
 
 // 예약 페이지
