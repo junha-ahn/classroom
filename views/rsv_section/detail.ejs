@@ -1,13 +1,13 @@
 <div>
     <form v-on:submit="detailSubmit">
       <label>학과</label>
-      <select class="form-control" v-model="formData.department_id" :disabled="menu_step != 'detail'">
+      <select class="form-control" v-model="formData.department_id" :disabled="menu_step != 'detail'" @change="changeDepartment">
         <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="formData.department_id == department.department_id" :key="i">
           {{ department.name }}
         </option>
       </select>
       <label>스터디</label>
-      <select class="form-control" v-model="formData.study_group_id" :disabled="menu_step != 'detail'">
+      <select class="form-control" v-model="formData.study_group_id" :disabled="formData.department_id == null || menu_step != 'detail'">
         <option v-for="(study_group, i) in study_group_results" :key="i">
           {{ study_group.name }}
         </option>

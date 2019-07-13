@@ -46,7 +46,7 @@ router.get('/study_group', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.studyGroup(connection, {
+    } = await select_func.viewTableStudyGroup(connection, {
       page,
       page_length,
       department_id,

@@ -308,6 +308,9 @@
           }
         },
         // DETAIL
+        changeDepartment: function() {
+          this.getStudyGroup();
+        },
         setDepartment: function(results,department_id) {
           this.department_results = results;
           this.formData.department_id = department_id;
@@ -336,8 +339,9 @@
             type: 'GET',
             data: null,
             query: {
+              department_id: this.formData.department_id,
               building_id: this.params.building_id,
-              is_join: 1,
+              is_join: this.is_user ? 1 : 0,
             }
           },
           function(data, status) {
