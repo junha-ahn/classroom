@@ -25,9 +25,9 @@
       (squel.select()
         .from('room_category')
         .toParam()))
-    let room_rsv_category_results = await db_func.sendQueryToDB(connection,
+    let rsv_category_results = await db_func.sendQueryToDB(connection,
       (squel.select()
-        .from('room_rsv_category')
+        .from('rsv_category')
         .toParam()))
     let permission_results = await db_func.sendQueryToDB(connection,
       (squel.select()
@@ -39,7 +39,7 @@
       building_results,
       department_results,
       room_category_results,
-      room_rsv_category_results,
+      rsv_category_results,
       permission_results,
     };
     
