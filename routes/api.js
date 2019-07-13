@@ -540,7 +540,21 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
           message: `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
         })
       } else {
-        // start ~ end 예약 체크
+        /*
+          0. 휴일 체크
+
+          1. time_id를 기준으로 예약시 time이 변경되는 문제
+            - time_array 자체를 넘길 경우, 일치하는지 비교?
+            -> 실제 예약은 관리자를 통해 이루어지기때문에 큰 문제가 없을것 같음
+
+          2. time_array를 만들고 , start / end 를 완성
+            - (상세 조회시 노출 예정)
+
+          3. 시간 체크 (available_time)
+          4. start ~ end 예약 체크 (승인된 예약 전부 조회 후, list_count 가 1이상이라면, 예약 불가능 상태) => 예약 수용치는 1
+
+          5. room_rsv, room_rsv_time, room_to_use 테이블에 각각 추가
+        */
         let start_datetime;
         let end_datetime;
   
