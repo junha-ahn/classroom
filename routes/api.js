@@ -485,6 +485,42 @@ router.get('/available_time', async (req, res, next) => {
   }
 });
 
+
+router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
+  const {
+    building_id,
+    room_id,
+    date,
+    time_id_array,
+    department_id,
+    study_group_id,
+    student_count,
+    non_student_count,
+    representative_name,
+    representative_phone,
+    description,
+  } = req.body;
+
+  if (building_id == undefined || room_id == undefined || date == undefined || time_id_array == undefined) {
+    res.status(401).json({
+      message: '필수값을 입력해주세요'
+    })
+  } else {
+    let connection;
+    try {
+      connection = await db_func.getDBConnection();
+      
+      res.status(401).json({
+        message : '처리중!'
+      })
+    } catch (error) {
+      next(error);
+    } finally {
+      db_func.release(connection);
+    }
+  }
+});
+
 function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {

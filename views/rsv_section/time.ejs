@@ -1,5 +1,5 @@
 <dl>
-  <dt v-for="(time, i) in formData.time_array" :key="i">
+  <dt v-for="(time, i) in info.time_array" :key="i">
       <button type="button" :class="timeBlockClass(time)" @click="clickTimeBlock(time)" :disabled="!time.is_active">
         {{time.start_time_string}}  ~ {{time.end_time_string}}
       </button>

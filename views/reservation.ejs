@@ -64,11 +64,12 @@
             room_number : null,
             date: null,
             tiem_block_type: 'blank',
+            time_array: [],
           },
           formData:{
             room_id:null,
             date:null,
-            time_array: [],
+            time_id_array:[],
           },
 
           rooms: {},
@@ -223,10 +224,10 @@
           })
         },
         setAvailableTimeResults: function (data) {
-          this.formData.time_array = data;
+          this.info.time_array = data;
         },
         getTimeArrayIndex: function(available_time_id) {
-          var time_array = this.formData.time_array;
+          var time_array = this.info.time_array;
           for (var i = 0; i < time_array.length; i++) {
             if (time_array[i].available_time_id == available_time_id) {
               return i
@@ -234,7 +235,7 @@
           }
         },
         resetTimeBlockSelected: function() {
-          var time_array =  this.formData.time_array;
+          var time_array =  this.info.time_array;
           for (var i = 0; i < time_array.length; i++) {
             time_array[i].is_seleted = 0;
           }
@@ -242,7 +243,7 @@
           this.info.end_time = null;
         },
         clickTimeBlock: function(_time) {
-          var time_array = this.formData.time_array;
+          var time_array = this.info.time_array;
           var _available_time_id = _time.available_time_id;
 
           var find_on_first = false;
@@ -340,6 +341,12 @@
           if (this.menu_step == 'detail') {
             this.nextMenuStep();
           } else {
+            var time_array = this.info.time_array;
+            for (var i = 0; i < time_array.length; i ++) {
+              if (time_array[i].is_seleted == 1) {
+                this.formData.time_id_array.push(time_array[i].available_time_id)
+              }
+            }
             global.ajax({
               url: '/api/room_rsv',
               type: 'POST',
@@ -368,19 +375,18 @@
           this.info.min_date = new Date();
         },
         resetTime: function() {
-          this.formData.time_array = null;
+          this.info.time_array = null;
           this.info.start_time = null;
           this.info.end_time = null;
         },
         resetDetail: function() {
           this.formData.department_id = null;
-          this.info.study_group_id = null;
-          this.info.student_count = null;
-          this.info.non_student_count = null;
-          this.info.representative_name = null;
-          this.info.representative_phone = null;
-          this.info.study_group_id = null;
-          this.info.description = null;
+          this.formData.study_group_id = null;
+          this.formData.student_count = null;
+          this.formData.non_student_count = null;
+          this.formData.representative_name = null;
+          this.formData.representative_phone = null;
+          this.formData.description = null;
         },
       },
       watch: {
