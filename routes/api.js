@@ -21,12 +21,23 @@ const {
   checkReqInfo,
 } = require('../global/middlewares');
 
+
+router.get('/departemnt', async (req, res, next) => {
+  res.status(200).json({
+    query: req.query,
+    results: info.department_results,
+    department_id: (req.user) ? req.user.department_id : null,
+  })
+});
+
 router.get('/study_group', async (req, res, next) => {
   const {
     page,
     page_length,
     department_id,
     building_id,
+    is_mine,
+    is_join,
   } = req.query;
 
   let connection;
@@ -40,15 +51,17 @@ router.get('/study_group', async (req, res, next) => {
       page_length,
       department_id,
       building_id,
+      is_mine,
+      is_join,
+      user_id: (req.user) ? req.user.user_id : null,
     })
 
     foo.cleaningList(results);
-
-    res.status(200, foo.getResJson(req.user, {
+    res.status(200).json({
       results,
       list_count,
       query: req.query,
-    }));
+    });
   } catch (error) {
     next(error);
   } finally {

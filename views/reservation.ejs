@@ -5,7 +5,7 @@
       <template v-if="menu_step=='room'">
         <% include ./rsv_section/room %>
       </template>
-      <template v-if="menu_step=='date'">
+      <template v-else-if="menu_step=='date'">
         <custom-datepicker
           :inline="true"
           :default_date="new Date()"
@@ -16,10 +16,10 @@
           maximum-view="day"
         ></custom-datepicker>
       </template>
-      <template v-if="menu_step=='time'">
+      <template v-else-if="menu_step=='time'">
         <% include ./rsv_section/time %>
       </template>
-      <template v-if="menu_step=='detail'">
+      <template v-else>
         <% include ./rsv_section/detail %>
       </template>
 
@@ -73,6 +73,8 @@
 
           rooms: {},
           holiday_results : [],
+          study_group_results: [],
+          department_results: [],
         }
       },
       methods: {
@@ -291,8 +293,67 @@
           }
         },
         // DETAIL
+        setDepartment: function(results,department_id) {
+          this.department_results = results;
+          this.formData.department_id = department_id;
+        },
+        setStudyGroupResults: function(data) {
+          this.study_group_results = data;
+        },
+        getDepartment: function() {
+          var __this = this;
+          global.ajax({
+            url: '/api/departemnt',
+            type: 'GET',
+            data: null,
+          },
+          function(data, status) {
+            __this.setDepartment(data.results, data.department_id);
+          },
+          function(message, status, data) {
+            alert(message);
+          })
+        },
+        getStudyGroup: function() {
+          var __this = this;
+          global.ajax({
+            url: '/api/study_group',
+            type: 'GET',
+            data: null,
+            query: {
+              building_id: this.params.building_id,
+              is_join: 1,
+            }
+          },
+          function(data, status) {
+            var results = data.results;
+            __this.setStudyGroupResults(results);
+          },
+          function(message, status, data) {
+            alert(message);
+          })
+        },
 
-        // LAST
+        // DETAIL & Lar
+        detailSubmit: function(e) {
+          e.preventDefault();
+          if (this.menu_step == 'detail') {
+            this.nextMenuStep();
+          } else {
+            global.ajax({
+              url: '/api/room_rsv',
+              type: 'POST',
+              data: this.formData,
+            },
+            function(data, status) {
+              var results = data.results;
+              __this.setStudyGroupResults(results);
+            },
+            function(message, status, data) {
+              alert(message);
+            })
+          }
+        },
         
         // =====================
         resetRoom: function() {
@@ -311,6 +372,16 @@
           this.info.start_time = null;
           this.info.end_time = null;
         },
+        resetDetail: function() {
+          this.formData.department_id = null;
+          this.info.study_group_id = null;
+          this.info.student_count = null;
+          this.info.non_student_count = null;
+          this.info.representative_name = null;
+          this.info.representative_phone = null;
+          this.info.study_group_id = null;
+          this.info.description = null;
+        },
       },
       watch: {
         menu_step: function (menu_step) {
@@ -326,8 +397,17 @@
               this.resetDate();
               this.resetTime();
               break;
-            default:
+            case 'time':
+              this.resetTime();
+              this.resetDetail();
+
               this.getAvailableTime();
+              break;
+            case 'detail':
+              this.resetDetail();
+
+              this.getDepartment();
+              this.getStudyGroup();
               break;
           }
         },
