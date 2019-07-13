@@ -501,9 +501,14 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
     description,
   } = req.body;
 
+  let _date = new Date(date);
   if (building_id == undefined || room_id == undefined || date == undefined || time_id_array == undefined) {
     res.status(401).json({
       message: '필수값을 입력해주세요'
+    })
+  } else if (date != undefined && isNaN(_date)) {
+    res.status(401).json({
+      message: '날짜를 다시 입력해주세요'
     })
   } else {
     let connection;
@@ -515,6 +520,12 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
         building_id,
         room_id,
       });
+      
+      let min_date = (() => {
+        let min_date = foo.resetDate(new Date());
+        min_date.setDate(min_date.getDate() + results[0].rsv_apply_min_day);
+        return min_date;
+      })();
 
       if (!results[0]) {
         res.status(401).json({
@@ -524,8 +535,11 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
         res.status(401).json({
           message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
         })
+      } else if (foo.resetTime(_date) < min_date) {
+        res.status(401).json({
+          message: `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
+        })
       } else {
-        // rsv_apply_min_day 체크
         // start ~ end 예약 체크
         let start_datetime;
         let end_datetime;

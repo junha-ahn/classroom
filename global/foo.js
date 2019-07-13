@@ -36,6 +36,11 @@ let self = {
     ip = (ip) ? ip.replace(/:/g, "") : ip;
     return ip;
   },
+  resetTime: (date) => {
+    date.setHours(0);
+    date.setMinutes(0);
+    return date;
+  },
   parseDateTime: (date_string, is_seoul_tz) => {
     let target_date = new Date(date_string);
     if (is_seoul_tz) {
@@ -73,7 +78,7 @@ let self = {
       if (show_meridiem) {
         res_string += getTime < 12 ? '오전 ' : '오후 ';
         res_string += `${getTime == 12 ? getTime : getTime%12}:${time_string.substring(3,5)}`;
-        
+
       } else {
         res_string = time_string;
       }
