@@ -19,6 +19,9 @@
       <template v-if="menu_step=='time'">
         <% include ./rsv_section/time %>
       </template>
+      <template v-if="menu_step=='detail'">
+        <% include ./rsv_section/detail %>
+      </template>
 
     </main>
     
@@ -60,6 +63,7 @@
             room_name : null,
             room_number : null,
             date: null,
+            tiem_block_type: 'blank',
           },
           formData:{
             room_id:null,
@@ -98,7 +102,6 @@
               }
             }
           }
-
           return {
             is_next : is_next,
             is_now : is_now,
@@ -228,37 +231,60 @@
             }
           }
         },
-        clickTimeBlock: function(_time) {
-          // 이미 존재하는 경우,
-          // 존재하지 않는 경우,
-          // 스타일 컨트롤
-          var time_array = this.formData.time_array;
-          var index = this.getTimeArrayIndex(_time.available_time_id);
-          if (!time_array[index].is_seleted) {
-            time_array[index].is_seleted = 1;
-          } else {
-            time_array[index].is_seleted = 0;
+        resetTimeBlockSelected: function() {
+          var time_array =  this.formData.time_array;
+          for (var i = 0; i < time_array.length; i++) {
+            time_array[i].is_seleted = 0;
           }
+          this.info.start_time = null;
+          this.info.end_time = null;
+        },
+        clickTimeBlock: function(_time) {
+          var time_array = this.formData.time_array;
+          var _available_time_id = _time.available_time_id;
+
+          var find_on_first = false;
+          var reset_flag = false;
+          
+          for (var i = 0; i < time_array.length; i++) {
+            var is_find = time_array[i].available_time_id == _available_time_id;
+            if (this.info.tiem_block_type == 'blank') {
+              if (is_find) {
+                time_array[i].is_seleted = 1;
+                this.info.tiem_block_type = 'fisrt';
+                this.info.start_time = time_array[i];
+                break;
+              }
+            } else  {
+              if (is_find && (!find_on_first || time_array[i].is_seleted == 1)) {
+                reset_flag = true;
+                break;
+              } 
+              if (time_array[i].is_seleted == 1) {
+                find_on_first = true;
+              }
+
+              if (find_on_first) {
+                time_array[i].is_seleted = 1;
+                if (is_find) {
+                  this.info.end_time = time_array[i];
+                  this.info.tiem_block_type = 'second';
+                  break;
+                }
+              }
+            }
+          }
+          
+          if (reset_flag) {
+            this.info.tiem_block_type = 'blank'
+            this.resetTimeBlockSelected();
+          }
+
         },
         timeBlockClass: function (_time) {
           if (!_time.is_seleted) {
             var start_time = this.info.start_time;
             var end_time = this.info.end_time;
-            // 1. 시간 대소 비교
-            // 2. 연속 선택 
-            // - 강제 연속 선택 (네이버)
-            // - 시작과 끝 사이는 연속 선택...
-            // - 연속 선택 여부 체크
-            if (!start_time) {
-              this.info.start_time = _time;
-            } else {
-              start_time = _time;
-            }
-            if (!end_time) {
-              this.info.end_time = _time;
-            } else {
-
-            }
             return 'btn btn-default'
           } else {
             return 'btn btn-primary'

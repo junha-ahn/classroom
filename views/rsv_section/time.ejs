@@ -1,7 +1,8 @@
 <dl>
   <dt v-for="(time, i) in formData.time_array" :key="i">
-      <button type="button" :class="timeBlockClass(time)" @click="clickTimeBlock(time)">
+      <button type="button" :class="timeBlockClass(time)" @click="clickTimeBlock(time)" :disabled="!time.is_active">
         {{time.start_time_string}}  ~ {{time.end_time_string}}
       </button>
   </dt>
 </dl>
+<button type="button" class="btn btn-primary" @click="nextMenuStep">다음으로</button>
