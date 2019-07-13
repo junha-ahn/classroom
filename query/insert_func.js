@@ -21,13 +21,13 @@ let self = {
 
         user_type = 10;
         await db_func.beginTransaction(connection);
-        let userString = squel.insert()
+        let queryString = squel.insert()
           .into('user')
           .set('user_type', user_type)
           .set('email', email)
           .set('password', hashed_password)
           .toParam();
-        let insert_result = await db_func.sendQueryToDB(connection, userString, true);
+        let insert_result = await db_func.sendQueryToDB(connection, queryString, true);
         let user_id = insert_result.insertId;
         await self.person(connection, {
           isTransaction: true,
@@ -72,7 +72,7 @@ let self = {
           phone,
           student_number,
         } = object;
-        let personString = squel.insert()
+        let queryString = squel.insert()
           .into('person')
           .set('user_id', user_id)
           .set('campus_id', campus_id)
@@ -82,7 +82,7 @@ let self = {
           .set('phone', phone)
           .set('student_number', student_number)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, personString, isTransaction));
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }
@@ -98,7 +98,7 @@ let self = {
           name,
           description,
         } = object;
-        let studyGroupString = squel.insert()
+        let queryString = squel.insert()
           .into('study_group')
           .set('department_id', department_id)
           .set('building_id', building_id)
@@ -106,7 +106,7 @@ let self = {
           .set('description', description)
           .set('user_id', user_id)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, studyGroupString));
+        resolve(await db_func.sendQueryToDB(connection, queryString));
       } catch (error) {
         reject(error);
       }
@@ -120,12 +120,12 @@ let self = {
           study_group_id,
         } = object;
 
-        let userString = squel.insert()
+        let queryString = squel.insert()
           .into('study_group_user')
           .set('user_id', user_id)
           .set('study_group_id', study_group_id)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, userString, true));
+        resolve(await db_func.sendQueryToDB(connection, queryString, true));
       } catch (error) {
         reject(error);
       }
@@ -148,7 +148,7 @@ let self = {
           rsv_apply_min_day,
           rsv_cancel_min_day,
         } = object;
-        let roomString = squel.insert()
+        let queryString = squel.insert()
           .into('room')
           .set('building_id', building_id)
           .set('room_category_id', room_category_id)
@@ -164,7 +164,68 @@ let self = {
           .set('rsv_apply_min_day', rsv_apply_min_day)
           .set('rsv_cancel_min_day', rsv_cancel_min_day)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, roomString));
+        resolve(await db_func.sendQueryToDB(connection, queryString));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  room_rsv: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          rsv_status,
+          rsv_category_id,
+          department_id,
+          study_group_id,
+          user_id,
+          start_datetime,
+          end_datetime,
+          student_count,
+          non_student_count,
+          representative_name,
+          representative_phone,
+          description,
+        } = object;
+        let queryString = squel.insert()
+          .into('room_rsv')
+          .set('rsv_status', rsv_status)
+          .set('rsv_category_id', rsv_category_id)
+          .set('department_id', department_id)
+          .set('auth_rsv_cancel', auth_rsv_cancel)
+          .set('study_group_id', study_group_id)
+          .set('user_id', user_id)
+          .set('start_datetime', start_datetime)
+          .set('end_datetime', end_datetime)
+          .set('student_count', student_count)
+          .set('non_student_count', non_student_count)
+          .set('representative_name', representative_name)
+          .set('representative_phone', representative_phone)
+          .set('description', description)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  room_rsv_time: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          room_rsv_id,
+          start_time,
+          end_time,
+        } = object;
+        let queryString = squel.insert()
+          .into('room_rsv_time')
+          .set('room_rsv_id', room_rsv_id)
+          .set('start_time', start_time)
+          .set('end_time', end_time)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }
