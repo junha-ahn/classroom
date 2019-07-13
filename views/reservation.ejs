@@ -151,7 +151,7 @@
         chooseRoom: function(room) {
           if (room.available_for_rsv_create != true) {
             var message = '예약 불가능 상태입니다.'
-            if (!this.user) {
+            if (!this.is_user) {
               message += '\n로그인 후 다시 확인해주세요.' 
             } else {
               message +=  '\n관리자로 로그인 해 주세요'
@@ -187,8 +187,22 @@
             alert(message);
           })
         },
-        setRooms: function(data) {
-          this.rooms = data;
+        setRooms: function(results) {
+          if (results.length == 0) {
+            alert('예약 가능한 교실이 없습니다.');
+            if (!this.user) {
+              message += '\n로그인 후 다시 확인해주세요.' 
+            } else {
+              message +=  '\n관리자로 로그인 해 주세요'
+            } 
+            if (this.menu_step == 'DT') {
+              this.prevMenuStep();
+            } else {
+
+            }
+          } else {
+            this.rooms = results;
+          }
         },
         // DATE
         onSelected: function(date) {
