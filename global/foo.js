@@ -93,6 +93,7 @@ let self = {
       if (array[i].auth_rsv_cancel != undefined) {
         array[i].available_for_rsv_cancel = self.checkPermission(user, array[i].auth_rsv_cancel);
       }
+      array[i].password = undefined
       array[i].date_created = array[i].date_created ? self.parseDate(array[i].date_created, true) : array[i].date_created;
       array[i].date_joined = array[i].date_joined ? self.parseDate(array[i].date_joined, true) : array[i].date_joined;
       array[i].date_last_updated = array[i].date_last_updated ? self.parseDate(array[i].date_last_updated, true) : array[i].date_last_updated;
@@ -133,15 +134,11 @@ let self = {
   getResJson: (user, json) => {
     json.is_user = (user) ? true : false;
     json.is_admin = (user && user.user_type == info.ADMIN_TYPE) ? true : false;
-    return {
-      ...json,
-    }
+    return json
   },
   setRes: (res, set_result, json) => {
     if (set_result.affectedRows) {
-      res.status(200).json({
-        ...json,
-      })
+      res.status(200).json(json)
     } else {
       res.status(constant.UNCHANGED_STATUS).json({
         display_message: constant.UNCHANGED_MESSAGE

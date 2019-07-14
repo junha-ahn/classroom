@@ -81,7 +81,10 @@ let self = {
         let countString
         let {
           user_id,
+          campus_id,
+          building_id,
           email,
+          user_type,
           page,
           page_length,
           sort_key,
@@ -103,6 +106,18 @@ let self = {
               .when('? IS NULL', email)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user.email = ?', email)))
+            .where(squel.case()
+              .when('? IS NULL', user_type)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_type = ?', user_type)))
+            .where(squel.case()
+              .when('? IS NULL', campus_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.campus_id = ?', campus_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.building_id = ?', building_id)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -116,6 +131,18 @@ let self = {
               .when('? IS NULL', email)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user.email = ?', email)))
+            .where(squel.case()
+              .when('? IS NULL', user_type)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_type = ?', user_type)))
+            .where(squel.case()
+              .when('? IS NULL', campus_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.campus_id = ?', campus_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.building_id = ?', building_id)))
             .order(`user.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -132,6 +159,18 @@ let self = {
               .when('? IS NULL', email)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('user.email = ?', email)))
+            .where(squel.case()
+              .when('? IS NULL', user_type)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('user.user_type = ?', user_type)))
+            .where(squel.case()
+              .when('? IS NULL', campus_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.campus_id = ?', campus_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.building_id = ?', building_id)))
             .order(`user.${sort_key}`, sort_type)
             .toParam();
         }
@@ -716,10 +755,11 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
-        let countString
+        let countString;
         let {
           room_id,
           building_id,
+          floor,
           room_category_id,
           page,
           page_length,
@@ -745,6 +785,10 @@ let self = {
               .when('? IS NULL', room_category_id)
               .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.room_category_id = ?', room_category_id)))
+            .where(squel.case()
+              .when('? IS NULL', floor)
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
+              .else(squel.expr().and('room.floor = ?', floor)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -761,6 +805,10 @@ let self = {
               .when('? IS NULL', room_category_id)
               .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.room_category_id = ?', room_category_id)))
+            .where(squel.case()
+              .when('? IS NULL', floor)
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
+              .else(squel.expr().and('room.floor = ?', floor)))
             .order(`room.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -780,6 +828,10 @@ let self = {
               .when('? IS NULL', room_category_id)
               .then(squel.expr().and('room.room_id IS NOT NULL'))
               .else(squel.expr().and('room.room_category_id = ?', room_category_id)))
+            .where(squel.case()
+              .when('? IS NULL', floor)
+              .then(squel.expr().and('room.room_id IS NOT NULL'))
+              .else(squel.expr().and('room.floor = ?', floor)))
             .order(`room.${sort_key}`, sort_type)
             .toParam();
         }
@@ -1054,10 +1106,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
               .else(squel.expr().and('available_time.room_id = ?', room_id)))
-              .where(squel.case()
-                .when('? IS NULL', day_of_the_week)
-                .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
-                .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
+            .where(squel.case()
+              .when('? IS NULL', day_of_the_week)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
             .order(`available_time.${sort_key}`, sort_type)
             .toParam();
         }

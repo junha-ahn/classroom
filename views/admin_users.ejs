@@ -3,17 +3,12 @@
       <h1>관리자_회원목록</h1>
       <div>
         <div>
-          <button type="button" class="btn btn-default">회원/관리자</button>
-          <select class="form-control">
-            <option>회원</option>
-            <option>관리자</option>
-          </select>
+          <button type="button" class="btn btn-default">관리자</button>
         </div>
         <div>
           <table class="table table-striped">
             <thead>
               <tr>
-                <td>구분</td>
                 <td>이름</td>
                 <td>학번</td>
                 <td>전화번호</td>
@@ -22,20 +17,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>학생</td>
-                <td>조아라</td>
-                <td>201900-000000</td>
-                <td>010-1234-1234</td>
-                <td><button type="button" class="btn btn-default">상세보기</button></td>
-                <td><button type="button" class="btn btn-primary">관리자<br>권한부여</button></td>
-              </tr>
-              <tr>
-                <td>학생</td>
-                <td>조아라</td>
-                <td>201900-000000</td>
-                <td>010-1234-1234</td>
-                <td><button type="button" class="btn btn-default">상세보기</button></td>
+              <tr v-for="(user, i) in results" :key="i">
+                <td>{{user.name}}</td>
+                <td>{{user.student_number}}</td>
+                <td>{{user.phone}}</td>
+                <td><button type="button" class="btn btn-default" @click="location.href='/admin/user/single/' + user.user_id">상세보기</button></td>
                 <td><button type="button" class="btn btn-primary">관리자<br>권한부여</button></td>
               </tr>
             </tbody>
@@ -44,12 +30,14 @@
         <div>
           <nav>
             <ul class="pagination">
-              <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-              <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#">2 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#">3 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#">4 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+              <li
+              v-for="page in pagenation"
+              :key="page.value"
+              :class="{active: page.isSelf}">
+                <a @click="chagePage(page.value)" aria-label="Previous">
+                  <span aria-hidden="true" v-html="page.name"></span>
+                </a>
+              </li>
             </ul>
           </nav>
         </div>
@@ -71,11 +59,28 @@
           admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
           is_user: <%- is_user %> ,
           is_admin: <%- is_admin %> ,
+          results: <%-JSON.stringify(results) %> ,
+          list_count: <%-JSON.stringify(list_count) %> ,
+          query: <%-JSON.stringify(query) %> ,
+          params: <%-JSON.stringify(params) %> ,
         }
       },
       methods: {
 
-      }
+      },
+      computed: {
+        pagenation: function() {
+          return pagenation({
+            numberOfItems:this.list_count,
+            itemsPerPage: 10,
+            pagesPerNav:5,
+            indexOfPage: this.query.page,
+            hasPrevAndNext: true,
+            prevText:'&laquo;',
+            nextText:'&raquo;',
+          })
+        },
+      }, 
     })
   </script>
 

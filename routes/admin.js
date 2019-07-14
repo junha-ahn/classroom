@@ -3,7 +3,7 @@ const router = express.Router();
 
 const db_func = require('../global/db_func');
 
-const  {
+const {
   select_func,
 } = require('../query/index');
 
@@ -18,14 +18,68 @@ const {
 } = require('../global/middlewares');
 
 router.get('/user/lookup', isAdmin, async (req, res, next) => {
-  res.render('admin_users', foo.getResJson(req.user, {
 
-  }))
+  let {
+    page,
+    page_length,
+    is_admin,
+  } = req.query
+
+  page_length = page_length || 10;
+  page = page || 1;
+  
+  let connection;
+  try {
+    connection = await db_func.getDBConnection();
+
+    let {
+      results,
+      list_count
+    } = await select_func.viewTableUser(connection, {
+      page,
+      page_length,
+      user_type: is_admin ? info.ADMIN_TYPE : null,
+      campus_id: req.user.campus_id,
+      building_id: req.user.building_id,
+    });
+    foo.cleaningList(results);
+    res.render('admin_users', foo.getResJson(req.user, {
+      results,
+      list_count,
+      query: req.query,
+      params: req.params,
+    }))
+  } catch (error) {
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
 });
-router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
-  res.render('admin_user', foo.getResJson(req.user, {
 
-  }))
+router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
+
+  let user_id = req.params.user_id; 
+  try {
+    connection = await db_func.getDBConnection();
+
+    let {
+      results,
+      list_count
+    } = await select_func.viewTableUser(connection, {
+      user_id,
+    });
+    foo.cleaningList(results);
+    res.render('admin_user', foo.getResJson(req.user, {
+      results,
+      query : req.query,
+      params : req.params
+    }))
+
+  } catch (error){
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
 });
 
 router.get('/schedule', isAdmin, async (req, res, next) => {
@@ -34,10 +88,45 @@ router.get('/schedule', isAdmin, async (req, res, next) => {
   }))
 });
 router.get('/room/lookup', isAdmin, async (req, res, next) => {
-  res.render('admin_rooms', foo.getResJson(req.user, {
+  
+  let {
+    page,
+    page_length,
+    floor,
+    room_category_id,
+  } = req.query
 
-  }))
+  page_length = page_length || 10;
+  page = page || 1;
+
+  let connection;
+  try {
+    connection = await db_func.getDBConnection();
+    let {
+      results,
+      list_count,
+    } = await select_func.room( connection, {
+      building_id: req.user.building_id,
+      floor,
+      room_category_id,
+      page,
+      page_length
+    });
+    foo.cleaningList(results);
+
+    res.render('admin_rooms', foo.getResJson(req.user, {
+      results,
+      list_count,
+      query: req.query,
+      params: req.params,  
+    }))
+  } catch (error) {
+    next(error)
+  } finally {
+    db_func.release(connection);
+  }
 });
+
 router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
   res.render('admin_room', foo.getResJson(req.user, {
 
