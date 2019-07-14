@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment')
 
 const db_func = require('../global/db_func');
 const constant = require('../global/constant');
@@ -441,9 +442,11 @@ router.get('/holiday', async (req, res, next) => {
 router.get('/available_time', async (req, res, next) => {
   let {
     building_id,
+    room_id,
+    date,
     day_of_the_week,
   } = req.query;
-
+  console.log(req.query)
   if (building_id == undefined && day_of_the_week == undefined) {
     res.status(401).json({
       message: "필수 항목을 입력해주세요"
@@ -452,6 +455,7 @@ router.get('/available_time', async (req, res, next) => {
     let connection;
     try {
       connection = await db_func.getDBConnection();
+      
       let {
         results,
         list_count,
@@ -460,13 +464,32 @@ router.get('/available_time', async (req, res, next) => {
         day_of_the_week,
         sort_key: 'start_time',
       });
-      let is_active = false;
+      let rsv_results;
+      if (room_id) {
+        rsv_results = (await select_func.viewTableRoomRsv(connection, {
+          room_id: room_id,
+          rsv_status : info.SUBMIT_RSV_STATUS,
+          start_datetime : moment(`${foo.parseDate(date)} 00:00`).format('YYYY-MM-DD HH:mm'),
+          end_datetime : moment(`${foo.parseDate(date)} 24:00`).format('YYYY-MM-DD HH:mm'),
+        })).results;
 
+      }
+      let is_active = false;
       for (let i in results) {
         results[i].is_seleted = 0;
         results[i].is_active = 1;
         results[i].start_time_string = foo.parseTimeString(results[i].start_time, true)
         results[i].end_time_string = foo.parseTimeString(results[i].end_time, true)
+
+        for (let j in rsv_results) {
+          let _start = moment(`${foo.parseDate(date)} ${results[i].start_time}`);
+          let _end = moment(`${foo.parseDate(date)} ${results[i].end_time}`);
+          let start_datetime = moment(foo.parseDateTime(rsv_results[j].start_datetime, true));
+          let end_datetime = moment(foo.parseDateTime(rsv_results[j].end_datetime, true));
+          if (_start < end_datetime && _end > start_datetime) {
+            results[i].is_active = 0;
+          }
+        }
         if (results[i].is_active) {
           is_active = true;
         }
@@ -485,10 +508,8 @@ router.get('/available_time', async (req, res, next) => {
   }
 });
 
-
 router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
   const {
-    building_id,
     room_id,
     date,
     time_id_array,
@@ -500,13 +521,12 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
     representative_phone,
     description,
   } = req.body;
-
-  let _date = new Date(date);
-  if (building_id == undefined || room_id == undefined || date == undefined || time_id_array == undefined) {
+  let _date = foo.resetTime(moment(date));
+  if (room_id == undefined || date == undefined || time_id_array == undefined) {
     res.status(401).json({
       message: '필수값을 입력해주세요'
     })
-  } else if (date != undefined && isNaN(_date)) {
+  } else if (date != undefined && !_date.isValid()) {
     res.status(401).json({
       message: '날짜를 다시 입력해주세요'
     })
@@ -517,70 +537,99 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
       let {
         results
       } = await select_func.room(connection, {
-        building_id,
         room_id,
       });
-      
-      let min_date = (() => {
-        let min_date = foo.resetDate(new Date());
-        min_date.setDate(min_date.getDate() + results[0].rsv_apply_min_day);
-        return min_date;
-      })();
 
+      let min_date = (() => {
+        let _min_date = moment();
+        foo.resetTime(_min_date)
+        _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
+        return _min_date;
+      })();
       if (!results[0]) {
         res.status(401).json({
           message: '강의실을 다시 선택해주세요'
         })
-      } else if(!foo.checkPermission(req.user, results[0].auth_rsv_create)) {
+      } else if (!foo.checkPermission(req.user, results[0].auth_rsv_create)) {
         res.status(401).json({
           message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
         })
-      } else if (foo.resetTime(_date) < min_date) {
+      } else if (_date < min_date) {
         res.status(401).json({
           message: `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
         })
       } else {
-        /*
-          0. 휴일 체크
+        let is_holiday = (await select_func.viewTableRoomHoliday(connection, {
+          room_id: results[0].room_id,
+          building_id: results[0].building_id,
+          date: moment(date).format('YYYY-MM-DD'),
+        })).results[0] ? true : false;
 
-          1. time_id를 기준으로 예약시 time이 변경되는 문제
-            - time_array 자체를 넘길 경우, 일치하는지 비교?
-            -> 실제 예약은 관리자를 통해 이루어지기때문에 큰 문제가 없을것 같음
+        if (is_holiday) {
+          res.status(401).json({
+            message: '휴일입니다. 다른 날짜를 선택해주세요'
+          })
+        } else {
+          let available_time_results = (await select_func.viewTableRoomAvailableTime(connection, {
+            building_id: results[0].building_id,
+            room_id: results[0].room_id,
+            time_id_array,
+            day_of_the_week: _date.day(),
+            sort_key: 'start_time',
+            sort_type: true,
+          })).results;
+          if (!available_time_results[0] || time_id_array.length != available_time_results.length) {
+            res.status(401).json({
+              message: '시간을 다시 선택해주세요'
+            })
+          } else {
+            let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[0].start_time)}`);
+            let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[available_time_results.length - 1].end_time)}`);
+            let rsv_results = (await select_func.viewTableRoomRsv(connection, {
+              room_id: results[0].room_id,
+              rsv_status : info.SUBMIT_RSV_STATUS,
+              start_datetime : start_datetime.format('YYYY-MM-DD HH:mm'),
+              end_datetime : end_datetime.format('YYYY-MM-DD HH:mm'),
+            })).results;
 
-          2. time_array를 만들고 , start / end 를 완성
-            - (상세 조회시 노출 예정)
-
-          3. 시간 체크 (available_time)
-          4. start ~ end 예약 체크 (승인된 예약 전부 조회 후, list_count 가 1이상이라면, 예약 불가능 상태) => 예약 수용치는 1
-
-          5. room_rsv, room_rsv_time, room_to_use 테이블에 각각 추가
-        */
-        let start_datetime;
-        let end_datetime;
-  
-        let rsv_status = (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS;
-  
-        await db_func.beginTransaction(connection);
-        let insert_result = await insert_func.room(connection, {
-          isTransaction: true,
-          rsv_status,
-          room_rsv_category_id : 1,
-          department_id,
-          study_group_id,
-          user_id : req.user ? req.user.user_id : null,
-          start_datetime,
-          end_datetime,
-          student_count,
-          non_student_count,
-          representative_name,
-          representative_phone,
-          description,
-        });
-  
-        await db_func.commit(connection);
-        foo.setRes(res, insert_result, {
-          message: '성공했습니다'
-        })
+            if (rsv_results[0]) {
+              res.status(401).json({
+                message: '이미 예약되었습니다.'
+              })
+            } else {
+              await db_func.beginTransaction(connection);
+              let insert_result = await insert_func.room_rsv(connection, {
+                isTransaction: true,
+                rsv_status : (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS,
+                room_rsv_category_id: 1,
+                department_id,
+                study_group_id,
+                user_id: req.user ? req.user.user_id : null,
+                start_datetime : start_datetime.format('YYYY-MM-DD HH:mm'),
+                end_datetime : end_datetime.format('YYYY-MM-DD HH:mm'),
+                student_count,
+                non_student_count,
+                representative_name,
+                representative_phone,
+                description,
+              });
+              await insert_func.room_to_use(connection, {
+                isTransaction: true,
+                room_rsv_id: insert_result.insertId,
+                room_id_array: [room_id],
+              })
+              await insert_func.room_rsv_time(connection, {
+                isTransaction: true,
+                room_rsv_id: insert_result.insertId,
+                time_array: available_time_results,
+              })
+              await db_func.commit(connection);
+              foo.setRes(res, insert_result, {
+                message: '성공했습니다'
+              })
+            }
+          }
+        }
       }
     } catch (error) {
       next(error);

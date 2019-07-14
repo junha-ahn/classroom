@@ -5,6 +5,7 @@ function makeGlobal() {
   var resetTime = function(date) {
     date.setHours(0);
     date.setMinutes(0);
+    date.setMilliseconds(0);
     return date;
   }
   var parseDate = function(date_string, is_seoul_tz) {

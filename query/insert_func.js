@@ -193,7 +193,6 @@ let self = {
           .set('rsv_status', rsv_status)
           .set('room_rsv_category_id', room_rsv_category_id)
           .set('department_id', department_id)
-          .set('auth_rsv_cancel', auth_rsv_cancel)
           .set('study_group_id', study_group_id)
           .set('user_id', user_id)
           .set('start_datetime', start_datetime)
@@ -216,14 +215,44 @@ let self = {
         let {
           isTransaction,
           room_rsv_id,
-          start_time,
-          end_time,
+          time_array,
         } = object;
+        let fieldsRows = [];
+        for (let i in time_array) {
+          fieldsRows.push({
+            room_rsv_id,
+            start_time : time_array[i].start_time,
+            end_time : time_array[i].end_time,
+          })
+        }
         let queryString = squel.insert()
           .into('room_rsv_time')
-          .set('room_rsv_id', room_rsv_id)
-          .set('start_time', start_time)
-          .set('end_time', end_time)
+          .setFieldsRows(fieldsRows)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  room_to_use: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          room_rsv_id,
+          room_id_array,
+        } = object;
+        let fieldsRows = [];
+        for (let i in room_id_array) {
+          fieldsRows.push({
+            room_rsv_id,
+            room_id : room_id_array[i],
+          })
+        }
+        let queryString = squel.insert()
+          .into('room_to_use')
+          .setFieldsRows(fieldsRows)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
