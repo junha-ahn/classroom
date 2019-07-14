@@ -1,28 +1,31 @@
 <% include ./sub/header %>
-      <div class="panel panel-primary" @click="chageMethod('R')">
-        <div class="panel-heading">
-          교실 예약
+      <h1>예약/조회 페이지입니다.</h1>
+      <div class="mom_div clearfix">
+        <div class="panel panel-primary" @click="chageMethod('R')">
+          <div class="panel-heading">
+            교실 예약
+          </div>
+          <div class="panel-body">
+            원하는 <span>교실에 따라</span> 예약합니다.
+          </div>
         </div>
-        <div class="panel-body">
-          원하는 교실을 예약합니다
-        </div>
-      </div>
 
-      <div class="panel panel-primary" @click="chageMethod('DT')">
-        <div class="panel-heading">
-          시간 예약
+        <div class="margin_center panel panel-primary" @click="chageMethod('DT')">
+          <div class="panel-heading">
+            시간 예약
+          </div>
+          <div class="panel-body">
+            원하는 <span>시간에 따라</span> 예약합니다.
+          </div>
         </div>
-        <div class="panel-body">
-          원하는 시간을 예약합니다
-        </div>
-      </div>
 
-      <div class="panel panel-info">
-        <div class="panel-heading">
-          예약 조회
-        </div>
-        <div class="panel-body">
-          예약을 예약합니다
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            예약 조회
+          </div>
+          <div class="panel-body">
+            예약된 교실을 조회합니다.
+          </div>
         </div>
       </div>
     </main>

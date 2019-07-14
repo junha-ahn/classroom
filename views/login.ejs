@@ -1,17 +1,20 @@
 <% include ./sub/header %>
-      <button type="button" @click="_user">유저 채우기</button>
-      <button type="button" @click="_admin">관리자 채우기</button>
-      <form v-on:submit="login">
-        <div class="form-inline">
-          <label>이메일 주소</label>
-          <input v-model="loginForm.email" type="email" class="form-control" placeholder="이메일을 입력하세요">
+      <div class="mom_div">
+        <h1>로그인을 해주세요</h1>
+        <!--<button type="button" @click="_user">유저 채우기</button>-->
+        <!--<button type="button" @click="_admin">관리자 채우기</button>-->
+        <div class="Contents">
+          <form v-on:submit="login">
+            <div class="form-inline">
+              <input v-model="loginForm.email" type="email" placeholder="  이메일을 입력하세요" class="button_width">
+            </div>
+            <div class="form-inline">
+              <input v-model="loginForm.password" type="password" placeholder="  암호를 입력하세요" class="button_width">
+            </div>
+            <button type="submit" class="button_width">로그인</button>
+          </form>
         </div>
-        <div class="form-inline">
-          <label>암호</label>
-          <input v-model="loginForm.password" type="password" class="form-control"placeholder="암호">
-        </div>
-        <button type="submit" class="btn btn-primary">로그인</button>
-      </form>
+      </div><!--mom_div끝-->
     </main>
     
     <footer>

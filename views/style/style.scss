@@ -1,12 +1,18 @@
 // SASS 스타일적용페이지
 
 // ★전체스타일적용!★
+.clearfix:after {
+  display: block;
+  content: '';
+  clear: both;
+}
 
 div {
-  border: 1px solid red;
+  // border: 1px solid red;
 }
+
 body {
-  font-size:1.8vmin!important;
+  font-size: 1.8vmin !important;
 }
 
 thead {
@@ -41,6 +47,7 @@ thead {
 .main {
   main {
     margin: 0 4%;
+
     h1 {
       font-size: 4vmin;
       text-align: center;
@@ -88,26 +95,124 @@ thead {
   }
 }
 
+.reservation_intro {
+  main {
+    margin: 0 4%;
+    text-align: center;
+    display: block;
+    content: '';
+    clear: both;
+
+    h1 {
+      font-size: 4vmin;
+      text-align: center;
+      padding: 2%;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 2%;
+    }
+
+    .mom_div {
+      width: 100%;
+      float: right;
+      position: relative;
+      left: -50%;
+
+      .margin_center {
+        margin: 0 5%;
+      }
+
+      .panel {
+        float: left;
+        position: relative;
+        left: 50%;
+        width: 30%;
+        cursor: pointer;
+      }
+
+      .panel-heading {
+        padding: 5%;
+        font-size: 3vmin;
+        font-weight: bold;
+      }
+
+      .panel-body {
+        padding: 10%;
+
+        span {
+          color: #ff9000;
+          font-size: 2vmin;
+          font-weight: bold;
+        }
+      }
+
+    }
+  }
+
+  //main끝
+}
+
+//reservation_intro끝
+
+.login {
+  main {
+    .mom_div {
+      h1 {
+        text-align: center;
+        padding: 1% 0;
+      }
+
+      .Contents {
+        margin: 0 auto;
+        text-align: center;
+
+        .button_width {
+          width: 30%;
+          padding: 1.2% 0;
+          margin-bottom: 1.5%;
+        
+        }
+        input{
+          border:1px solid #ddd;
+        }
+
+        button {
+          background-color: #337ab7;
+          color:#fff;
+          border-style:none;
+        }
+      }
+    }
+  }
+
+}
+
+//login 끝
 
 .group_lookup {
   main {
     margin: 0 4%;
+
     .btn {
-      font-size:1.8vmin!important;
+      font-size: 1.8vmin !important;
     }
+
     select {
-      font-size:1.8vmin!important;
+      font-size: 1.8vmin !important;
     }
+
     nav {
       text-align: center;
-    
+
     }
+
     .lookup_button {
       float: right;
     }
+
     .lookup_select {
       text-align: center;
-      margin-bottom:1%;
+      margin-bottom: 1%;
 
       label {
         margin-bottom: 0 !important;
