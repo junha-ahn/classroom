@@ -17,6 +17,7 @@
       :maximum-view="maximumView"
       v-model="selected_date"
     ></vuejs-datepicker>
+    {{min_date}}
   </div>
 </script>
 
@@ -145,7 +146,11 @@
       },
     },
     mounted: function() {
+      console.log('하이~ ::', this.min_date)
       this.getHoliday();
+    },
+    created: function() {
+      console.log('create~ ::', this.min_date)
     },
     components: {
       vuejsDatepicker: vuejsDatepicker,

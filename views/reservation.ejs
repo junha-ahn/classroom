@@ -58,7 +58,7 @@
           },
           
           info : {
-            min_date: new Date(),
+            min_date: null,
             floor : null,
             room_name : null,
             room_number : null,
@@ -162,7 +162,7 @@
             var min_date = global.resetTime(new Date());
             min_date.setDate(min_date.getDate() + room.rsv_apply_min_day);
             this.info.min_date = min_date;
-
+            // 오류.. MIN DATE!!!!!!
             this.info.room_number = room.room_number;
             this.info.room_name =  room.name;
             this.formData.room_id = room.room_id;
