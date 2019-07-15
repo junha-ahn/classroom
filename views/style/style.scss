@@ -39,14 +39,16 @@ thead {
 
 //----------------------------------------------------
 
-//@media screen and (max-width:768px){}
+@media screen and (max-width:768px){
+  
+}
 
 //----------------------------------------------------
 
 
 .main {
   main {
-    margin: 0 4%;
+   
 
     h1 {
       font-size: 4vmin;
@@ -97,7 +99,8 @@ thead {
 
 .reservation_intro {
   main {
-    margin: 0 4%;
+    margin:0 auto;
+    width:80%;
     text-align: center;
     display: block;
     content: '';
@@ -191,7 +194,7 @@ thead {
 
 .group_lookup {
   main {
-    margin: 0 4%;
+    
 
     .btn {
       font-size: 1.8vmin !important;
@@ -248,7 +251,8 @@ thead {
 
 .reservation_intro {
   main {
-    margin: 0 4%;
+    margin: 0 auto;
+    width:80%;
   }
 }
 
@@ -291,4 +295,45 @@ thead {
     }
   }
 
+}
+
+
+
+
+
+/********** 상단nav틀어지는부분 **********/
+
+@media (max-width: 768px){
+  .navbar-nav {
+    float: left !important;
+  }
+  .navbar-nav>li {
+    float: left !important;
+  }
+  .collapse {
+    display: block !important;
+    visibility: initial !important;
+  }
+  .navbar-right {
+     float: right!important;
+     margin-right: -15px;
+  }
+}
+
+
+@media (min-width:300px){
+  .navbar-nav {
+    float: left !important;
+  }
+  .navbar-nav>li {
+    float: left !important;
+  }
+  .collapse {
+    display: block !important;
+    visibility: initial !important;
+  }
+  .navbar-right {
+     float: right!important;
+     margin-right: -15px;
+  }
 }
