@@ -446,7 +446,6 @@ router.get('/available_time', async (req, res, next) => {
     date,
     day_of_the_week,
   } = req.query;
-  console.log(req.query)
   if (building_id == undefined && day_of_the_week == undefined) {
     res.status(401).json({
       message: "필수 항목을 입력해주세요"

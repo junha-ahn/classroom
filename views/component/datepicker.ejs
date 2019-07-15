@@ -1,0 +1,158 @@
+<script type="text/javascript" src="https://unpkg.com/vuejs-datepicker"></script>
+<script type="text/javascript" src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/ko.js"></script>
+
+<script type="text/x-template" id="datepicker-template">
+  <div>
+    <vuejs-datepicker
+      @selectedDisabled="selectedDisabled"
+      @changedMonth="changedMonth"
+      @selected="selected"
+      :highlighted="state.highlighted"
+      :disabled-dates="state.disabledDates"
+      :inline="inline"
+      :format="customFormatter"
+      :language="ko"
+      :monday-first="true"
+      :open-date="state.default_date"
+      :maximum-view="maximumView"
+      v-model="selected_date"
+    ></vuejs-datepicker>
+    {{min_date}}
+  </div>
+</script>
+
+<script>
+  Vue.component('custom-datepicker', {
+    template: '#datepicker-template',
+    props: {
+      inline: Boolean,
+      maximumView: String,
+      default_date: Date,
+      min_date: Date,
+      building_id: Number,
+      room_id: Number,
+      onSelected: Function,
+    },
+    data: function(){ 
+      return {
+        ko: vdp_translation_ko.js,
+        selected_date: null,
+        room_id: this.room_id,
+        holiday_results: [],
+        year: this.default_date.getFullYear(),
+        month: this.default_date.getMonth() + 1,
+        state: {
+          default_date: this.default_date,
+          //selete_min_day
+          disabledDates: {
+            to: this.min_date || null,
+            ranges: [],
+          },
+          highlighted: {
+            dates: [
+              
+            ],
+            includeDisabled: true // Highlight disabled dates
+          },
+        },
+      }
+    },
+    methods: {
+      selected: function(seleted_date) {
+        this.onSelected(global.resetTime(seleted_date));
+      },
+      selectedDisabled: function(object) {
+        var selected_date = global.resetTime(new Date(object.timestamp))
+        var holiday_results = this.holiday_results;
+        var message = null;
+        for (var i = 0; i < holiday_results.length; i++) {
+          var start_date = global.resetTime(new Date(holiday_results[i].start_date));
+          if (start_date <= selected_date) {
+            var end_date =global.resetTime(new Date(holiday_results[i].end_date));
+            if (end_date >= selected_date) {
+              message = '[ '+ holiday_results[i].name+ ' ] \n'+ '다른 날짜를 선택해주세요'
+            }
+          }
+        }
+        alert(message ? message : '예약은 ' + global.parseDate(this.min_date) + ' 이후로 가능합니다');
+      },
+      changedMonth: function(object) {
+        var date = null;
+        if (object.timestamp) {
+          date = new Date(object.timestamp);
+        } else {
+          date = new Date(object);
+        }
+        this.year = date.getFullYear();
+        this.month = parseInt(date.getMonth()) + 1;
+        this.getHoliday();
+      },
+      customFormatter: function(date) {
+        date = new Date(date);
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var string = year + '-' + ((month<10)? ("0"+month): month) + '-' + ((day<10)? ("0"+day): day);
+        return string;
+      },
+      setHolidayResults: function(value) {
+        this.holiday_results = value;
+      },
+      setDisbeldDates: function(ranges) {
+        this.state.disabledDates.ranges = ranges;
+      },
+      setHighlighted: function(dates) {
+        this.state.highlighted.dates = dates;
+      },
+      getHoliday: function() {
+        let __this = this;
+        global.ajax({
+          url: '/api/holiday',
+          type: 'GET',
+          data: null,
+          query: {
+            building_id : this.building_id,
+            room_id: this.room_id,
+            year: this.year,
+            month: this.month,
+            need_dates: true,
+          },
+        },
+        function(data, status) {
+          var holiday_results = data.results;
+          var __dates = data.dates;
+          __this.setHolidayResults(holiday_results)
+          var ranges = [];
+          var dates = [];
+          for (var i = 0; i < holiday_results.length; i++) {
+            var from = global.resetTime(new Date(holiday_results[i].start_date))
+            var to = global.resetTime(new Date(holiday_results[i].end_date))
+            ranges.push({
+              from: from,
+              to:to.setDate(to.getDate() + 1),
+            });
+          }
+          for (var i = 0; i < __dates.length; i++) {
+            dates.push(new Date(__dates[i]));
+          }
+          
+          __this.setDisbeldDates(ranges);
+          __this.setHighlighted(dates);
+        },
+        function(message, status, data) {
+          alert(message);
+        })
+      },
+    },
+    mounted: function() {
+      console.log('하이~ ::', this.min_date)
+      this.getHoliday();
+    },
+    created: function() {
+      console.log('create~ ::', this.min_date)
+    },
+    components: {
+      vuejsDatepicker: vuejsDatepicker,
+    },
+  })
+</script> 
