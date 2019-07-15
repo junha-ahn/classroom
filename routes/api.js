@@ -520,6 +520,7 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
     representative_phone,
     description,
   } = req.body;
+
   let _date = foo.resetTime(moment(date));
   if (room_id == undefined || date == undefined || time_id_array == undefined) {
     res.status(401).json({
@@ -590,7 +591,6 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
               start_datetime : start_datetime.format('YYYY-MM-DD HH:mm'),
               end_datetime : end_datetime.format('YYYY-MM-DD HH:mm'),
             })).results;
-
             if (rsv_results[0]) {
               res.status(401).json({
                 message: '이미 예약되었습니다.'

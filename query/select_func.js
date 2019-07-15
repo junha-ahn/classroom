@@ -1,5 +1,4 @@
 const squel = require('squel');
-// squel  ORM 같은거 ?? 
 
 const db_func = require('../global/db_func.js');
 
@@ -939,6 +938,7 @@ let self = {
           room_id,
           year,
           month,
+          date,
           page,
           page_length,
           sort_key,
@@ -962,6 +962,10 @@ let self = {
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.building_id = ?', building_id)))
             .where(squel.case()
+              .when('? IS NULL', date)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)))
+            .where(squel.case()
               .when('? IS NULL', room_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.room_id = ? OR holiday.room_id IS NULL', room_id)))
@@ -982,6 +986,10 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', date)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)))
             .where(squel.case()
               .when('? IS NULL', room_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
@@ -1006,6 +1014,10 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', date)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)))
             .where(squel.case()
               .when('? IS NULL', room_id)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
@@ -1113,6 +1125,190 @@ let self = {
             .order(`available_time.${sort_key}`, sort_type)
             .toParam();
         }
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  viewTableRoomAvailableTime: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          building_id,
+          room_id,
+          time_id_array,
+          day_of_the_week,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+
+        sort_key = (sort_key) ? sort_key : 'available_time_id';
+        sort_type = (sort_type == false) ? false : true;
+        let is_search_array = time_id_array && time_id_array[0] ? true : null;
+        if (page && page_length) {
+          countString = squel.select()
+            .from('available_time')
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.room_id = ? OR available_time.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_search_array)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_array : [0])))
+            .where(squel.case()
+              .when('? IS NULL', day_of_the_week)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('available_time')
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.room_id = ? OR available_time.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_search_array)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_array : [0])))
+            .where(squel.case()
+              .when('? IS NULL', day_of_the_week)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
+            .order(`available_time.${sort_key}`, sort_type)
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('available_time')
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.room_id = ? OR available_time.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_search_array)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_array : [0])))
+            .where(squel.case()
+              .when('? IS NULL', day_of_the_week)
+              .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
+              .else(squel.expr().and('available_time.day_of_the_week = ?', day_of_the_week)))
+            .order(`available_time.${sort_key}`, sort_type)
+            .toParam();
+        }
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  viewTableRoomRsv: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          room_id,
+          rsv_status,
+          start_datetime,
+          end_datetime,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+        sort_key = (sort_key) ? sort_key : 'room_rsv_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('room_to_use')
+            .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', rsv_status)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+            .where(squel.case()
+              .when('? IS NULL OR ? IS NULL', start_datetime, end_datetime)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime, start_datetime)))
+            .field('COUNT(*)', 'list_count')
+            .group('room_rsv.room_rsv_id')
+            .toParam();
+          queryString = squel.select()
+            .from('room_to_use')
+            .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', rsv_status)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+            .where(squel.case()
+              .when('? IS NULL OR ? IS NULL', start_datetime, end_datetime)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime, start_datetime)))
+            .order(`room_rsv.${sort_key}`, sort_type)
+            .group('room_rsv.room_rsv_id')
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('room_to_use')
+            .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', rsv_status)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+            .where(squel.case()
+              .when('? IS NULL OR ? IS NULL', start_datetime, end_datetime)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime, start_datetime)))
+            .order(`room_rsv.${sort_key}`, sort_type)
+            .group('room_rsv.room_rsv_id')
+            .toParam();
+        }
+
         let results = await db_func.sendQueryToDB(connection, queryString);
         let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
         resolve({

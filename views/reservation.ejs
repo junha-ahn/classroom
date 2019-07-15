@@ -217,7 +217,7 @@
             query: {
               building_id : this.params.building_id,
               room_id : this.formData.room_id,
-              date : this.formData.date,
+              date : global.parseDate(this.formData.date),
               day_of_the_week : this.formData.date.getDay(),
             }
           },
@@ -252,6 +252,7 @@
           }
           this.info.start_time = null;
           this.info.end_time = null;
+          this.formData.time_id_array = [];
         },
         clickTimeBlock: function(_time) {
           var time_array = this.info.time_array;
@@ -266,6 +267,7 @@
                 time_array[i].is_seleted = 1;
                 this.info.tiem_block_type = 'fisrt';
                 this.info.start_time = time_array[i];
+                this.formData.time_id_array.push(time_array[i].available_time_id);
                 break;
               }
             } else  {
@@ -277,6 +279,12 @@
                 find_on_first = true;
               }
               if (find_on_first) {
+                if (time_array[i].is_active != 1) {
+                  break;
+                }
+                if (time_array[i].is_seleted != 1) {
+                  this.formData.time_id_array.push(time_array[i].available_time_id);
+                }
                 time_array[i].is_seleted = 1;
                 if (is_find) {
                   this.info.end_time = time_array[i];
@@ -352,20 +360,13 @@
           if (this.menu_step == 'detail') {
             this.nextMenuStep();
           } else {
-            var time_array = this.info.time_array;
-            for (var i = 0; i < time_array.length; i ++) {
-              if (time_array[i].is_seleted == 1) {
-                this.formData.time_id_array.push(time_array[i].available_time_id)
-              }
-            }
             global.ajax({
               url: '/api/room_rsv',
               type: 'POST',
               data: this.formData,
             },
             function(data, status) {
-              var results = data.results;
-              __this.setStudyGroupResults(results);
+              alert(data.message)
             },
             function(message, status, data) {
               alert(message);
@@ -379,11 +380,11 @@
           this.info.room_name = null;
           this.info.room_number = null;
           this.formData.room_id = null;
+          this.info.min_date = new Date();
         },
         resetDate: function() {
           this.formData.date = null;
           this.info.date = null;
-          this.info.min_date = new Date();
         },
         resetTime: function() {
           this.info.time_array = null;

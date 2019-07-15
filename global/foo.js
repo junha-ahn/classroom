@@ -37,8 +37,10 @@ let self = {
     return ip;
   },
   resetTime: (date) => {
-    date.setHours(0);
-    date.setMinutes(0);
+    date.millisecond(0);
+    date.second(0);
+    date.minute(0);
+    date.hour(0);
     return date;
   },
   parseDateTime: (date_string, is_seoul_tz) => {
