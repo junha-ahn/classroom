@@ -247,7 +247,8 @@ router.put('/person/:person_id', isLoggedIn, checkReqInfo, async (req, res, next
 router.get('/room', async (req, res, next) => {
   const {
     building_id,
-    sort_by_floor
+    sort_by_floor,
+    time_id_array,
   } = req.query;
   let connection;
   try {
