@@ -58,7 +58,7 @@
           },
           
           info : {
-            min_date: null,
+            min_date: new Date(),
             floor : null,
             room_name : null,
             room_number : null,
@@ -157,7 +157,7 @@
             } 
             alert(message);
           } else {
-            var min_date = global.resetTime(new Date());
+            var min_date = new Date();
             min_date.setDate(min_date.getDate() + room.rsv_apply_min_day);
             this.info.min_date = min_date;
             // 오류.. MIN DATE!!!!!!
@@ -176,6 +176,7 @@
             query: {
               building_id : this.params.building_id,
               sort_by_floor: 1,
+              time_id_array: this.time_id_array,
             }
           },
           function(data, status) {
