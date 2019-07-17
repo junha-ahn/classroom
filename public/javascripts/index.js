@@ -1,4 +1,6 @@
 function makeGlobal() {
+  var USER_TYPE = 10;
+  var ADMIN_TYPE = 30;
   var message = {
     NEED_LOGIN : '로그인이 필요합니다'
   }
@@ -97,6 +99,8 @@ function makeGlobal() {
     });
   };
   return {
+    USER_TYPE: USER_TYPE,
+    ADMIN_TYPE: ADMIN_TYPE,
     resetTime : resetTime,
     parseDate : parseDate,
     parseDateTime : parseDateTime,

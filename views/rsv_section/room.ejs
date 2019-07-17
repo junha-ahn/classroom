@@ -5,10 +5,10 @@
       <dl>
         <dt v-for="(room, i) in floor" :key="i">
           <div v-if="room.floor==info.floor">
-            <button type="button" class="btn btn-default" @click="chooseRoom(room)" v-if="room.available_for_rsv_create==true">
+            <button type="button" class="btn btn-default" @click="chooseRoom(room)" v-if="room.available_for_rsv_create==true" :disabled="room.is_active==0">
               {{room.room_category_name}} || {{room.room_number}} {{room.name}} ({{room.seat_count}}석)
             </button>
-            <button type="button" class="btn btn-gray" @click="chooseRoom(room)" v-else>
+            <button type="button" class="btn btn-gray" @click="chooseRoom(room)" v-else :disabled="room.is_active==0">
               {{room.room_category_name}} || {{room.room_number}} {{room.name}} ({{room.seat_count}}석)
             </button>
           </div>

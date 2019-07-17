@@ -138,8 +138,12 @@
           var now_menu_step = this.menu_step;
           var menu_step_array = this.menu_steps[this.method];
           for (var i = 0; i < menu_step_array.length; i ++ ) {
-            if (now_menu_step == menu_step_array[i]  && i != 0) {
-              this.menu_step = menu_step_array[parseInt(i) - 1];
+            if (now_menu_step == menu_step_array[i]) {
+              if (i == 0) {
+                history.back();
+              } else {
+                this.menu_step = menu_step_array[parseInt(i) - 1];
+              }
             }
           }
         },
@@ -148,13 +152,9 @@
           this.info.floor = (this.info.floor == floor) ? null : floor;
         },
         chooseRoom: function(room) {
+          var message = null;
           if (room.available_for_rsv_create != true) {
-            var message = '예약 불가능 상태입니다.'
-            if (!this.is_user) {
-              message += '\n로그인 후 다시 확인해주세요.' 
-            } else {
-              message +=  '\n관리자로 로그인 해 주세요'
-            } 
+            message = '설정상 예약 불가능합니다 (로그인 후 다시 예약해주세요)' 
             alert(message);
           } else {
             var min_date = new Date();
@@ -176,11 +176,18 @@
             query: {
               building_id : this.params.building_id,
               sort_by_floor: 1,
-              time_id_array: this.time_id_array,
+              date: global.parseDate(this.formData.date),
+              start_time: this.info.start_time ? this.info.start_time.start_time : null,
+              end_time: this.info.end_time ? this.info.end_time.end_time : null,
             }
           },
           function(data, status) {
-            __this.setRooms(data.results);
+            if (data.results && Object.keys(data.results).length > 0) {
+              __this.setRooms(data.results);
+            } else {
+              alert('등록된 강의실을 찾을수 없습니다.')
+              __this.prevMenuStep();
+            }
           },
           function(message, status, data) {
             alert(message);
@@ -404,27 +411,54 @@
       },
       watch: {
         menu_step: function (menu_step) {
-          switch (menu_step) {
-            case 'room':
-              this.resetRoom();
-              this.resetDate();
-              this.resetTime();
-              this.getRoom();
-              break;
-            case 'date':
-              this.resetDate();
-              this.resetTime();
-              break;
-            case 'time':
-              this.resetTime();
-              this.resetDetail();
-              this.getAvailableTime();
-              break;
-            case 'detail':
-              this.resetDetail();
-              this.getDepartment();
-              this.getStudyGroup();
-              break;
+          if (this.method=='R') {
+            switch (menu_step) {
+              case 'room':
+                this.resetRoom();
+                this.resetDate();
+                this.resetTime();
+                this.getRoom();
+                break;
+              case 'date':
+                this.resetDate();
+                this.resetTime();
+                break;
+              case 'time':
+                this.resetTime();
+                this.resetDetail();
+                this.getAvailableTime();
+                break;
+              case 'detail':
+                this.resetDetail();
+                this.getDepartment();
+                this.getStudyGroup();
+                break;
+            }
+          } else {
+            switch (menu_step) {
+              case 'date':
+                this.resetDetail();
+                this.resetRoom();
+                this.resetTime();
+                this.resetDate();
+                break;
+              case 'time':
+                this.resetDetail();
+                this.resetRoom();
+                this.resetTime();
+                this.getAvailableTime();
+                break;
+              case 'room':
+                this.resetDetail();
+                this.resetRoom();
+                this.getRoom();
+                break;
+              case 'detail':
+                this.resetDetail();
+                this.getDepartment();
+                this.getStudyGroup();
+                break;
+            }
           }
         },
       },

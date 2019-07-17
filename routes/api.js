@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const moment = require('moment')
+const moment = require('moment');
+const squel = require('squel');
 
 const db_func = require('../global/db_func');
 const constant = require('../global/constant');
@@ -245,11 +246,14 @@ router.put('/person/:person_id', isLoggedIn, checkReqInfo, async (req, res, next
 });
 
 router.get('/room', async (req, res, next) => {
-  const {
+  let {
     building_id,
     sort_by_floor,
-    time_id_array,
+    date,
+    start_time,
+    end_time,
   } = req.query;
+  
   let connection;
   try {
     connection = await db_func.getDBConnection();
@@ -260,6 +264,35 @@ router.get('/room', async (req, res, next) => {
       building_id,
       sort_key: 'room_number',
     });
+    let room_id_array = [];
+
+    for (let i in results) {
+      results[i].is_active = 1;
+      room_id_array.push(results[i].room_id)
+    }
+
+    if (date && start_time && end_time) {
+      let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(start_time)}`);
+      let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(end_time)}`);
+      let queryString = squel.select()
+        .from('room_to_use')
+        .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
+        .where('room_to_use.room_id IN ?', room_id_array)
+        .where('room_rsv.rsv_status = ?', info.SUBMIT_RSV_STATUS)
+        .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime.format('YYYY-MM-DD HH:mm'), start_datetime.format('YYYY-MM-DD HH:mm'))
+        .field('room_to_use.room_id')
+        .group('room_to_use.room_id')
+        .toParam();
+      let rsv_results = await db_func.sendQueryToDB(connection, queryString);
+      for (let i in results) {
+        for (let j in rsv_results) {
+          if (rsv_results[j].room_id == results[i].room_id) {
+            results[i].is_active = 0;
+            break;
+          }
+        }
+      }
+    }
     foo.cleaningList(results, req.user);
     res.status(200).json({
       results: sort_by_floor ? roomSortByFloor(results) : results,
