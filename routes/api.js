@@ -271,10 +271,12 @@ router.get('/room', async (req, res, next) => {
       room_id_array.push(results[i].room_id)
     }
 
-    if (date && start_time && end_time) {
-      let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(start_time)}`);
-      let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(end_time)}`);
-      let queryString = squel.select()
+    if (date && start_time && end_time && room_id_array[0]) {
+      date = foo.parseDate(date);
+
+      let start_datetime = moment(`${date} ${foo.parseTimeString(start_time)}`);
+      let end_datetime = moment(`${date} ${foo.parseTimeString(end_time)}`);
+      let rsvQeuryString = squel.select()
         .from('room_to_use')
         .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
         .where('room_to_use.room_id IN ?', room_id_array)
@@ -283,7 +285,13 @@ router.get('/room', async (req, res, next) => {
         .field('room_to_use.room_id')
         .group('room_to_use.room_id')
         .toParam();
-      let rsv_results = await db_func.sendQueryToDB(connection, queryString);
+      let holidayQueryString = squel.select()
+        .from('holiday')
+        .where('room_id IN ?',room_id_array)
+        .where('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)
+        .toParam();
+      let holiday_results = await db_func.sendQueryToDB(connection, holidayQueryString);
+      let rsv_results = await db_func.sendQueryToDB(connection, rsvQeuryString);
       for (let i in results) {
         for (let j in rsv_results) {
           if (rsv_results[j].room_id == results[i].room_id) {
