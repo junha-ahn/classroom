@@ -16,7 +16,7 @@
           </option>
         </select>
         <label>학습관</label>
-        <select class="form-control" v-model="joinForm.building_id">
+        <select class="form-control" v-model="joinForm.building_id"  :disabled="joinForm.campus_id == null">
           <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
             {{ building.name }}
           </option>
