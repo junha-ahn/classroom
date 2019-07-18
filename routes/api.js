@@ -293,9 +293,19 @@ router.get('/room', async (req, res, next) => {
       let holiday_results = await db_func.sendQueryToDB(connection, holidayQueryString);
       let rsv_results = await db_func.sendQueryToDB(connection, rsvQeuryString);
       for (let i in results) {
+        for (let j in holiday_results) {
+          if (holiday_results[j].room_id == results[i].room_id) {
+            results[i].is_active = 0;
+            results[i].message = `[ ${holiday_results[j].name }]\n다른 날짜를 선택해주세요`
+            break;
+          }
+        }
+        if (results[i].is_active == 0) 
+          continue;
         for (let j in rsv_results) {
           if (rsv_results[j].room_id == results[i].room_id) {
             results[i].is_active = 0;
+            results[i].message = `이미 예약됬습니다.`
             break;
           }
         }
