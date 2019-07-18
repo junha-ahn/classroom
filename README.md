@@ -3,7 +3,7 @@
 - [Node.js](https://nodejs.org)
 - [Express](https://expressjs.com)
 - [EJS](https://ejs.co)
-- [Vue.js(cdn)](https://vuejs.org)
+- [Vue.js(Rumtime + Compiler)](https://vuejs.org)
 - [vuejs-datepicker](https://github.com/charliekassel/vuejs-datepicker)
 - [jQuery(ajax)](https://jquery.com)
 - [bootstrap](https://getbootstrap.com)
