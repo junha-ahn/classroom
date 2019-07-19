@@ -83,9 +83,28 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
 });
 
 router.get('/schedule', isAdmin, async (req, res, next) => {
-  res.render('admin_schedule', foo.getResJson(req.user, {
+  try {
+    connection = await db_func.getDBConnection();
 
-  }))
+    let {
+      results,
+      list_count
+    } = await select_func.room(connection, {
+      building_id: req.user.building_id,
+    });
+    foo.cleaningList(results);
+    res.render('admin_schedule', foo.getResJson(req.user, {
+      results,
+      query : req.query,
+      params : req.params,
+      building: info.building_object[req.user.building_id],
+    }))
+
+  } catch (error){
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
 });
 router.get('/room/lookup', isAdmin, async (req, res, next) => {
   

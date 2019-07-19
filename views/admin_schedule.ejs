@@ -1,0 +1,49 @@
+<% include ./sub/header %>
+      <% include ./sub/admin_menu %>
+      
+      <custom-datepicker
+        :inline="true"
+        :default_date="new Date()"
+        :building_id="building.building_id"
+        :on-selected="onSelected"
+      ></custom-datepicker>
+
+      <button class="btn btn-default" type="button">{{building.name}}(학습관 전체)</button>
+      <br/>
+      <button v-for="(room, i) in results" :key="i" class="btn btn-default" type="button">{{room.name}}</button>
+    </main>
+
+    <footer>
+      <% include ./sub/footer %>
+    </footer>
+  </div>
+
+<% include ./component/datepicker %>
+  <script>
+    var global = makeGlobal();
+    var results = <%-JSON.stringify(results) %>;
+    var building = <%-JSON.stringify(building) %>;
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+          results: results,
+          building: building,
+        }
+      },
+      methods: {
+        onSelected: function(date) {
+          console.log(date);
+        },
+
+      }
+    })
+  </script>
+
+</body>
+
+</html>
