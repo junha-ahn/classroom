@@ -64,14 +64,23 @@ function makeGlobal() {
     if (!query)
       return '';
     var data = Object.keys(query);
-    return data.length
-    ? '?' + data.map(function(key){
+    if (!data.length) 
+      return ''; 
+    
+    var queryString = ''
+    for (var i = 0; i < data.length; i++) {
+      var key = data[i];
       var value = query[key];
-      return (value !== '' && value !== null && value !== undefined)
-      ? key + '=' + value
-      : ''
-    }).join('&')
-    : '';
+      if ((value !== '' && value !== null && value !== undefined)) {
+        if (queryString === '') {
+          queryString += '?'
+        } else {
+          queryString += '&'
+        }
+        queryString += key + '=' + value;
+      }
+    }
+    return queryString;
   }
   var ajax = function (object, done, err) {
     var url = object.url;
