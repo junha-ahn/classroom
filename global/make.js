@@ -3,6 +3,7 @@ module.exports = () => {
 
   let department_results = global_data.department_results;
   let room_category_results = global_data.room_category_results;
+  let room_rsv_category_results = global_data.room_rsv_category_results;
   let building_results = global_data.building_results;
   let campus_results = global_data.campus_results;
    
@@ -11,6 +12,7 @@ module.exports = () => {
 
   global_data.department_object = {}; 
   global_data.room_category_object = {}; 
+  global_data.room_rsv_category_object = {}; 
   global_data.building_object = {}; 
   global_data.campus_object = {}; 
 
@@ -19,6 +21,9 @@ module.exports = () => {
   }
   for (let i in room_category_results) {
     global_data.room_category_object[room_category_results[i].room_category_id] = room_category_results[i];
+  }
+  for (let i in room_rsv_category_results) {
+    global_data.room_rsv_category_object[room_rsv_category_results[i].room_rsv_category_id] = room_rsv_category_results[i];
   }
 
   for (let i in building_results) {

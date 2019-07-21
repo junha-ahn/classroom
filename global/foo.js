@@ -95,10 +95,12 @@ let self = {
       if (array[i].auth_rsv_cancel != undefined) {
         array[i].available_for_rsv_cancel = self.checkPermission(user, array[i].auth_rsv_cancel);
       }
-      array[i].password = undefined
+      delete array[i].password
       array[i].date_created = array[i].date_created ? self.parseDate(array[i].date_created, true) : array[i].date_created;
       array[i].date_joined = array[i].date_joined ? self.parseDate(array[i].date_joined, true) : array[i].date_joined;
       array[i].date_last_updated = array[i].date_last_updated ? self.parseDate(array[i].date_last_updated, true) : array[i].date_last_updated;
+      array[i].start_datetime = array[i].start_datetime ? self.parseDateTime(array[i].start_datetime, true) : array[i].start_datetime;
+      array[i].end_datetime = array[i].end_datetime ? self.parseDateTime(array[i].end_datetime, true) : array[i].end_datetime;
 
       if (array[i].campus_id) {
         array[i].campus_name = info.campus_object[array[i].campus_id].name;
@@ -111,6 +113,17 @@ let self = {
       }
       if (array[i].room_category_id) {
         array[i].room_category_name = info.room_category_object[array[i].room_category_id].name;
+      }
+      if (array[i].room_rsv_category_id) {
+        array[i].room_rsv_category_name = info.room_rsv_category_object[array[i].room_rsv_category_id].name;
+      }
+      if (array[i].rsv_status) {
+        array[i].rsv_status_name = ((rsv_status) => {
+          for (let i in info.rsv_status_results) {
+            if (info.rsv_status_results[i].rsv_status == rsv_status) 
+              return info.rsv_status_results[i].name;
+          }
+        })(array[i].rsv_status);
       }
 
 

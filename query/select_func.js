@@ -1320,6 +1320,134 @@ let self = {
       }
     });
   },
+  viewTableRoomRsvList: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          department_id,
+          study_group_id,
+          rsv_status,
+          is_mine,
+          user_id,
+          date,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+        sort_key = (sort_key) ? sort_key : 'room_rsv_id';
+        sort_type = (sort_type == false) ? false : true;
+        is_mine = is_mine || 0;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('room_rsv')
+            .where(squel.case()
+              .when('? IS NULL', rsv_status)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.department_id = ?', department_id)))
+            .where(squel.case()
+              .when('? IS NULL', study_group_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.study_group_id = ?', study_group_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.user_id = ?', user_id)))
+            .where(squel.case()
+              .when('? IS NULL', date)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('room_rsv')
+            .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
+            .where(squel.case()
+              .when('? IS NULL', rsv_status)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.department_id = ?', department_id)))
+            .where(squel.case()
+              .when('? IS NULL', study_group_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.study_group_id = ?', study_group_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.user_id = ?', user_id)))
+            .where(squel.case()
+              .when('? IS NULL', date)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
+            .field('room_rsv.*')
+            .field('study_group.name', 'study_group_name')
+            .field(squel.select()
+              .from('room_to_use')
+              .join('room', null, 'room.room_id = room_to_use.room_id')
+              .where('room_to_use.room_rsv_id = room_rsv.room_rsv_id')
+              .field(`group_concat(room.name SEPARATOR ',')`), 'rooms_name')
+            .order(`room_rsv.${sort_key}`, sort_type)
+            .group('room_rsv.room_rsv_id')
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('room_rsv')
+            .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
+            .where(squel.case()
+              .when('? IS NULL', rsv_status)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.department_id = ?', department_id)))
+            .where(squel.case()
+              .when('? IS NULL', study_group_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.study_group_id = ?', study_group_id)))
+            .where(squel.case()
+              .when('? != 1', is_mine)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.user_id = ?', user_id)))
+            .where(squel.case()
+              .when('? IS NULL', date)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
+            .field('room_rsv.*')
+            .field('study_group.name', 'study_group_name')
+            .field(squel.select()
+              .from('room_to_use')
+              .join('room', null, 'room.room_id = room_to_use.room_id')
+              .where('room_to_use.room_rsv_id = room_rsv.room_rsv_id')
+              .field(`group_concat(room.name SEPARATOR ',')`), 'rooms_name')
+            .order(`room_rsv.${sort_key}`, sort_type)
+            .group('room_rsv.room_rsv_id')
+            .toParam();
+        }
+        console.log((await db_func.sendQueryToDB(connection, countString)))
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   notification: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {

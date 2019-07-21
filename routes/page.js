@@ -86,8 +86,22 @@ router.get('/reservation/:building_id', async (req, res, next) => {
   }
 });
 router.get('/reservation/lookup/:building_id', async (req, res, next) => {
+  let building_id = req.params.building_id;
+  let {
+    department_id,
+    study_group_id,
+    rsv_status,
+    is_mine,
+    date,
+    page,
+    page_length,
+  } = req.query;
+  page_length = page_length || 10;
+  department_id = department_id ? department_id : (req.user) ? req.user.department_id : null;
+  building_id = building_id ? building_id : (req.user) ? req.user.building_id || 0: null;
+  rsv_status = rsv_status ? rsv_status : null;
+  let connection;
   try {
-    let building_id = req.params.building_id;
     let building = info.building_object[building_id];
     if (!building) {
       res.render('error', foo.getResJson(req.user, {
@@ -95,9 +109,43 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
         message: "다시 확인해주세요"
       }));
     } else {
+      connection = await db_func.getDBConnection();
+      let {
+        results,
+        list_count,
+      } = await select_func.viewTableRoomRsvList(connection, {
+        department_id,
+        study_group_id,
+        rsv_status,
+        is_mine,
+        user_id: req.user ? req.user.user_id : null,
+        date,
+        page,
+        page_length,
+        sort_key: 'start_datetime',
+        sort_type: false,
+      })
+      let study_group_results = (await select_func.viewTableStudyGroup(connection, {
+        department_id,
+        building_id,
+        user_id: (req.user) ? req.user.user_id : null,
+      })).results;
+      foo.cleaningList(results);
+      foo.cleaningList(study_group_results);
+      console.log(results)
       res.render('reservation_lookup', foo.getResJson(req.user, {
-        query: req.query,
         params: req.params,
+        query: {
+          ...req.query,
+          department_id: department_id || 0,
+          building_id: building_id || 0,
+          rsv_status : rsv_status || 0,
+        },
+        department_results: info.department_results,
+        rsv_status_results: info.rsv_status_results,
+        study_group_results,
+        results,
+        list_count,
       }));
     }
   } catch (error) {

@@ -19,7 +19,7 @@
           </div>
         </div>
 
-        <div class="panel panel-info">
+        <div class="panel panel-info" @click="location.href='/reservation/lookup/' + params.building_id + '?page=1&date=' + global.parseDate(new Date())">
           <div class="panel-heading">
             예약 조회
           </div>

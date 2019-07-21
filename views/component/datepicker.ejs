@@ -16,6 +16,8 @@
       :open-date="state.default_date"
       :maximum-view="maximumView"
       v-model="selected_date"
+      :placeholder="selected_date"
+      :clear-button="true"
     ></vuejs-datepicker>
   </div>
 </script>
@@ -28,6 +30,7 @@
       maximumView: String,
       default_date: Date,
       min_date: Date,
+      selected_date: Date,
       building_id: Number,
       room_id: Number,
       onSelected: Function,
@@ -35,7 +38,7 @@
     data: function(){ 
       return {
         ko: vdp_translation_ko.js,
-        selected_date: null,
+        selected_date: this.selected_date || null,
         room_id: this.room_id,
         holiday_results: [],
         year: this.default_date.getFullYear(),
@@ -58,7 +61,10 @@
     },
     methods: {
       selected: function(seleted_date) {
-        this.onSelected(global.resetTime(seleted_date));
+        if (seleted_date != null) {
+          seleted_date = global.resetTime(seleted_date);
+        }
+        this.onSelected(seleted_date);
       },
       selectedDisabled: function(object) {
         var selected_date = global.resetTime(new Date(object.timestamp))

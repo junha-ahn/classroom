@@ -33,6 +33,10 @@
       (squel.select()
         .from('permission')
         .toParam()))
+    let rsv_status_results = await db_func.sendQueryToDB(connection,
+      (squel.select()
+        .from('rsv_status')
+        .toParam()))
         
     let data = {
       campus_results,
@@ -41,6 +45,7 @@
       room_category_results,
       room_rsv_category_results,
       permission_results,
+      rsv_status_results,
     };
     
     fs.writeFile(path.join('./global/db_data.json'), JSON.stringify(data), function(err) {
