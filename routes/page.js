@@ -97,8 +97,7 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
     page_length,
   } = req.query;
   page_length = page_length || 10;
-  department_id = department_id ? department_id : (req.user) ? req.user.department_id : null;
-  building_id = building_id ? building_id : (req.user) ? req.user.building_id || 0: null;
+  department_id = department_id ? department_id : (req.user && department_id != 0) ? req.user.department_id : null;
   rsv_status = rsv_status ? rsv_status : null;
   let connection;
   try {
@@ -137,7 +136,7 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
         query: {
           ...req.query,
           department_id: department_id || 0,
-          building_id: building_id || 0,
+          study_group_id: study_group_id || 0,
           rsv_status : rsv_status || 0,
         },
         department_results: info.department_results,
@@ -166,8 +165,8 @@ router.get('/group/lookup', async (req, res, next) => {
     is_join,
   } = req.query;
   page_length = page_length || 10;
-  department_id = department_id ? department_id : (req.user) ? req.user.department_id : null;
-  building_id = building_id ? building_id : (req.user) ? req.user.building_id || 0: null;
+  department_id = department_id ? department_id : (req.user && department_id != 0) ? req.user.department_id : null;
+  building_id = building_id ? building_id : (req.user && building_id != 0) ? req.user.building_id || 0: null;
 
   let connection;
   try {

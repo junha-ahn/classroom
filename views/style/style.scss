@@ -191,63 +191,63 @@ thead {
 }
 
 //login 끝
-
-.group_lookup {
-  main {
-    
-
-    .btn {
-      font-size: 1.8vmin !important;
-    }
-
-    select {
-      font-size: 1.8vmin !important;
-    }
-
-    nav {
-      text-align: center;
-
-    }
-
-    .lookup_button {
-      float: right;
-    }
-
-    .lookup_select {
-      text-align: center;
-      margin-bottom: 1%;
-
-      label {
-        margin-bottom: 0 !important;
-        margin: 2% 1% !important;
-        font-size: 2.5vmin;
+@each $lookup_page in group, reservation, uesr, room {
+  .#{$lookup_page}_lookup {
+    main {
+      .btn {
+        font-size: 1.8vmin !important;
       }
-
-      .form-control {
-        display: inline-block !important;
-        width: 30% !important;
-
-        option {}
+  
+      select {
+        font-size: 1.8vmin !important;
       }
-    }
-
-    .table {
-
-      text-align: center;
-
-      thead {
-        tr {
-          background: #337ab7;
-
-          th {
-            text-align: center;
-            color: #fff;
+  
+      nav {
+        text-align: center;
+  
+      }
+  
+      .lookup_button {
+        float: right;
+      }
+  
+      .lookup_select {
+        text-align: center;
+        margin-bottom: 1%;
+  
+        label {
+          margin-bottom: 0 !important;
+          margin: 2% 1% !important;
+          font-size: 2.5vmin;
+        }
+  
+        .form-control {
+          display: inline-block !important;
+          width: 30% !important;
+  
+          option {}
+        }
+      }
+  
+      .table {
+  
+        text-align: center;
+  
+        thead {
+          tr {
+            background: #337ab7;
+  
+            th {
+              text-align: center;
+              color: #fff;
+            }
           }
         }
       }
     }
   }
 }
+
 
 .reservation_intro {
   main {
