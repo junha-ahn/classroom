@@ -32,11 +32,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>강의실</td>
-                <td>101호</td>
-                <td>공용강의실</td>
-                <td><button type="button" class="btn btn-default">상세조회</button></td>
+              <tr v-for="(room, i) in results" :key="i"> 
+                <td> {{ room.room_category_name }}</td>
+                <td> {{ room.name}}</td>
+                <td> TEST </td>
+                <td> <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
+                      상세조회
+                     </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -72,10 +75,27 @@
           admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
           is_user: <%- is_user %> ,
           is_admin: <%- is_admin %> ,
+          results: <%-JSON.stringify(results) %> ,
+          list_count: <%-JSON.stringify(list_count) %> ,
+          query: <%-JSON.stringify(query) %> ,
+          params: <%-JSON.stringify(params) %> 
         }
       },
       methods: {
 
+      },
+      computed: {
+        pagenation: function() {
+          return pagenation({
+            numberOfItems:this.list_count,
+            itemsPerPage: 10,
+            pagesPerNav:5,
+            indexOfPage: this.query.page,
+            hasPrevAndNext: true,
+            prevText:'&laquo;',
+            nextText:'&raquo;',
+          })
+        },
       }
     })
   </script>

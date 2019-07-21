@@ -5,23 +5,23 @@
         <div>
           <ul>
             <li style="width:30%">학생/교직원</li>
-            <li>학생</li>
+            <li>{{user.user_type}}</li>
           </ul>
           <ul>
             <li style="width:30%">이름</li>
-            <li>조아라</li>
+            <li>{{user.name}}</li>
           </ul>
           <ul>
             <li style="width:30%">학번</li>
-            <li>123456-123456</li>
+            <li>{{user.person_id}}</li>
           </ul>
           <ul>
             <li style="width:30%">이메일</li>
-            <li>123@naver.com</li>
+            <li>{{user.email}}</li>
           </ul>
           <ul>
             <li style="width:30%">전화번호</li>
-            <li>010-1234-1234</li>
+            <li>{{user.phone}}</li>
           </ul>
         </div>
         <button type="button" class="btn btn-primary">수정하기</button>
@@ -43,6 +43,9 @@
           admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
+          user: <%-JSON.stringify(user) %> ,
+          query: <%-JSON.stringify(query) %> ,
+          params: <%-JSON.stringify(params) %> 
         }
       },
       methods: {

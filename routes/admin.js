@@ -43,6 +43,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
       building_id: req.user.building_id,
     });
     foo.cleaningList(results);
+
     res.render('admin_users', foo.getResJson(req.user, {
       results,
       list_count,
@@ -70,7 +71,7 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
     });
     foo.cleaningList(results);
     res.render('admin_user', foo.getResJson(req.user, {
-      results,
+      user : results[0],
       query : req.query,
       params : req.params
     }))
@@ -147,9 +148,30 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
 });
 
 router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
-  res.render('admin_room', foo.getResJson(req.user, {
 
-  }))
+  let room_id = req.params.room_id;
+  try{
+    connection = await db_func.getDBConnection();
+    let{
+      results,
+      list_count
+    } = await select_func.room(connection,{
+      room_id
+    });
+
+    foo.cleaningList(results);
+    res.render('admin_room', foo.getResJson(req.user, {
+      room: results[0],
+      list_count,
+      query : req.query,
+      params : req.params    
+    }))
+  } catch (error){
+    next(error);
+  } finally {
+    db_func.release(connection);
+  }
+  
 });
 router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
   res.render('admin_reservations', foo.getResJson(req.user, {
