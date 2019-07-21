@@ -1436,7 +1436,6 @@ let self = {
             .group('room_rsv.room_rsv_id')
             .toParam();
         }
-        console.log((await db_func.sendQueryToDB(connection, countString)))
         let results = await db_func.sendQueryToDB(connection, queryString);
         let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
         resolve({

@@ -132,7 +132,6 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
       })).results;
       foo.cleaningList(results);
       foo.cleaningList(study_group_results);
-      console.log(results)
       res.render('reservation_lookup', foo.getResJson(req.user, {
         params: req.params,
         query: {
