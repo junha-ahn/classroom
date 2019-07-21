@@ -135,6 +135,7 @@
           }
           this.query.study_group_id = this.query.study_group_id || undefined;
           this.query.rsv_status = this.query.rsv_status || undefined;
+          this.query.building_id = undefined;
           location.href= '/reservation/lookup/' + this.params.building_id + global.serializeQuery(this.query);
         },
       },
