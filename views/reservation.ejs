@@ -1,28 +1,42 @@
 <% include ./sub/header %>
-      <% include ./rsv_section/menu %>
-      <% include ./rsv_section/left_info %>
-
-      <template v-if="menu_step=='room'">
-        <% include ./rsv_section/room %>
-      </template>
-      <template v-else-if="menu_step=='date'">
-        <custom-datepicker
-          :inline="true"
-          :default_date="new Date()"
-          :building_id="params.building_id"
-          :room_id="formData.room_id"
-          :min_date="info.min_date"
-          :on-selected="onSelected"
-          maximum-view="day"
-        ></custom-datepicker>
-      </template>
-      <template v-else-if="menu_step=='time'">
-        <% include ./rsv_section/time %>
-      </template>
-      <template v-else>
-        <% include ./rsv_section/detail %>
-      </template>
-
+      <div class="rsv_menu">
+        <% include ./rsv_section/menu %>
+      </div>
+      <div class="rsv_body clearfix"> 
+        <div class="left_info">
+          <% include ./rsv_section/left_info %>
+        </div>
+        <div class="right_info"> 
+          <template v-if="menu_step=='room'">
+            <div class="step_room">
+              <% include ./rsv_section/room %>
+            </div>
+          </template>
+          <template v-else-if="menu_step=='date'">
+            <div class="step_date">
+              <custom-datepicker
+                :inline="true"
+                :default_date="new Date()"
+                :building_id="params.building_id"
+                :room_id="formData.room_id"
+                :min_date="info.min_date"
+                :on-selected="onSelected"
+                maximum-view="day"
+              ></custom-datepicker>
+            </div>
+          </template>
+          <template v-else-if="menu_step=='time'">
+            <div class="step_time">
+              <% include ./rsv_section/time %>
+            </div>
+          </template>
+          <template v-else>
+            <div class="step_detail">
+              <% include ./rsv_section/detail %>
+            </div>
+          </template>
+        </div>
+      </div>
     </main>
 
     <footer>

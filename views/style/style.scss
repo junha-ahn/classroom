@@ -8,7 +8,7 @@
 }
 
 div {
-  // border: 1px solid red;
+  border: 1px solid red;
 }
 
 body {
@@ -39,16 +39,14 @@ thead {
 
 //----------------------------------------------------
 
-@media screen and (max-width:768px){
-  
-}
+@media screen and (max-width:768px) {}
 
 //----------------------------------------------------
 
 
 .main {
   main {
-   
+
 
     h1 {
       font-size: 4vmin;
@@ -99,8 +97,8 @@ thead {
 
 .reservation_intro {
   main {
-    margin:0 auto;
-    width:80%;
+    margin: 0 auto;
+    width: 80%;
     text-align: center;
     display: block;
     content: '';
@@ -173,16 +171,17 @@ thead {
           width: 30%;
           padding: 1.2% 0;
           margin-bottom: 1.5%;
-        
+
         }
-        input{
-          border:1px solid #ddd;
+
+        input {
+          border: 1px solid #ddd;
         }
 
         button {
           background-color: #337ab7;
-          color:#fff;
-          border-style:none;
+          color: #fff;
+          border-style: none;
         }
       }
     }
@@ -252,7 +251,7 @@ thead {
 .reservation_intro {
   main {
     margin: 0 auto;
-    width:80%;
+    width: 80%;
   }
 }
 
@@ -260,9 +259,7 @@ thead {
 // 예약 페이지
 .reservation {
 
-  main {
-
-  }
+  main {}
 
 }
 
@@ -298,40 +295,127 @@ thead {
   }
 }
 
+.reservation {
+  .rsv_menu {
+    margin: 0 auto;
+    width: 80%;
+    text-align: center;
+
+    .btn-group {
+      width: 20%;
+
+      button {
+        width: 98%;
+        padding: 5% 0;
+      }
+    }
+  }
+
+  .rsv_body {
+    margin: 2% auto;
+    width: 80%;
+    text-align: center;
+
+    .left_info {
+      float: left;
+      width: 50%;
+
+      div {
+        margin-bottom: 1%;
+
+        .btn {
+          width: 30%;
+          padding: 2% 10%;
+        }
+
+        .btn_right {
+          width: 40%;
+        }
+      }
+    }
+
+    .right_info {
+      float: right;
+      width: 50%;
+
+      .step_room {
+        dl {
+          dt {
+            button {
+              width: 100%;
+              padding: 2% 0;
+            }
+
+          }
+        }
+
+        .btn-group-vertical {
+          margin: 0 auto;
+          width: 80%;
+
+          button {
+            padding: 3% 0;
+          }
+
+        }
+      }
+      .step_date {
+        .vdp-datepicker {
+          width:80%;
+          .vdp-datepicker__calendar {
+            width:100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+/*달력*/
+.step_date {
+text-align:center;
+}
+
 
 /********** 상단nav틀어지는부분 **********/
 
-@media (max-width: 768px){
+@media (max-width: 768px) {
   .navbar-nav {
     float: left !important;
   }
+
   .navbar-nav>li {
     float: left !important;
   }
+
   .collapse {
     display: block !important;
     visibility: initial !important;
   }
+
   .navbar-right {
-     float: right!important;
-     margin-right: -15px;
+    float: right !important;
+    margin-right: -15px;
   }
 }
 
 
-@media (min-width:300px){
+@media (min-width:300px) {
   .navbar-nav {
     float: left !important;
   }
+
   .navbar-nav>li {
     float: left !important;
   }
+
   .collapse {
     display: block !important;
     visibility: initial !important;
   }
+
   .navbar-right {
-     float: right!important;
-     margin-right: -15px;
+    float: right !important;
+    margin-right: -15px;
   }
 }

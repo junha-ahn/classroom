@@ -1,8 +1,7 @@
 <% include ./sub/header %>
       <div class="mom_div">
         <h1>로그인을 해주세요</h1>
-        <!--<button type="button" @click="_user">유저 채우기</button>-->
-        <!--<button type="button" @click="_admin">관리자 채우기</button>-->
+        
         <div class="Contents">
           <form v-on:submit="login">
             <div class="form-inline">
@@ -14,6 +13,8 @@
             <button type="submit" class="button_width">로그인</button>
           </form>
         </div>
+        <center><button type="button" @click="_user">유저 채우기</button></center>
+        <center><button type="button" @click="_admin">관리자 채우기</button></center>
       </div><!--mom_div끝-->
     </main>
     

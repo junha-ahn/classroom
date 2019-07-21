@@ -1,20 +1,18 @@
-<dl>
-  <dt v-for="(floor, i) in rooms" :key="i">
-    <div class="btn-group-vertical" role="group" aria-label="...">
-      <button type="button" class="btn btn-primary" @click="changeRoomFloor(i)">{{i}} 층</button>
-      <dl>
-        <dt v-for="(room, i) in floor" :key="i">
-          <div v-if="room.floor==info.floor">
-            <button type="button" class="btn btn-default" @click="chooseRoom(room)" v-if="room.is_active==1" :disabled="room.available_for_rsv_create==false">
-              {{room.room_category_name}} || {{room.room_number}} {{room.name}} ({{room.seat_count}}석)
-            </button>
-            <button type="button" class="btn btn-gray" @click="chooseRoom(room)" v-else :disabled="room.available_for_rsv_create==false">
-              {{room.room_category_name}} || {{room.room_number}} {{room.name}} ({{room.seat_count}}석)
-            </button>
-          </div>
-        </dt>
-      </dl>
-    </div>
-  </dt>
-  <p v-if="is_user==false">※ 비활성화 강의실은 로그인 후 확인해주세요</p>
+<dl v-for="(floor, i) in rooms" :key="i">
+  <div class="btn-group-vertical" role="group" aria-label="...">
+    <button type="button" class="btn btn-primary" @click="changeRoomFloor(i)">{{i}} 층</button>
+    <dt v-for="(room, i) in floor" :key="i">
+      <div v-if="room.floor==info.floor">
+        <button type="button" class="btn btn-default" @click="chooseRoom(room)" v-if="room.is_active==1"
+          :disabled="room.available_for_rsv_create==false">
+          {{room.room_number}} {{room.name}} ({{room.seat_count}}석)
+        </button>
+        <button type="button" class="btn btn-gray" @click="chooseRoom(room)" v-else
+          :disabled="room.available_for_rsv_create==false">
+          {{room.room_number}} {{room.name}} ({{room.seat_count}}석)
+        </button>
+      </div>
+    </dt>
+  </div>
 </dl>
+<p v-if="is_user==false">※ 비활성화 강의실은 로그인 후 확인해주세요</p>
