@@ -56,7 +56,6 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
     db_func.release(connection);
   }
 });
-
 router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
 
   let user_id = req.params.user_id; 
@@ -68,14 +67,22 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
       list_count
     } = await select_func.viewTableUser(connection, {
       user_id,
+      // 내 건물에 속한 유저만 보이게 하기?...
     });
-    foo.cleaningList(results);
-    res.render('admin_user', foo.getResJson(req.user, {
-      user : results[0],
-      query : req.query,
-      params : req.params
-    }))
-
+    
+    if (!results[0]) {
+      res.status(401).render('error', foo.getResJson(req.user, {
+        error_name: '404 NOT FOUND',
+        message: '유저를 찾을 수 없습니다',
+      }));
+    } else {
+      foo.cleaningList(results);
+      res.render('admin_user', foo.getResJson(req.user, {
+        user : results[0],
+        query : req.query,
+        params : req.params
+      }))
+    }
   } catch (error){
     next(error);
   } finally {
@@ -107,6 +114,7 @@ router.get('/schedule', isAdmin, async (req, res, next) => {
     db_func.release(connection);
   }
 });
+
 router.get('/room/lookup', isAdmin, async (req, res, next) => {
   
   let {
@@ -146,7 +154,6 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
     db_func.release(connection);
   }
 });
-
 router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
 
   let room_id = req.params.room_id;
@@ -156,16 +163,24 @@ router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
       results,
       list_count
     } = await select_func.room(connection,{
-      room_id
+      room_id, 
+      building_id: req.user.building_id,
     });
-
-    foo.cleaningList(results);
-    res.render('admin_room', foo.getResJson(req.user, {
-      room: results[0],
-      list_count,
-      query : req.query,
-      params : req.params    
-    }))
+    
+    if (!results[0]) {
+      res.status(401).render('error', foo.getResJson(req.user, {
+        error_name: '404 NOT FOUND',
+        message: '강의실을 찾을 수 없습니다',
+      }));
+    } else {
+      foo.cleaningList(results);
+      res.render('admin_room', foo.getResJson(req.user, {
+        room: results[0],
+        list_count,
+        query : req.query,
+        params : req.params    
+      }))
+    }
   } catch (error){
     next(error);
   } finally {

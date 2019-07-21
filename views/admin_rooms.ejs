@@ -34,8 +34,8 @@
             <tbody>
               <tr v-for="(room, i) in results" :key="i"> 
                 <td> {{ room.room_category_name }}</td>
-                <td> {{ room.name}}</td>
-                <td> TEST </td>
+                <td> {{ room.room_number }}</td>
+                <td> {{ room.name }} </td>
                 <td> <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
                       상세조회
                      </button>
