@@ -1,0 +1,34 @@
+<% include ./sub/header %>
+      <% include ./rsv_section/menu %>
+      <% include ./rsv_section/left_info %>
+
+    </main>
+
+    <footer>
+      <% include ./sub/footer %>
+    </footer>
+  </div>
+
+<% include ./component/datepicker %>
+  <script>
+    var global = makeGlobal();
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+          query : <%-JSON.stringify(query) %>,
+          params : <%-JSON.stringify(params) %>,
+        }
+      },
+      methods: {
+        
+      },
+    })
+  </script>
+
+</body>
+
+</html> 

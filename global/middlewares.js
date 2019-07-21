@@ -1,13 +1,15 @@
 const info = require('./info')
+const foo = require('./foo')
 
 let self = {
   isLoggedIn: (req, res, next) => {
     if (req.isAuthenticated()) {
       next();
     } else {
-      res.status(403).json({
-        message: '로그인이 필요합니다'
-      })
+      res.status(403).render('error', foo.getResJson(req.user, {
+        error_name: '권한 문제',
+        message: '로그인이 필요합니다',
+      }));
     }
   },
   isAdmin: (req, res, next) => {
@@ -15,23 +17,26 @@ let self = {
       if (req.user.user_type == info.ADMIN_TYPE) {
         next()
       } else {
-        res.status(403).json({
-          message: '관리자 접근 권한입니다'
-        })
+        res.status(403).render('error', foo.getResJson(req.user, {
+          error_name: '권한 문제',
+          message: '관리자 접근 권한입니다',
+        }));
       }
     } else {
-      res.status(403).json({
-        message: '로그인이 필요합니다'
-      })
+      res.status(403).render('error', foo.getResJson(req.user, {
+        error_name: '권한 문제',
+        message: '관리자로 로그인을 해주세요',
+      }));
     }
   },
   isNotLoggedIn: (req, res, next) => {
     if (!req.isAuthenticated()) {
       next();
     } else {
-      res.status(403).json({
-        message: '로그아웃이 필요합니다'
-      })
+      res.status(403).render('error', foo.getResJson(req.user, {
+        error_name: '권한 문제',
+        message: '로그아웃이 필요합니다',
+      }));
     }
   },
   checkReqInfo: (req, res, next) => {

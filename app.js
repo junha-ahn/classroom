@@ -89,14 +89,13 @@ app.use('/', pageRoute);
 app.use('/admin', adminPageRoute);
 
 app.use(function (error, req, res, next) {
-  res.status(error.status || 500);
   if (process.env.NODE_ENV != 'production') {
     console.error(error);
   }
-  res.json({
+  res.status(error.status || 500).render('error', foo.getResJson(req.user, {
     error_name: error.name,
-    error_message: error.message,
-  });
+    message: error.message,
+  }));
 });
 
 app.use(function (req, res, next) {

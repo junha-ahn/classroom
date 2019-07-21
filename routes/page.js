@@ -151,7 +151,7 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
     next(error)
   }
 });
-router.get('/reservation/single/:room_reservation_id', async (req, res, next) => {
+router.get('/reservation/single/:room_rsv_id', async (req, res, next) => {
   res.status(404).send('개발중')
 });
 
@@ -215,21 +215,28 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
       study_group_id,
       user_id: (req.user) ? req.user.user_id : null,
     });
-    foo.cleaningList(groupObject.results);
-    let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
-    let {
-      results,
-      list_count,
-    } = await select_func.viewTableStudyGroupPerson(connection, {
-      study_group_id,
-    });
-    foo.cleaningList(results, req.user, true);
-    res.render('group', foo.getResJson(req.user, {
-      group: groupObject.results[0],
-      results,
-      department_results: info.department_results,
-      building_results,
-    }));
+    if (!groupObject.results[0]) {
+      res.status(401).render('error', foo.getResJson(req.user, {
+        error_name: '404 NOT FOUND',
+        message: '그룹을 찾을 수 없습니다',
+      }));
+    } else {
+      foo.cleaningList(groupObject.results);
+      let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
+      let {
+        results,
+        list_count,
+      } = await select_func.viewTableStudyGroupPerson(connection, {
+        study_group_id,
+      });
+      foo.cleaningList(results, req.user, true);
+      res.render('group', foo.getResJson(req.user, {
+        group: groupObject.results[0],
+        results,
+        department_results: info.department_results,
+        building_results,
+      }));
+    }
   } catch (error) {
     next(error);
   } finally {

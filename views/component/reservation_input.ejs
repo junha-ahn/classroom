@@ -1,0 +1,43 @@
+<script type="text/x-template" id="input-template">
+  <form class="form-lnline" v-on:submit="onSubmitForm">
+
+  </form>
+</script>
+
+<script>
+  Vue.component('reservation-input', {
+    template: '#input-template',
+    props: ['mod', 'reservation'],
+    data: function () {
+      return {
+        mod: this.mod,
+        reservation: this.reservation,
+      }
+    }, 
+    methods: {
+      onSubmitForm: function(e) {
+        e.preventDefault();
+        var __this = this;
+        var mod = this.mod;
+        let need_location_href = mod == 'POST' ? true : false;
+        var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.group.study_group_id : '');
+        global.ajax({
+          url: url,
+          type: mod,
+          data: this.group,
+        },
+        function (data, status) {
+          alert(data.message);
+          if (need_location_href) {
+            location.href='/group/lookup?page=1'
+          } else {
+            __this.setMod('GET');
+          }
+        },
+        function (message, status, data) {
+          alert(message);
+        });
+      }
+    },
+  })
+</script>
