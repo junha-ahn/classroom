@@ -19,7 +19,7 @@
           </div>
         </div>
 
-        <div class="panel panel-info" @click="location.href='/reservation/lookup/' + params.building_id + '?page=1&date=' + global.parseDate(new Date())">
+        <div class="panel panel-info" @click="locationHrefLookup()">
           <div class="panel-heading">
             예약 조회
           </div>
@@ -52,6 +52,10 @@
           if (method == 'R' || method == 'DT') {
             location.href = '/reservation/' + this.params.building_id + '?method=' + method
           }
+        },
+        locationHrefLookup: function() {
+          var link ='/reservation/lookup/' + this.params.building_id + '?page=1&date=' + global.parseDate(new Date())
+          location.href = link
         }
       }
     })
