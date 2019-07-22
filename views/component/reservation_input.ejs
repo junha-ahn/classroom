@@ -98,14 +98,17 @@
         <p class="form-control-static">{{reservation.datetime_created}}</p>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
-    <button 
-    type="button" 
-    class="btn btn-warning" 
-    v-if="is_userpage && reservation.is_mine == 1 && reservation.rsv_status == 20"
-    @click="cancelRsv($event, reservation)">
-    취소
-    </button>
+    <div class="btn-group" role="group">
+      <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
+      <button 
+      type="button" 
+      class="btn btn-warning" 
+      v-if="is_userpage && reservation.is_mine == 1 && reservation.rsv_status == 20"
+      @click="cancelRsv($event, reservation)">
+      취소
+      </button>
+    </div>
+   
 
     <div v-if="!is_userpage && is_admin==1">
       <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
