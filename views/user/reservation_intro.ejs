@@ -44,6 +44,7 @@
           header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
+          department_id: <%- department_id %>,
           params : <%-JSON.stringify(params) %>,
         }
       },
@@ -55,6 +56,9 @@
         },
         locationHrefLookup: function() {
           var link ='/reservation/lookup/' + this.params.building_id + '?page=1'
+          if (this.department_id) {
+            link += '&department_id=' + this.department_id
+          }
           location.href = link
         }
       }

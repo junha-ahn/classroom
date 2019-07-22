@@ -51,6 +51,7 @@ router.get('/reservation/intro/:building_id', async (req, res, next) => {
       res.render('user/reservation_intro', foo.getResJson(req.user, {
         query: req.query,
         params: req.params,
+        department_id : req.user ? req.user.department_id : null,
       }));
     }
   } catch (error) {
@@ -97,7 +98,6 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
     page_length,
   } = req.query;
   page_length = page_length || 10;
-  department_id = department_id ? department_id : (req.user && department_id != 0) ? req.user.department_id : null;
   rsv_status = rsv_status ? rsv_status : null;
   let connection;
   try {
@@ -154,10 +154,34 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
 });
 router.get('/reservation/single/:room_rsv_id', db_func.inDBStream(async (req, res, next, conn) => {
   let room_rsv_id = req.params.room_rsv_id;
+  let {
+    results
+  } = await select_func.room_rsv(conn, {
+    room_rsv_id,
+  });
+
+  if (!results[0]) {
+    res.render('error', foo.getResJson(req.user, {
+      error_name: "예약을 찾을수 없습니다",
+      message: "다시 확인해주세요"
+    }));
+  } else {
+    let room_to_use_results = (await select_func.vRoomToUse(conn, {
+      room_rsv_id,
+    }));
+    foo.cleaningList(results);
+    res.render('user/reservation_single', foo.getResJson(req.user, {
+      params: req.params,
+      reservation: results[0],
+      room_to_use_results,
+      rsv_status_results: info.rsv_status_results,
+      room_rsv_category_results: info.room_rsv_category_results,
+    }));
+  }
 }));
 
 
-router.get('/group/lookup', async (req, res, next) => {
+router.get('/study_group/lookup', async (req, res, next) => {
   let {
     page,
     page_length,
@@ -167,8 +191,6 @@ router.get('/group/lookup', async (req, res, next) => {
     is_join,
   } = req.query;
   page_length = page_length || 10;
-  department_id = department_id ? department_id : (req.user && department_id != 0) ? req.user.department_id : null;
-  building_id = building_id ? building_id : (req.user && building_id != 0) ? req.user.building_id || 0: null;
 
   let connection;
   try {
@@ -188,7 +210,7 @@ router.get('/group/lookup', async (req, res, next) => {
     });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
-    res.render('user/groups', foo.getResJson(req.user, {
+    res.render('user/study_group_lookup', foo.getResJson(req.user, {
       results,
       list_count,
       query: {
@@ -205,7 +227,7 @@ router.get('/group/lookup', async (req, res, next) => {
     db_func.release(connection);
   }
 });
-router.get('/group/single/:study_group_id', async (req, res, next) => {
+router.get('/study_group/single/:study_group_id', async (req, res, next) => {
   let study_group_id = req.params.study_group_id || null;
 
   let connection;
@@ -231,7 +253,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
         study_group_id,
       });
       foo.cleaningList(results, req.user, true);
-      res.render('user/group', foo.getResJson(req.user, {
+      res.render('user/study_group', foo.getResJson(req.user, {
         group: groupObject.results[0],
         results,
         department_results: info.department_results,
@@ -244,8 +266,8 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
     db_func.release(connection);
   }
 });
-router.get('/group/write', isLoggedIn, async (req, res, next) => {
-  res.render('user/group_write', foo.getResJson(req.user, {
+router.get('/study_group/write', isLoggedIn, async (req, res, next) => {
+  res.render('user/study_group_write', foo.getResJson(req.user, {
     department_results: info.department_results,
     building_results: req.user ? info.buildings[req.user.campus_id] : info.building_results,
     department_id: req.user ? req.user.department_id || 0: 0,

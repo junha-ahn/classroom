@@ -1,6 +1,15 @@
 <% include ../sub/header %>
-      <% include ./rsv_section/menu %>
-      <% include ./rsv_section/left_info %>
+      <template>
+        <reservation-input 
+        v-bind:reservation="reservation" 
+        :is_admin="is_admin"
+        mod="GET"
+        :rsv_status_results="rsv_status_results"
+        :room_rsv_category_results="room_rsv_category_results"
+        >
+        </group-input>
+      </template>
+
 
     </main>
 
@@ -9,9 +18,12 @@
     </footer>
   </div>
 
-<% include ../component/datepicker %>
+<% include ../component/reservation_input %>
   <script>
     var global = makeGlobal();
+    var reservation = <%-JSON.stringify(reservation) %>;
+    var rsv_status_results = <%-JSON.stringify(rsv_status_results) %>;
+    var room_rsv_category_results = <%-JSON.stringify(room_rsv_category_results) %>;
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -19,8 +31,9 @@
           header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
-          query : <%-JSON.stringify(query) %>,
-          params : <%-JSON.stringify(params) %>,
+          reservation: reservation,
+          rsv_status_results: rsv_status_results,
+          room_rsv_category_results: room_rsv_category_results,
         }
       },
       methods: {

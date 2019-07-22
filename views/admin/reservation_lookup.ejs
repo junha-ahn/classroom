@@ -54,7 +54,7 @@
             <td>{{room_rsv.start_datetime}}</td>
             <td>{{room_rsv.end_datetime}}</td>
             <td>{{makeDisplayName(room_rsv)}}</td>
-            <td><button type="button" class="btn btn-default" @click="location.href='/resrervation/single/' + room_rsv.room_rsv_id"> 조회 </button></td>
+            <td><button type="button" class="btn btn-default" @click="location.href='/reservation/single/' + room_rsv.room_rsv_id"> 조회 </button></td>
           </tr>
         </tbody>
       </table><nav>
@@ -88,6 +88,7 @@
       data: function () {
         return {
           header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           params : <%-JSON.stringify(params) %>,

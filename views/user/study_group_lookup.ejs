@@ -36,7 +36,7 @@
               <button type="button" class="btn btn-danger" v-else @click="joinStudyGroup(study_group.study_group_id, false)"> 가입취소 </button>
             
             </td>
-            <td><button type="button" class="btn btn-default" @click="locationHref('/group/single/' + study_group.study_group_id)"> 조회 </button></td>
+            <td><button type="button" class="btn btn-default" @click="locationHref('/study_group/single/' + study_group.study_group_id)"> 조회 </button></td>
           </tr>
         </tbody>
       </table>
@@ -106,7 +106,7 @@
           if (!this.is_user) {
             alert(global.message.NEED_LOGIN)
           } else {
-            this.locationHref('/group/write')
+            this.locationHref('/study_group/write')
           }
         },
         joinStudyGroup: function(study_group_id, is_join) {
@@ -142,7 +142,7 @@
         refresh: function() {
           this.query.building_id = this.query.building_id || undefined;
           this.query.department_id = this.query.department_id || undefined;
-          location.href= '/group/lookup' + global.serializeQuery(this.query);
+          location.href= '/study_group/lookup' + global.serializeQuery(this.query);
         },
         locationHref: function (link) {
           location.href= link;

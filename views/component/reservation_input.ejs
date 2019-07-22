@@ -1,26 +1,86 @@
 <script type="text/x-template" id="input-template">
   <form class="form-lnline" v-on:submit="onSubmitForm">
-
+    <label>상태</label>
+    <select class="form-control" v-model="reservation.rsv_status">
+      <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
+        :selected="reservation.rsv_status == status.rsv_status" :key="i" :disabled="mod != 'POST'">
+        {{ status.name }}
+      </option>
+    </select>
+    <label>학습관</label>
+    <select class="form-control" v-model="reservation.room_rsv_category_id">
+      <option v-for="(room_rsv_category, j) in room_rsv_category_results" v-bind:value="room_rsv_category.room_rsv_category_id" :key="j"
+        :disabled="mod != 'POST'">
+        {{ room_rsv_category.name }}
+      </option>
+    </select>
+    <div class="form-group" v-if="mod!='POST'">
+      <label class="col-sm-2 control-label">사용시간</label>
+      <div class="col-sm-10">
+        <p class="form-control-static">{{reservation.start_datetime}} ~ {{reservation.end_datetime}}</p>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">시간s</label>
+      <div class="col-sm-10">
+        <%# <input type="text" class="form-control" v-model="reservation.name" :disabled="mod == 'GET'"> %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">교실s</label>
+      <div class="col-sm-10">
+        <%# <input type="text" class="form-control" v-model="reservation.name" :disabled="mod == 'GET'"> %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">설명</label>
+      <div class="col-sm-10">
+        <textarea class="form-control" rows="3" v-model="reservation.description" :disabled="mod == 'GET'"></textarea>
+      </div>
+    </div>
+    <div class="form-group" v-if="mod!='POST'">
+      <label class="col-sm-2 control-label">생성일</label>
+      <div class="col-sm-10">
+        <p class="form-control-static">{{reservation.date_created}}</p>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
+    <div v-if="reservation.is_mine==1">
+      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">취소</button>
+    </div>
+    <div v-if="is_admin==1">
+      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
+    </div>
   </form>
 </script>
 
 <script>
   Vue.component('reservation-input', {
     template: '#input-template',
-    props: ['mod', 'reservation'],
+    props: {
+      mod: String,
+      is_admin: Number,
+      reservation: Object,
+      rsv_status_results: Array,
+      room_rsv_category_results: Array,
+    },
     data: function () {
       return {
-        mod: this.mod,
-        reservation: this.reservation,
       }
     }, 
     methods: {
+      setMod: function(mod, e) {
+        if (e) {
+          e.preventDefault();
+        }
+        this.mod = mod;
+      },
       onSubmitForm: function(e) {
         e.preventDefault();
         var __this = this;
         var mod = this.mod;
         let need_location_href = mod == 'POST' ? true : false;
-        var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.group.study_group_id : '');
+        var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.reservation.study_group_id : '');
         global.ajax({
           url: url,
           type: mod,
@@ -29,7 +89,7 @@
         function (data, status) {
           alert(data.message);
           if (need_location_href) {
-            location.href='/group/lookup?page=1'
+            location.href='/study_group/lookup?page=1'
           } else {
             __this.setMod('GET');
           }

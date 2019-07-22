@@ -26,7 +26,7 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li :class="{active: header_menu_name=='main'}"><a href="/">메인</a></li>
-              <li :class="{active: header_menu_name=='group'}"><a href="/group/lookup?page=1">스터디</a></li>
+              <li :class="{active: header_menu_name=='study_group'}"><a href="/study_group/lookup?page=1">스터디</a></li>
             </ul>
             <ul v-if="is_user==false" class="nav navbar-nav navbar-right">
               <li :class="{active: header_menu_name=='login'}"><a href="/login">로그인</a></li>

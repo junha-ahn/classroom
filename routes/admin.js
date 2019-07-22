@@ -18,7 +18,6 @@ const {
 } = require('../global/middlewares');
 
 router.get('/user/lookup', isAdmin, async (req, res, next) => {
-
   let {
     page,
     page_length,
@@ -27,7 +26,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
 
   page_length = page_length || 10;
   page = page || 1;
-  
+
   let connection;
   try {
     connection = await db_func.getDBConnection();
@@ -57,8 +56,9 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
   }
 });
 router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
+  let user_id = req.params.user_id;
 
-  let user_id = req.params.user_id; 
+  let connection;
   try {
     connection = await db_func.getDBConnection();
 
@@ -69,7 +69,7 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
       user_id,
       // 내 건물에 속한 유저만 보이게 하기?...
     });
-    
+
     if (!results[0]) {
       res.status(401).render('error', foo.getResJson(req.user, {
         error_name: '404 NOT FOUND',
@@ -78,12 +78,12 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
     } else {
       foo.cleaningList(results);
       res.render('admin/user', foo.getResJson(req.user, {
-        user : results[0],
-        query : req.query,
-        params : req.params
+        user: results[0],
+        query: req.query,
+        params: req.params
       }))
     }
-  } catch (error){
+  } catch (error) {
     next(error);
   } finally {
     db_func.release(connection);
@@ -91,6 +91,7 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
 });
 
 router.get('/schedule', isAdmin, async (req, res, next) => {
+  let connection;
   try {
     connection = await db_func.getDBConnection();
 
@@ -103,12 +104,12 @@ router.get('/schedule', isAdmin, async (req, res, next) => {
     foo.cleaningList(results);
     res.render('admin/schedule', foo.getResJson(req.user, {
       results,
-      query : req.query,
-      params : req.params,
+      query: req.query,
+      params: req.params,
       building: info.building_object[req.user.building_id],
     }))
 
-  } catch (error){
+  } catch (error) {
     next(error);
   } finally {
     db_func.release(connection);
@@ -116,7 +117,6 @@ router.get('/schedule', isAdmin, async (req, res, next) => {
 });
 
 router.get('/room/lookup', isAdmin, async (req, res, next) => {
-  
   let {
     page,
     page_length,
@@ -133,7 +133,7 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.room( connection, {
+    } = await select_func.room(connection, {
       building_id: req.user.building_id,
       floor,
       room_category_id,
@@ -146,7 +146,7 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
       results,
       list_count,
       query: req.query,
-      params: req.params,  
+      params: req.params,
     }))
   } catch (error) {
     next(error)
@@ -155,18 +155,19 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
   }
 });
 router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
-
   let room_id = req.params.room_id;
-  try{
+
+  let connection;
+  try {
     connection = await db_func.getDBConnection();
-    let{
+    let {
       results,
       list_count
-    } = await select_func.room(connection,{
-      room_id, 
+    } = await select_func.room(connection, {
+      room_id,
       building_id: req.user.building_id,
     });
-    
+
     if (!results[0]) {
       res.status(401).render('error', foo.getResJson(req.user, {
         error_name: '404 NOT FOUND',
@@ -177,16 +178,15 @@ router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
       res.render('admin/room', foo.getResJson(req.user, {
         room: results[0],
         list_count,
-        query : req.query,
-        params : req.params    
+        query: req.query,
+        params: req.params
       }))
     }
-  } catch (error){
+  } catch (error) {
     next(error);
   } finally {
     db_func.release(connection);
   }
-  
 });
 router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
   let building_id = req.user.building_id;
@@ -200,7 +200,6 @@ router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
     page_length,
   } = req.query;
   page_length = page_length || 10;
-  department_id = department_id ? department_id : (req.user && department_id != 0) ? req.user.department_id : null;
   rsv_status = rsv_status ? rsv_status : null;
   let connection;
   try {
@@ -240,7 +239,7 @@ router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
           ...req.query,
           department_id: department_id || 0,
           study_group_id: study_group_id || 0,
-          rsv_status : rsv_status || 0,
+          rsv_status: rsv_status || 0,
         },
         department_results: info.department_results,
         rsv_status_results: info.rsv_status_results,
@@ -255,7 +254,7 @@ router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
     db_func.release(connection);
   }
 });
-router.get('/reservation/single/:room_reservation_id', isAdmin, async (req, res, next) => {
+router.get('/reservation/single/:room_rsv_id', isAdmin, async (req, res, next) => {
   res.render('admin/reservation', foo.getResJson(req.user, {
 
   }))
