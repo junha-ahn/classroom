@@ -48,7 +48,7 @@ router.get('/study_group', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.viewTableStudyGroup(connection, {
+    } = await select_func.vStudyGroup(connection, {
       page,
       page_length,
       department_id,
@@ -471,7 +471,7 @@ router.get('/holiday', async (req, res, next) => {
       let {
         results,
         list_count,
-      } = await select_func.viewTableRoomHoliday(connection, {
+      } = await select_func.vRoomHoliday(connection, {
         room_id,
         building_id,
         year,
@@ -517,7 +517,7 @@ router.get('/available_time', async (req, res, next) => {
       });
       let rsv_results;
       if (room_id) {
-        rsv_results = (await select_func.viewTableRoomRsv(connection, {
+        rsv_results = (await select_func.vRoomRsv(connection, {
           room_id: room_id,
           rsv_status : info.SUBMIT_RSV_STATUS,
           start_datetime : moment(`${foo.parseDate(date)} 00:00`).format('YYYY-MM-DD HH:mm'),
@@ -611,7 +611,7 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
           message: `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
         })
       } else {
-        let is_holiday = (await select_func.viewTableRoomHoliday(connection, {
+        let is_holiday = (await select_func.vRoomHoliday(connection, {
           room_id: results[0].room_id,
           building_id: results[0].building_id,
           date: moment(date).format('YYYY-MM-DD'),
@@ -622,7 +622,7 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
             message: '휴일입니다. 다른 날짜를 선택해주세요'
           })
         } else {
-          let available_time_results = (await select_func.viewTableRoomAvailableTime(connection, {
+          let available_time_results = (await select_func.vRoomAvailableTime(connection, {
             building_id: results[0].building_id,
             room_id: results[0].room_id,
             time_id_array,
@@ -637,7 +637,7 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
           } else {
             let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[0].start_time)}`);
             let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[available_time_results.length - 1].end_time)}`);
-            let rsv_results = (await select_func.viewTableRoomRsv(connection, {
+            let rsv_results = (await select_func.vRoomRsv(connection, {
               room_id: results[0].room_id,
               rsv_status : info.SUBMIT_RSV_STATUS,
               start_datetime : start_datetime.format('YYYY-MM-DD HH:mm'),
@@ -710,7 +710,7 @@ function checkAdminManager(connection, object) {
 
     let {
       results
-    } = await select_func.viewTableAdmin(connection, {
+    } = await select_func.vAdmin(connection, {
       user_id,
     })
     if (!results[0]) {

@@ -1,6 +1,6 @@
 let pool = require('../db.js');
 
-module.exports = {
+let self = {
   getDBConnection : () => {
     return new Promise((resolve, reject) => {
       pool.getConnection(function(error,connection){
@@ -61,4 +61,18 @@ module.exports = {
       });
     });
   },
+  inDBStream: (innerAction) => {
+    return async (req,res,next) => {
+      let connection;
+      try {
+        connection = await self.getDBConnection();
+        await innerAction(req, res, next, connection);
+      } catch (e) {
+        next(e)
+      } finally {
+        self.release(connection);
+      }
+    }
+  },
 }
+module.exports = self;

@@ -16,7 +16,7 @@ module.exports = (passport) => {
       connection = await db_func.getDBConnection();
       let {
         results
-      } = await select_func.viewTableUser(connection, {
+      } = await select_func.vUser(connection, {
         email,
       });
       if (results[0]) {

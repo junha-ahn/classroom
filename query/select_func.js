@@ -73,7 +73,7 @@ let self = {
       }
     });
   },
-  viewTableUser: (connection, object) => {
+  vUser: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -185,7 +185,7 @@ let self = {
       }
     });
   },
-  viewTableAdmin: (connection, object) => {
+  vAdmin: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -369,7 +369,7 @@ let self = {
       }
     });
   },
-  viewTableStudyGroup: (connection, object) => {
+  vStudyGroup: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -498,7 +498,7 @@ let self = {
       }
     });
   },
-  viewTableStudyGroupPerson: (connection, object) => {
+  vStudyGroupPerson: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -927,7 +927,7 @@ let self = {
       }
     });
   },
-  viewTableRoomHoliday: (connection, object) => {
+  vRoomHoliday: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -1136,7 +1136,7 @@ let self = {
       }
     });
   },
-  viewTableRoomAvailableTime: (connection, object) => {
+  vRoomAvailableTime: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -1231,7 +1231,7 @@ let self = {
       }
     });
   },
-  viewTableRoomRsv: (connection, object) => {
+  vRoomRsv: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;
@@ -1320,7 +1320,7 @@ let self = {
       }
     });
   },
-  viewTableRoomRsvList: (connection, object) => {
+  vRoomRsvList: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let queryString;

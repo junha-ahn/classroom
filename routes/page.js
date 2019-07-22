@@ -112,7 +112,7 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
       let {
         results,
         list_count,
-      } = await select_func.viewTableRoomRsvList(connection, {
+      } = await select_func.vRoomRsvList(connection, {
         department_id,
         study_group_id,
         rsv_status,
@@ -124,7 +124,7 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
         sort_key: 'start_datetime',
         sort_type: false,
       })
-      let study_group_results = (await select_func.viewTableStudyGroup(connection, {
+      let study_group_results = (await select_func.vStudyGroup(connection, {
         department_id,
         building_id,
         user_id: (req.user) ? req.user.user_id : null,
@@ -152,9 +152,9 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
     db_func.release(connection);
   }
 });
-router.get('/reservation/single/:room_rsv_id', async (req, res, next) => {
-  res.status(404).send('개발중')
-});
+router.get('/reservation/single/:room_rsv_id', db_func.inDBStream(async (req, res, next, conn) => {
+  let room_rsv_id = req.params.room_rsv_id;
+}));
 
 
 router.get('/group/lookup', async (req, res, next) => {
@@ -177,7 +177,7 @@ router.get('/group/lookup', async (req, res, next) => {
     let {
       results,
       list_count,
-    } = await select_func.viewTableStudyGroup(connection, {
+    } = await select_func.vStudyGroup(connection, {
       page,
       page_length,
       department_id,
@@ -212,7 +212,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
   try {
     connection = await db_func.getDBConnection();
 
-    let groupObject = await select_func.viewTableStudyGroup(connection, {
+    let groupObject = await select_func.vStudyGroup(connection, {
       study_group_id,
       user_id: (req.user) ? req.user.user_id : null,
     });
@@ -227,7 +227,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
       let {
         results,
         list_count,
-      } = await select_func.viewTableStudyGroupPerson(connection, {
+      } = await select_func.vStudyGroupPerson(connection, {
         study_group_id,
       });
       foo.cleaningList(results, req.user, true);

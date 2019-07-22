@@ -35,7 +35,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
     let {
       results,
       list_count
-    } = await select_func.viewTableUser(connection, {
+    } = await select_func.vUser(connection, {
       page,
       page_length,
       user_type: is_admin ? info.ADMIN_TYPE : null,
@@ -65,7 +65,7 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
     let {
       results,
       list_count
-    } = await select_func.viewTableUser(connection, {
+    } = await select_func.vUser(connection, {
       user_id,
       // 내 건물에 속한 유저만 보이게 하기?...
     });
@@ -215,7 +215,7 @@ router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
       let {
         results,
         list_count,
-      } = await select_func.viewTableRoomRsvList(connection, {
+      } = await select_func.vRoomRsvList(connection, {
         department_id,
         study_group_id,
         rsv_status,
@@ -227,7 +227,7 @@ router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
         sort_key: 'start_datetime',
         sort_type: false,
       })
-      let study_group_results = (await select_func.viewTableStudyGroup(connection, {
+      let study_group_results = (await select_func.vStudyGroup(connection, {
         department_id,
         building_id,
         user_id: (req.user) ? req.user.user_id : null,
