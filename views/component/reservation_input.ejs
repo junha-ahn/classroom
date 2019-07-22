@@ -1,19 +1,26 @@
 <script type="text/x-template" id="input-template">
   <form class="form-lnline" v-on:submit="onSubmitForm">
-    <label>상태</label>
-    <select class="form-control" v-model="reservation.rsv_status">
+    <label class="col-sm-2 control-label">상태</label>
+    <div v-if="mod='GET'" class="col-sm-10">
+      <p class="form-control-static">{{ reservation.rsv_status_name }}</p>
+    </div>
+    <select v-else class="form-control" v-model="reservation.rsv_status">
       <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
-        :selected="reservation.rsv_status == status.rsv_status" :key="i" :disabled="mod != 'POST'">
+        :selected="reservation.rsv_status == status.rsv_status" :key="i">
         {{ status.name }}
       </option>
     </select>
-    <label>학습관</label>
-    <select class="form-control" v-model="reservation.room_rsv_category_id">
-      <option v-for="(room_rsv_category, j) in room_rsv_category_results" v-bind:value="room_rsv_category.room_rsv_category_id" :key="j"
-        :disabled="mod != 'POST'">
+
+    <label class="col-sm-2 control-label">카테고리</label>
+    <div v-if="mod='GET'" class="col-sm-10">
+      <p class="form-control-static">{{ reservation.room_rsv_category_name }}</p>
+    </div>
+    <select v-else class="form-control" v-model="reservation.room_rsv_category_id">
+      <option v-for="(room_rsv_category, i) in room_rsv_category_results" v-bind:value="room_rsv_category.room_rsv_category_id" :key="i">
         {{ room_rsv_category.name }}
       </option>
     </select>
+    
     <div class="form-group" v-if="mod!='POST'">
       <label class="col-sm-2 control-label">사용시간</label>
       <div class="col-sm-10">
@@ -21,34 +28,86 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="col-sm-2 control-label">시간s</label>
-      <div class="col-sm-10">
-        <%# <input type="text" class="form-control" v-model="reservation.name" :disabled="mod == 'GET'"> %>
-      </div>
+      <label class="col-sm-2 control-label">타임블럭</label>
+      <button
+      class="btn btn-default"
+      v-for="(room_rsv_time, i) in room_rsv_time_results" 
+      v-bind:value="room_rsv_time.room_rsv_time_id" 
+      :key="i"
+      disabled
+      >{{room_rsv_time.start_time}} ~ {{room_rsv_time.end_time}}</button>
     </div>
     <div class="form-group">
-      <label class="col-sm-2 control-label">교실s</label>
-      <div class="col-sm-10">
-        <%# <input type="text" class="form-control" v-model="reservation.name" :disabled="mod == 'GET'"> %>
-      </div>
+      <label class="col-sm-2 control-label">교실목록</label>
+      <button
+      class="btn btn-default"
+      v-for="(room, i) in room_to_use_results" 
+      v-bind:value="room.room_id" 
+      :key="i"
+      disabled
+      >{{room.room_number}}({{room.name}})</button>
     </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">설명</label>
+    
+    <label class="col-sm-2 control-label">학과</label>
+    <div v-if="mod='GET'" class="col-sm-10">
+      <p class="form-control-static">{{ reservation.department_name }}</p>
+    </div>
+    <select v-else class="form-control" v-model="reservation.department_id">
+      <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
+        {{ department.name }}
+      </option>
+    </select>
+    
+    <label class="col-sm-2 control-label">스터디</label>
+    <div v-if="mod='GET'" class="col-sm-10">
+      <p class="form-control-static">{{ reservation.study_group_name }}</p>
+    </div>
+    <select v-else class="form-control" v-model="reservation.study_group_id">
+      <option v-for="(study_group, i) in study_group_results" v-bind:value="study_group.study_group_id" :key="i">
+        {{ study_group.name }}
+      </option>
+    </select>
+
+    <label class="col-sm-2 control-label">대표명</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" v-model="reservation.representative_name" :disabled="mod == 'GET'">
+    </div>
+    <label class="col-sm-2 control-label">대표번호</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" v-model="reservation.representative_phone" :disabled="mod == 'GET'">
+    </div>
+    
+    <label class="col-sm-2 control-label">학생수</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" v-model="reservation.student_count" :disabled="mod == 'GET'">
+    </div>
+    <label class="col-sm-2 control-label">비학생수</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" v-model="reservation.non_student_count" :disabled="mod == 'GET'">
+    </div>
+
+    <div class="form-group" v-if="mod!='POST'">
+      <label class="col-sm-2 control-label">최근 수정일</label>
       <div class="col-sm-10">
-        <textarea class="form-control" rows="3" v-model="reservation.description" :disabled="mod == 'GET'"></textarea>
+        <p class="form-control-static">{{reservation.datetime_last_updated}}</p>
       </div>
     </div>
     <div class="form-group" v-if="mod!='POST'">
       <label class="col-sm-2 control-label">생성일</label>
       <div class="col-sm-10">
-        <p class="form-control-static">{{reservation.date_created}}</p>
+        <p class="form-control-static">{{reservation.datetime_created}}</p>
       </div>
     </div>
     <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
-    <div v-if="reservation.is_mine==1">
-      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">취소</button>
-    </div>
-    <div v-if="is_admin==1">
+    <button 
+    type="button" 
+    class="btn btn-warning" 
+    v-if="is_userpage && reservation.is_mine == 1 && reservation.rsv_status == 20"
+    @click="cancelRsv($event, reservation)">
+    취소
+    </button>
+
+    <div v-if="!is_userpage && is_admin==1">
       <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
     </div>
   </form>
@@ -58,17 +117,26 @@
   Vue.component('reservation-input', {
     template: '#input-template',
     props: {
+      is_userpage: Boolean,
       mod: String,
       is_admin: Number,
       reservation: Object,
       rsv_status_results: Array,
       room_rsv_category_results: Array,
+      room_rsv_time_results: Array,
+      room_to_use_results: Array,
     },
     data: function () {
       return {
       }
     }, 
     methods: {
+      cancelRsv: function(e, reservation) {
+        if (e) {
+          e.preventDefault();
+        }
+        alert('하이')
+      },
       setMod: function(mod, e) {
         if (e) {
           e.preventDefault();

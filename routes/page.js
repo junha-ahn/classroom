@@ -51,7 +51,7 @@ router.get('/reservation/intro/:building_id', async (req, res, next) => {
       res.render('user/reservation_intro', foo.getResJson(req.user, {
         query: req.query,
         params: req.params,
-        department_id : req.user ? req.user.department_id : null,
+        department_id : req.user ? req.user.department_id || 0 : 0,
       }));
     }
   } catch (error) {
@@ -156,8 +156,9 @@ router.get('/reservation/single/:room_rsv_id', db_func.inDBStream(async (req, re
   let room_rsv_id = req.params.room_rsv_id;
   let {
     results
-  } = await select_func.room_rsv(conn, {
+  } = await select_func.vRoomRsvSingle(conn, {
     room_rsv_id,
+    user_id: req.user ? req.user.user_id : null,
   });
 
   if (!results[0]) {
@@ -168,12 +169,17 @@ router.get('/reservation/single/:room_rsv_id', db_func.inDBStream(async (req, re
   } else {
     let room_to_use_results = (await select_func.vRoomToUse(conn, {
       room_rsv_id,
-    }));
+    })).results;
+    let room_rsv_time_results = (await select_func.room_rsv_time(conn, {
+      room_rsv_id,
+    })).results;
     foo.cleaningList(results);
+    foo.cleaningList(room_rsv_time_results);
     res.render('user/reservation_single', foo.getResJson(req.user, {
       params: req.params,
       reservation: results[0],
       room_to_use_results,
+      room_rsv_time_results,
       rsv_status_results: info.rsv_status_results,
       room_rsv_category_results: info.room_rsv_category_results,
     }));

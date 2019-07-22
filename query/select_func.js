@@ -1376,6 +1376,78 @@ let self = {
       }
     });
   },
+  vRoomRsvSingle: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          room_rsv_id,
+          user_id,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+        sort_key = (sort_key) ? sort_key : 'room_rsv_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('room_rsv')
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('room_rsv')
+            .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+            .field('room_rsv.*')
+            .field('study_group.name', 'study_group_name')
+            .field(squel.case()
+              .when('room_rsv.user_id = ?', user_id)
+              .then('1')
+              .else('0'), 'is_mine')
+            .order(`room_rsv.${sort_key}`, sort_type)
+            .group('room_rsv.room_rsv_id')
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('room_rsv')
+            .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+            .field('room_rsv.*')
+            .field('study_group.name', 'study_group_name')
+            .field(squel.case()
+              .when('room_rsv.user_id = ?', user_id)
+              .then('1')
+              .else('0'), 'is_mine')
+            .order(`room_rsv.${sort_key}`, sort_type)
+            .group('room_rsv.room_rsv_id')
+            .toParam();
+        }
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   vRoomRsvList: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1447,6 +1519,10 @@ let self = {
               .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
+            .field(squel.case()
+              .when('room_rsv.user_id = ?', user_id)
+              .then('1')
+              .else('0'), 'is_mine')
             .field(squel.select()
               .from('room_to_use')
               .join('room', null, 'room.room_id = room_to_use.room_id')
@@ -1483,6 +1559,10 @@ let self = {
               .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
+            .field(squel.case()
+              .when('room_rsv.user_id = ?', user_id)
+              .then('1')
+              .else('0'), 'is_mine')
             .field(squel.select()
               .from('room_to_use')
               .join('room', null, 'room.room_id = room_to_use.room_id')
@@ -1549,6 +1629,62 @@ let self = {
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_rsv_id = ?', room_rsv_id)))
             .order(`room_to_use.${sort_key}`, sort_type)
+            .toParam();
+        }
+
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  room_rsv_time: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          room_rsv_id,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+        sort_key = (sort_key) ? sort_key : 'room_rsv_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('room_rsv_time')
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('room_rsv_time.room_rsv_time_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv_time.room_rsv_id = ?', room_rsv_id)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('room_rsv_time')
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('room_rsv_time.room_rsv_time_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv_time.room_rsv_id = ?', room_rsv_id)))
+            .order(`room_rsv_time.${sort_key}`, sort_type)
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('room_rsv_time')
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('room_rsv_time.room_rsv_time_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv_time.room_rsv_id = ?', room_rsv_id)))
+            .order(`room_rsv_time.${sort_key}`, sort_type)
             .toParam();
         }
 

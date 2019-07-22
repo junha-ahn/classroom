@@ -96,11 +96,30 @@ let self = {
         array[i].available_for_rsv_cancel = self.checkPermission(user, array[i].auth_rsv_cancel);
       }
       delete array[i].password
-      array[i].date_created = array[i].date_created ? self.parseDate(array[i].date_created, true) : array[i].date_created;
-      array[i].date_joined = array[i].date_joined ? self.parseDate(array[i].date_joined, true) : array[i].date_joined;
-      array[i].date_last_updated = array[i].date_last_updated ? self.parseDate(array[i].date_last_updated, true) : array[i].date_last_updated;
-      array[i].start_datetime = array[i].start_datetime ? self.parseDateTime(array[i].start_datetime, true) : array[i].start_datetime;
-      array[i].end_datetime = array[i].end_datetime ? self.parseDateTime(array[i].end_datetime, true) : array[i].end_datetime;
+      if (array[i].date_created) {
+        array[i].datetime_created = self.parseDateTime(array[i].date_created, true);
+        array[i].date_created = self.parseDate(array[i].date_created, true);
+      }
+      if (array[i].date_joined) {
+        array[i].date_joined = self.parseDate(array[i].date_joined, true);
+      }
+      if (array[i].date_last_updated) {
+        array[i].datetime_last_updated = self.parseDateTime(array[i].date_last_updated, true);
+        array[i].date_last_updated = self.parseDate(array[i].date_last_updated, true);
+      }
+      if (array[i].start_datetime) {
+        array[i].start_datetime = self.parseDateTime(array[i].start_datetime, true);
+      }
+      if (array[i].end_datetime) {
+        array[i].end_datetime = self.parseDateTime(array[i].end_datetime, true);
+      }
+
+      if (array[i].start_time) {
+        array[i].start_time = self.parseTimeString(array[i].start_time);
+      }
+      if (array[i].end_time) {
+        array[i].end_time = self.parseTimeString(array[i].end_time);
+      }
 
       if (array[i].campus_id) {
         array[i].campus_name = info.campus_object[array[i].campus_id].name;

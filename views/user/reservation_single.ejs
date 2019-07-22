@@ -6,6 +6,9 @@
         mod="GET"
         :rsv_status_results="rsv_status_results"
         :room_rsv_category_results="room_rsv_category_results"
+        :room_rsv_time_results="room_rsv_time_results"
+        :room_to_use_results="room_to_use_results"
+        :is_userpage="true"
         >
         </group-input>
       </template>
@@ -24,6 +27,8 @@
     var reservation = <%-JSON.stringify(reservation) %>;
     var rsv_status_results = <%-JSON.stringify(rsv_status_results) %>;
     var room_rsv_category_results = <%-JSON.stringify(room_rsv_category_results) %>;
+    var room_rsv_time_results = <%-JSON.stringify(room_rsv_time_results) %>;
+    var room_to_use_results = <%-JSON.stringify(room_to_use_results) %>;
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -34,6 +39,8 @@
           reservation: reservation,
           rsv_status_results: rsv_status_results,
           room_rsv_category_results: room_rsv_category_results,
+          room_rsv_time_results: room_rsv_time_results,
+          room_to_use_results: room_to_use_results,
         }
       },
       methods: {
