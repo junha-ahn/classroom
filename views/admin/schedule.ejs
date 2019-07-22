@@ -1,5 +1,5 @@
-<% include ./sub/header %>
-      <% include ./sub/admin_menu %>
+<% include ../sub/header %>
+      <% include ../sub/admin_menu %>
       
       <custom-datepicker
         :inline="true"
@@ -14,11 +14,11 @@
     </main>
 
     <footer>
-      <% include ./sub/footer %>
+      <% include ../sub/footer %>
     </footer>
   </div>
 
-<% include ./component/datepicker %>
+<% include ../component/datepicker %>
   <script>
     var global = makeGlobal();
     var results = <%-JSON.stringify(results) %>;

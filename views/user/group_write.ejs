@@ -1,13 +1,13 @@
-<% include ./sub/header %>
+<% include ../sub/header %>
       <template>
         <group-input v-bind:group="formData" v-bind:department_results="department_results" v-bind:building_results="building_results" mod="POST"></group-input>
       </template>
     <footer>
-      <% include ./sub/footer %>
+      <% include ../sub/footer %>
     </footer>
   </div>
 
-  <% include ./component/group_input %>
+  <% include ../component/group_input %>
   <script>
     var global = makeGlobal();
     var department_results = <%-JSON.stringify(department_results) %>;

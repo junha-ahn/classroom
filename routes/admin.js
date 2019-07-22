@@ -44,7 +44,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
     });
     foo.cleaningList(results);
 
-    res.render('admin_users', foo.getResJson(req.user, {
+    res.render('admin/user_lookup', foo.getResJson(req.user, {
       results,
       list_count,
       query: req.query,
@@ -77,7 +77,7 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
       }));
     } else {
       foo.cleaningList(results);
-      res.render('admin_user', foo.getResJson(req.user, {
+      res.render('admin/user', foo.getResJson(req.user, {
         user : results[0],
         query : req.query,
         params : req.params
@@ -101,7 +101,7 @@ router.get('/schedule', isAdmin, async (req, res, next) => {
       building_id: req.user.building_id,
     });
     foo.cleaningList(results);
-    res.render('admin_schedule', foo.getResJson(req.user, {
+    res.render('admin/schedule', foo.getResJson(req.user, {
       results,
       query : req.query,
       params : req.params,
@@ -142,7 +142,7 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
     });
     foo.cleaningList(results);
 
-    res.render('admin_rooms', foo.getResJson(req.user, {
+    res.render('admin/room_lookup', foo.getResJson(req.user, {
       results,
       list_count,
       query: req.query,
@@ -174,7 +174,7 @@ router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
       }));
     } else {
       foo.cleaningList(results);
-      res.render('admin_room', foo.getResJson(req.user, {
+      res.render('admin/room', foo.getResJson(req.user, {
         room: results[0],
         list_count,
         query : req.query,
@@ -189,12 +189,74 @@ router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
   
 });
 router.get('/reservation/lookup', isAdmin, async (req, res, next) => {
-  res.render('admin_reservations', foo.getResJson(req.user, {
-
-  }))
+  let building_id = req.user.building_id;
+  let {
+    department_id,
+    study_group_id,
+    rsv_status,
+    is_mine,
+    date,
+    page,
+    page_length,
+  } = req.query;
+  page_length = page_length || 10;
+  department_id = department_id ? department_id : (req.user && department_id != 0) ? req.user.department_id : null;
+  rsv_status = rsv_status ? rsv_status : null;
+  let connection;
+  try {
+    let building = info.building_object[building_id];
+    if (!building) {
+      res.render('error', foo.getResJson(req.user, {
+        error_name: "건물을 찾을수 없습니다",
+        message: "다시 확인해주세요"
+      }));
+    } else {
+      connection = await db_func.getDBConnection();
+      let {
+        results,
+        list_count,
+      } = await select_func.viewTableRoomRsvList(connection, {
+        department_id,
+        study_group_id,
+        rsv_status,
+        is_mine,
+        user_id: req.user ? req.user.user_id : null,
+        date,
+        page,
+        page_length,
+        sort_key: 'start_datetime',
+        sort_type: false,
+      })
+      let study_group_results = (await select_func.viewTableStudyGroup(connection, {
+        department_id,
+        building_id,
+        user_id: (req.user) ? req.user.user_id : null,
+      })).results;
+      foo.cleaningList(results);
+      foo.cleaningList(study_group_results);
+      res.render('admin/reservation_lookup', foo.getResJson(req.user, {
+        params: req.params,
+        query: {
+          ...req.query,
+          department_id: department_id || 0,
+          study_group_id: study_group_id || 0,
+          rsv_status : rsv_status || 0,
+        },
+        department_results: info.department_results,
+        rsv_status_results: info.rsv_status_results,
+        study_group_results,
+        results,
+        list_count,
+      }));
+    }
+  } catch (error) {
+    next(error)
+  } finally {
+    db_func.release(connection);
+  }
 });
 router.get('/reservation/single/:room_reservation_id', isAdmin, async (req, res, next) => {
-  res.render('admin_reservation', foo.getResJson(req.user, {
+  res.render('admin/reservation', foo.getResJson(req.user, {
 
   }))
 });

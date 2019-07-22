@@ -19,12 +19,12 @@ const {
 } = require('../global/middlewares');
 
 router.get('/login', isNotLoggedIn, async (req, res, next) => {
-  res.render('login', foo.getResJson(req.user, {
+  res.render('user/login', foo.getResJson(req.user, {
 
   }));
 });
 router.get('/join', isNotLoggedIn, async (req, res, next) => {
-  res.render('join', foo.getResJson(req.user, {
+  res.render('user/join', foo.getResJson(req.user, {
     department_results: info.department_results,
     campus_results: info.campus_results,
     buildings: info.buildings,
@@ -32,7 +32,7 @@ router.get('/join', isNotLoggedIn, async (req, res, next) => {
 });
 
 router.get('/', async (req, res, next) => {
-  res.render('main', foo.getResJson(req.user, {
+  res.render('user/main', foo.getResJson(req.user, {
     campuses: info.campuses,
     campus_id: req.user ? req.user.campus_id : 0,
   }));
@@ -48,14 +48,14 @@ router.get('/reservation/intro/:building_id', async (req, res, next) => {
         message: "다시 확인해주세요"
       }));
     } else {
-      res.render('reservation_intro', foo.getResJson(req.user, {
+      res.render('user/reservation_intro', foo.getResJson(req.user, {
         query: req.query,
         params: req.params,
       }));
     }
   } catch (error) {
     next(error)
-  }
+  } 
 });
 router.get('/reservation/:building_id', async (req, res, next) => {
   try {
@@ -75,7 +75,7 @@ router.get('/reservation/:building_id', async (req, res, next) => {
         message: "다시 확인해주세요"
       }));
     } else {
-      res.render('reservation', foo.getResJson(req.user, {
+      res.render('user/reservation', foo.getResJson(req.user, {
         query: req.query,
         params: req.params,
         method,
@@ -131,7 +131,7 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
       })).results;
       foo.cleaningList(results);
       foo.cleaningList(study_group_results);
-      res.render('reservation_lookup', foo.getResJson(req.user, {
+      res.render('user/reservation_lookup', foo.getResJson(req.user, {
         params: req.params,
         query: {
           ...req.query,
@@ -148,6 +148,8 @@ router.get('/reservation/lookup/:building_id', async (req, res, next) => {
     }
   } catch (error) {
     next(error)
+  } finally {
+    db_func.release(connection);
   }
 });
 router.get('/reservation/single/:room_rsv_id', async (req, res, next) => {
@@ -186,7 +188,7 @@ router.get('/group/lookup', async (req, res, next) => {
     });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
-    res.render('groups', foo.getResJson(req.user, {
+    res.render('user/groups', foo.getResJson(req.user, {
       results,
       list_count,
       query: {
@@ -229,7 +231,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
         study_group_id,
       });
       foo.cleaningList(results, req.user, true);
-      res.render('group', foo.getResJson(req.user, {
+      res.render('user/group', foo.getResJson(req.user, {
         group: groupObject.results[0],
         results,
         department_results: info.department_results,
@@ -243,7 +245,7 @@ router.get('/group/single/:study_group_id', async (req, res, next) => {
   }
 });
 router.get('/group/write', isLoggedIn, async (req, res, next) => {
-  res.render('group_write', foo.getResJson(req.user, {
+  res.render('user/group_write', foo.getResJson(req.user, {
     department_results: info.department_results,
     building_results: req.user ? info.buildings[req.user.campus_id] : info.building_results,
     department_id: req.user ? req.user.department_id || 0: 0,
@@ -253,12 +255,12 @@ router.get('/group/write', isLoggedIn, async (req, res, next) => {
 
 
 router.get('/mypage', isLoggedIn, async (req, res, next) => {
-  res.render('mypage', foo.getResJson(req.user, {
+  res.render('user/mypage', foo.getResJson(req.user, {
 
   }))
 });
 router.get('/myaccount', isLoggedIn, async (req, res, next) => {
-  res.render('myaccount', foo.getResJson(req.user, {
+  res.render('user/myaccount', foo.getResJson(req.user, {
 
   }))
 });

@@ -1,4 +1,4 @@
-<% include ./sub/header %>
+<% include ../sub/header %>
       <div class="lookup_select"> 
         <label>날짜</label>
         <custom-datepicker
@@ -71,11 +71,11 @@
         <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
         <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
       </div>
-      <% include ./component/datepicker %>
+      <% include ../component/datepicker %>
     </main>
     
     <footer>
-      <% include ./sub/footer %>
+      <% include ../sub/footer %>
     </footer>
   </div>
   
