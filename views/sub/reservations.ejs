@@ -58,17 +58,17 @@
           type="button" 
           class="btn btn-default"
           v-if="is_adminpage"
-          @click="chageRsvStatus($event, reservation, global.REQ_RSV_STATUS)">요청</button> 
+          @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
         <button 
           type="button" 
           class="btn btn-default"
           v-if="is_adminpage"
-          @click="chageRsvStatus($event, reservation, global.SUBMIT_RSV_STATUS)">승인</button> 
+          @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
         <button 
           type="button" 
           class="btn btn-default"
           v-if="is_adminpage"
-          @click="chageRsvStatus($event, reservation, global.CANCEL_RSV_STATUS)">취소</button> 
+          @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
       </td>
     </tr>
   </tbody>

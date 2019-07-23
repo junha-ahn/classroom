@@ -34,6 +34,7 @@
           if (e) {
             e.preventDefault();
           }
+          var __this = this;
           var url = '/api/room_rsv/status/' + room_rsv.room_rsv_id;
           global.ajax({
             url: url,
@@ -44,6 +45,7 @@
           },
           function (data, status) {
             alert(data.message);
+            __this.refresh();
           },
           function (message, status, data) {
             alert(message);
