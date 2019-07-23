@@ -30,7 +30,6 @@ const {
   checkRequireUpdateRoomRsvStatus,
 } = require('../global/middlewares');
 
-
 router.get('/departemnt', async (req, res, next) => {
   res.status(200).json({
     query: req.query,
