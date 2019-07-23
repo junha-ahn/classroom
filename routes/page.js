@@ -38,6 +38,14 @@ router.get('/', async (req, res, next) => {
   }));
 });
 
+router.get('/reservation', async (req, res, next) => {
+  if (req.user && req.user.building_id) {
+    res.redirect('/reservation/intro/'+ req.user.building_id);
+  } else {
+    res.redirect('/');
+  }
+});
+
 router.get('/reservation/intro/:building_id', async (req, res, next) => {
   try {
     let building_id = req.params.building_id;

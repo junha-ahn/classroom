@@ -40,14 +40,14 @@ function makeGlobal() {
   }
   var header_name_by_class = {
     'main' : 'main',
-    'group_lookup' : 'group',
-    'group_single' : 'group',
-    'group_write' : 'group',
+    'study_group_lookup' : 'study_group',
+    'study_group_single' : 'study_group',
+    'study_group_write' : 'study_group',
     'mypage' : 'mypage',
     'login' : 'login',
-    'admin_user_lookup' : 'admin',
-    'admin_room_lookup' : 'admin',
-    'admin_reservation_lookup' : 'admin',
+    'reservation_intro' : 'reservation',
+    'reservation' : 'reservation',
+    'reservation_lookup' : 'reservation',
   };
   var admin_name_by_class = {
     'admin_user_lookup' : 'user',
