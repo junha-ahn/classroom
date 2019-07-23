@@ -42,18 +42,6 @@ let self = {
           student_number,
         })
 
-        if (constant.ADMIN_TYPE == user_type) {
-          let userAuthorityString = squel.insert()
-            .into('user_authority')
-            .set('user_id', user_id)
-            .set('can_manage_user', 0)
-            .set('can_manage_person', 0)
-            .set('can_manage_room', 0)
-            .set('can_manage_usgae', 0)
-            .toParam();
-          await db_func.sendQueryToDB(connection, userAuthorityString, true);
-        }
-
         await db_func.commit(connection);
         resolve();
       } catch (error) {

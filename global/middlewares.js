@@ -200,6 +200,10 @@ let self = {
       res.status(401).json({
         message: "필수값을 입력해주세요: " + flag,
       })
+    } else if (req.user && req.user.user_type == info.USER_TYPE && req.body.rsv_status != info.CANCEL_RSV_STATUS) {
+      res.status(401).json({
+        message: '예약 상태(rsv_status)를 다시 선택해주세요. 회원은 취소만 가능합니다'
+      })
     } else {
       next();
     }

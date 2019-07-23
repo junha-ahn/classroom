@@ -272,34 +272,24 @@ router.post('/room', isAdmin, checkReqInfo, checkRequireInsertRoom, db_func.inDB
     rsv_cancel_min_day,
   } = req.body;
 
-  let can_manage = await checkAdminManager(conn, {
-    user_id: req.user.user_id,
-    TYPE: 'room'
-  });
-  if (!can_manage) {
-    res.status(403).json({
-      message: '관리 권한이 없습니다'
-    })
-  } else {
-    let insert_result = await insert_func.room(conn, {
-      building_id,
-      room_category_id,
-      auth_rsv_create,
-      auth_rsv_cancel,
-      name,
-      room_number,
-      floor,
-      seat_count,
-      description,
-      is_require_rsv_accept,
-      is_require_cancel_accept,
-      rsv_apply_min_day,
-      rsv_cancel_min_day,
-    })
-    foo.setRes(res, insert_result, {
-      message: '성공했습니다'
-    })
-  }
+  let insert_result = await insert_func.room(conn, {
+    building_id,
+    room_category_id,
+    auth_rsv_create,
+    auth_rsv_cancel,
+    name,
+    room_number,
+    floor,
+    seat_count,
+    description,
+    is_require_rsv_accept,
+    is_require_cancel_accept,
+    rsv_apply_min_day,
+    rsv_cancel_min_day,
+  })
+  foo.setRes(res, insert_result, {
+    message: '성공했습니다'
+  })
 }));
 router.put('/room/:room_id', isAdmin, checkReqInfo, checkRequireUpdateRoom, db_func.inDBStream(async (req, res, next, conn) => {
   let room_id = req.params.room_id;
@@ -319,34 +309,24 @@ router.put('/room/:room_id', isAdmin, checkReqInfo, checkRequireUpdateRoom, db_f
     rsv_cancel_min_day,
   } = req.body;
 
-  let can_manage = await checkAdminManager(conn, {
-    user_id: req.user.user_id,
-    TYPE: 'room'
-  });
-  if (!can_manage) {
-    res.status(403).json({
-      message: '관리 권한이 없습니다'
-    })
-  } else {
-    let update_result = await update_func.room(conn, {
-      room_id,
-      room_category_id,
-      auth_rsv_create,
-      auth_rsv_cancel,
-      name,
-      room_number,
-      floor,
-      seat_count,
-      description,
-      is_require_rsv_accept,
-      is_require_cancel_accept,
-      rsv_apply_min_day,
-      rsv_cancel_min_day,
-    })
-    foo.setRes(res, update_result, {
-      message: '성공했습니다'
-    })
-  }
+  let update_result = await update_func.room(conn, {
+    room_id,
+    room_category_id,
+    auth_rsv_create,
+    auth_rsv_cancel,
+    name,
+    room_number,
+    floor,
+    seat_count,
+    description,
+    is_require_rsv_accept,
+    is_require_cancel_accept,
+    rsv_apply_min_day,
+    rsv_cancel_min_day,
+  })
+  foo.setRes(res, update_result, {
+    message: '성공했습니다'
+  })
 }));
 
 router.get('/holiday', async (req, res, next) => {
@@ -588,7 +568,22 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isLoggedIn, checkRequi
   // 관리자일경우 권한 체크
 
   // 유저일경우 요청일때만 취소 가능.
-  
+  let {
+    results
+  } = await select_func.room_rsv(conn, {
+    room_rsv_id,
+  });
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택해주세요'
+    })
+  } else if (req.user.user_type == info.USER_TYPE && results[0].user_id != req.user.user_id) {
+    res.status(401).json({
+      message: '본인의 예약을 선택해주세요'
+    })
+  } else {
+
+  }
 }));
 
 function roomSortByFloor(room_results) {
@@ -600,31 +595,6 @@ function roomSortByFloor(room_results) {
     rooms[room_results[i].floor].push(room_results[i]);
   }
   return rooms;
-}
-
-function checkAdminManager(connection, object) {
-  return new Promise(async (resolve, reject) => {
-    let {
-      user_id,
-      TYPE,
-    } = object;
-
-    let {
-      results
-    } = await select_func.vAdmin(connection, {
-      user_id,
-    })
-    if (!results[0]) {
-      let error = new Error('회원을 찾을 수 없습니다')
-      reject(error);
-    } else {
-      if (results[0][`can_manage_${TYPE}`]) {
-        resolve(true)
-      } else {
-        resolve(false)
-      }
-    }
-  })
 }
 
 function getDates(holiday_results) {
