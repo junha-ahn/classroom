@@ -460,6 +460,7 @@ router.get('/available_time', async (req, res, next) => {
 router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {
   const {
     room_id,
+    title,
     date,
     time_id_array,
     department_id,
@@ -544,6 +545,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
               isTransaction: true,
               rsv_status: (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS,
               room_rsv_category_id: 1,
+              title,
               department_id,
               study_group_id,
               user_id: req.user ? req.user.user_id : null,
@@ -577,7 +579,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
 }));
 
 
-router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {
+router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isLoggedIn, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
   let {
     rsv_status

@@ -14,6 +14,10 @@
         </option>
       </select>
       <div class="form-inline">
+        <label>제목</label>
+        <input v-model="formData.title" type="text" class="form-control" placeholder="제목을 입력해주세요" :disabled="menu_step != 'detail'">
+      </div>
+      <div class="form-inline">
         <label>인원</label>
         학생 <input v-model="formData.student_count" type="number" class="form-control" placeholder="예상 참여 인원을 입력해주세요" :disabled="menu_step != 'detail'">
         비학생 <input v-model="formData.non_student_count" type="number" class="form-control" placeholder="예상 참여 인원을 입력해주세요" :disabled="menu_step != 'detail'">

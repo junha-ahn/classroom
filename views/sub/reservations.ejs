@@ -34,8 +34,8 @@
     <th>교실</th>
     <th>카테고리</th>
     <th>상태</th>
-    <th>시작</th>
-    <th>종료</th>
+    <th>제목</th>
+    <th>사용시간</th>
     <th>학과(스터디)</th>
     <th>자세히보기</th>
   </thead>
@@ -44,8 +44,8 @@
       <td>{{room_rsv.rooms_name}}</td>
       <td>{{room_rsv.room_rsv_category_name}}</td>
       <td>{{room_rsv.rsv_status_name}}</td>
-      <td>{{room_rsv.start_datetime}}</td>
-      <td>{{room_rsv.end_datetime}}</td>
+      <td>{{room_rsv.title}}</td>
+      <td>{{room_rsv.start_datetime}} ~~ {{room_rsv.end_datetime}}</td>
       <td>{{makeDisplayName(room_rsv)}}</td>
       <td><button type="button" class="btn btn-default"
           @click="location.href='/reservation/single/' + room_rsv.room_rsv_id"> 조회 </button></td>

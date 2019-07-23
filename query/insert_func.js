@@ -181,6 +181,7 @@ let self = {
           isTransaction,
           rsv_status,
           room_rsv_category_id,
+          title,
           department_id,
           study_group_id,
           user_id,
@@ -196,6 +197,7 @@ let self = {
           .into('room_rsv')
           .set('rsv_status', rsv_status)
           .set('room_rsv_category_id', room_rsv_category_id)
+          .set('title', title)
           .set('department_id', department_id)
           .set('study_group_id', study_group_id)
           .set('user_id', user_id)

@@ -145,14 +145,26 @@ let self = {
         })(array[i].rsv_status);
       }
 
-
-      if (is_personal) {
-        if (!user || user.user_type != info.ADMIN_TYPE) {
-          array[i].name = array[i].name ? array[i].name.slice(0, 1) + ('*'.repeat(array[i].name.length - 1)) : null;
-          array[i].phone = array[i].phone ? '비공개' : undefined;
-          array[i].student_number = array[i].student_number ? '비공개' : undefined
+      if (!user || (user.user_id != array[i].user_id && user.user_type != info.ADMIN_TYPE)) {
+        if (array[i].representative_name) {
+          array[i].representative_name = array[i].representative_name.slice(0, 1) + ('*'.repeat(array[i].representative_name.length - 1));
+        }
+        if (array[i].representative_phone) {
+          array[i].representative_phone = '비공개';
+        }
+        if (is_personal) {
+          if (array[i].name) {
+            array[i].name = array[i].name.slice(0, 1) + ('*'.repeat(array[i].name.length - 1));
+          }
+          if (array[i].phone) {
+            array[i].phone = '비공개';
+          }
+          if (array[i].student_number) {
+            array[i].student_number = '비공개';
+          }
         }
       }
+
     }
   },
   checkPermission: (user, auth) => {

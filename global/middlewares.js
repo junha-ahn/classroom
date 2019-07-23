@@ -262,7 +262,7 @@ let self = {
             building_id,
             user_id: (req.user) ? req.user.user_id : null,
           })).results;
-          foo.cleaningList(results);
+          foo.cleaningList(results, req.user);
           foo.cleaningList(study_group_results);
           res.render((is_admin ? 'admin' : 'user') + '/reservation_lookup'
           ,  foo.getResJson(req.user, {
@@ -309,7 +309,7 @@ let self = {
         let room_rsv_time_results = (await select_func.room_rsv_time(conn, {
           room_rsv_id,
         })).results;
-        foo.cleaningList(results);
+        foo.cleaningList(results, req.user);
         foo.cleaningList(room_rsv_time_results);
         res.render((is_admin ? 'admin' : 'user') + '/reservation_single'
         , foo.getResJson(req.user, {
