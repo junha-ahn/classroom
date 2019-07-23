@@ -55,6 +55,7 @@
     </footer>
   </div>
 
+  <script type="text/javascript" src="/javascripts/validate.js"></script>
   <script>
     var global = makeGlobal();
     var app = new Vue({
@@ -73,7 +74,6 @@
             department_id: null,
             campus_id: null,
             building_id: null,
-            campus_name: null,
             email: null,
             password: null,
             name: null,
@@ -89,20 +89,50 @@
         },
         join: function (e) {
           e.preventDefault();
-          var __this = this;
-          global.ajax({
-              url: '/auth/join',
-              type: 'POST',
-              data: __this.joinForm
+          var _validate = validate(this.joinForm, {
+            'department_id': {
+              is_require: true,
             },
-            function (data, status) {
-              alert(data.message);
-              location.href='/'
+            'campus_id': {
+              is_require: true,
             },
-            function (message, status, data) {
-              alert(message);
-            });
-        }
+            'building_id': {
+              is_require: true,
+            },
+            'email': {
+              is_require: true,
+            },
+            'password': {
+              is_require: true,
+            },
+            'name': {
+              is_require: true,
+            },
+            'phone': {
+              is_require: false,
+            },
+            'student_number': {
+              is_require: (this.joinForm.is_student == 1) ? true : false,
+            },
+          });
+          if (_validate) {
+            alert(_validate)
+          } else {
+            var __this = this;
+            global.ajax({
+                url: '/auth/join',
+                type: 'POST',
+                data: __this.joinForm
+              },
+              function (data, status) {
+                alert(data.message);
+                location.href = '/'
+              },
+              function (message, status, data) {
+                alert(message);
+              });
+          }
+        },
       }
     })
   </script>

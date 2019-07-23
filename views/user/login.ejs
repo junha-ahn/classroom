@@ -23,6 +23,7 @@
     </footer>
   </div>
 
+  <script type="text/javascript" src="/javascripts/validate.js"></script>
   <script>
     var global = makeGlobal();
     var app = new Vue({
@@ -62,19 +63,31 @@
         },
         login: function(e) {
           e.preventDefault();
-          var __this = this;
-          global.ajax({
-            url: '/auth/login',
-            type: 'POST',
-            data: __this.loginForm
-          },
-          function(data, status) {
-            alert(data.message);
-            location.href='/'
-          },
-          function(message, status, data) {
-            alert(message);
+          var _validate = validate(this.loginForm, {
+            'email' : {
+              is_require : true,
+            },
+            'password' : {
+              is_require : true,
+            }
           });
+          if (_validate) {
+            alert(_validate)
+          } else {
+            var __this = this;
+            global.ajax({
+              url: '/auth/login',
+              type: 'POST',
+              data: __this.loginForm
+            },
+            function(data, status) {
+              alert(data.message);
+              location.href='/'
+            },
+            function(message, status, data) {
+              alert(message);
+            });
+          }
         },
       }
     })
