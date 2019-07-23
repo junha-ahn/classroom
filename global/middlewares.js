@@ -183,6 +183,9 @@ let self = {
       'room_id',
       'date',
       'time_id_array',
+      'department_id',
+      'representative_name',
+      'representative_phone',
     ]);
     if (flag) {
       res.status(401).json({
