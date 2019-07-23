@@ -107,6 +107,15 @@ let self = {
         array[i].datetime_last_updated = self.parseDateTime(array[i].date_last_updated, true);
         array[i].date_last_updated = self.parseDate(array[i].date_last_updated, true);
       }
+
+      if (array[i].start_datetime && array[i].end_datetime) {
+        let dateString = self.parseDate(array[i].start_datetime, true);
+        let start_time = self.parseTimeString((self.parseDateTime(array[i].start_datetime, true).split(' '))[1], true);
+        let end_time = self.parseTimeString((self.parseDateTime(array[i].end_datetime, true).split(' '))[1], true);
+        array[i].rsv_date = dateString
+        array[i].rsv_start_time = start_time
+        array[i].rsv_end_time = end_time
+      }
       if (array[i].start_datetime) {
         array[i].start_datetime = self.parseDateTime(array[i].start_datetime, true);
       }
@@ -120,6 +129,7 @@ let self = {
       if (array[i].end_time) {
         array[i].end_time = self.parseTimeString(array[i].end_time);
       }
+      
 
       if (array[i].campus_id) {
         array[i].campus_name = info.campus_object[array[i].campus_id].name;

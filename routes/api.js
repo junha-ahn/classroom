@@ -584,9 +584,11 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isLoggedIn, checkRequi
   let {
     rsv_status
   } = req.body;
-  res.status(200).json({
-    message: 'hi!'
-  })
+  // 유저일경우 본인 체크
+  // 관리자일경우 권한 체크
+
+  // 유저일경우 요청일때만 취소 가능.
+  
 }));
 
 function roomSortByFloor(room_results) {

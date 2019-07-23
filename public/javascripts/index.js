@@ -48,6 +48,7 @@ function makeGlobal() {
     'reservation_intro' : 'reservation',
     'reservation' : 'reservation',
     'reservation_lookup' : 'reservation',
+    'reservation_single' : 'reservation',
   };
   var admin_name_by_class = {
     'admin_user_lookup' : 'user',
