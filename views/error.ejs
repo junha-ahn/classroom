@@ -1,7 +1,7 @@
 <% include ./sub/header %>
       <div class="jumbotron">
-        <h1><%=error_name %></h1>
-        <h3><%=message %></h3>
+        <h1>{{ error_name}}</h1>
+        <h3>{{ message }}</h3>
       </div>
     </main>
     
@@ -12,6 +12,8 @@
 
   <script>
     var global = makeGlobal();
+    var error_name = '<%-locals.error_name %>';
+    var message = '<%-locals.message %>';
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -19,6 +21,8 @@
           header_menu_name: 'error',
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
+          error_name: error_name,
+          message: message,
         }
       }
     })

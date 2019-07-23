@@ -5,7 +5,7 @@ let self = {
   makeRandomPassword: () => {
     //Math.floor(Math.random() * (max - min + 1)) + min;
     let email_password = '';
-    let max_length = Math.floor(Math.random() * (20 - 10 + 1)) + 10; // 10~20
+    let max_length = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // 5~10
     for (let i = 0; i <= max_length; i++) {
       let flag = Math.floor(Math.random() * (1 - 0 + 1)) + 0; // 0~1
       let ascii_code = Math.floor(Math.random() * (122 - 65 + 1)) + 65; // 65~122 (아스키 코드 문자 범위)

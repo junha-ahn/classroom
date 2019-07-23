@@ -9,6 +9,7 @@ let self = {
       try {
         let {
           user_type,
+          is_student,
           email,
           hashed_password,
           campus_id,
@@ -32,6 +33,7 @@ let self = {
         await self.person(connection, {
           isTransaction: true,
           user_id,
+          is_student,
           campus_id,
           building_id,
           department_id,
@@ -65,6 +67,7 @@ let self = {
         let {
           isTransaction,
           user_id,
+          is_student,
           campus_id,
           building_id,
           department_id,
@@ -75,6 +78,7 @@ let self = {
         let queryString = squel.insert()
           .into('person')
           .set('user_id', user_id)
+          .set('is_student', is_student)
           .set('campus_id', campus_id)
           .set('building_id', building_id)
           .set('department_id', department_id)

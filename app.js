@@ -67,6 +67,15 @@ app.use(passport.session());
 app.use('/auth', authRoute);
 app.use('/api', apiRoute);
 
+app.use(function (error, req, res, next) {
+  if (process.env.NODE_ENV != 'production') {
+    console.error(error);
+  }
+  res.status(error.status || 500).json(foo.getResJson(req.user, {
+    error_name: error.name,
+    message: error.message,
+  }));
+});
 
 app.use((req,res,next) => {  
   let pagenames = req.originalUrl

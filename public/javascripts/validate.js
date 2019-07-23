@@ -38,6 +38,10 @@ var config = {
     name: '이메일',
     data_type: 'string',
   },
+  'email_password' : {
+    name: '이메일 인증 암호',
+    data_type: 'string',
+  },
   'password' : {
     name: '암호',
     data_type: 'string',

@@ -21,30 +21,35 @@
             {{ building.name }}
           </option>
         </select>
-        <div class="form-inline">
+        <div>
           <label>이메일 주소</label>
           <input v-model="joinForm.email" type="email" class="form-control" placeholder="이메일을 입력하세요">
-          <button type="submit" class="btn btn-default">확인하기</button>
+          <button type="button" class="btn btn-default" @click="checkEmail()">확인</button>
+        </div>
+        <div v-if="check_email == true">
+          <label>이메일 인증 암호</label>
+          <input v-model="joinForm.email_password" type="text" class="form-control" placeholder="이메일을 인증 암호를 입력하세요">
+          <p class="form-control-static">스팸 메일함을 확인해주세요</p>
         </div>
         <div :class="classPassDiff()">
           <label class="control-label">암호</label>
-          <input v-model="joinForm.password" type="password" class="form-control" placeholder="암호">
+          <input v-model="joinForm.password" type="password" class="form-control" placeholder="암호를 입력하세요">
         </div>
         <div :class="classPassDiff()">
           <label class="control-label">암호 확인</label>
-          <input v-model="joinForm.password_check" type="password" class="form-control" placeholder="암호 확인">
+          <input v-model="joinForm.password_check" type="password" class="form-control" placeholder="암호 다시 한번 입력하세요">
         </div>
         <div class="form-inline">
           <label>이름</label>
-          <input v-model="joinForm.name" type="text" class="form-control" placeholder="이름">
+          <input v-model="joinForm.name" type="text" class="form-control" placeholder="이름을 입력하세요">
         </div>
         <div class="form-inline">
           <label>전화번호</label>
-          <input v-model="joinForm.phone" type="text" class="form-control" placeholder="전화번호">
+          <input v-model="joinForm.phone" type="text" class="form-control" placeholder="전화번호를 입력하세요">
         </div>
         <div class="form-inline" v-if="joinForm.is_student == 1">
           <label>학번</label>
-          <input v-model="joinForm.student_number" type="text" class="form-control" placeholder="학번">
+          <input v-model="joinForm.student_number" type="text" class="form-control" placeholder="학번을 입력하세요">
         </div>
         <button type="submit" class="btn btn-primary">가입</button>
       </form>
@@ -75,12 +80,14 @@
             campus_id: null,
             building_id: null,
             email: null,
+            email_password: null,
             password: null,
             password_check: null,
             name: null,
             phone: null,
             student_number: null,
-          }
+          },
+          check_email: false,
         }
       },
       methods: {
@@ -88,11 +95,37 @@
           this.building_results = this.buildings[this.joinForm.campus_id];
           this.joinForm.building_id = null;
         },
+        checkEmail: function() {
+          var _validate = validate(this.joinForm, {
+            'email': {
+              is_require: true,
+            },
+          });
+          if (_validate) {
+            alert(_validate)
+          } else {
+            var __this = this;
+            global.ajax({
+                url: 'auth//email/password',
+                type: 'POST',
+                data: {
+                  email: this.joinForm.email
+                }
+              },
+              function (data, status) {
+                alert('입력한 이메일 주소로 인증용 암호를 전송했습니다.')
+                __this.check_email = true;
+              },
+              function (message, status, data) {
+                alert(message);
+              });
+          }
+        },
         join: function (e) {
           e.preventDefault();
           var _validate = validate(this.joinForm, {
             'department_id': {
-              is_require: true,
+              is_require: (this.joinForm.is_student == 1) ? true : false,
             },
             'campus_id': {
               is_require: true,
@@ -101,6 +134,9 @@
               is_require: true,
             },
             'email': {
+              is_require: true,
+            },
+            'email_password': {
               is_require: true,
             },
             'password': {
@@ -128,7 +164,7 @@
             global.ajax({
                 url: '/auth/join',
                 type: 'POST',
-                data: __this.joinForm
+                data: this.joinForm
               },
               function (data, status) {
                 alert(data.message);

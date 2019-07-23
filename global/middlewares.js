@@ -80,6 +80,24 @@ let self = {
       next();
     }
   },
+  checkRequireJoin: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'is_student',
+      'email',
+      'email_password',
+      'password',
+      'campus_id',
+      'building_id',
+      'name',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
   checkRequireInsertStudyGroup: (req, res, next) => {
     let flag = checkRequire(req.body, [
       'name',
@@ -177,6 +195,18 @@ let self = {
   checkRequireUpdateRoomRsvStatus: (req, res, next) => {
     let flag = checkRequire(req.body, [
       'rsv_status',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
+  checkRequireEmailPassword: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'email',
     ]);
     if (flag) {
       res.status(401).json({
