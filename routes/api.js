@@ -582,18 +582,39 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
   } else {
     //rsv_cancel_min_day 설정
     //is_require_cancel_accept 설정
-    let require_cancel_results = (await select_func.vRsvRoomsRequire(conn, {
+    let room_results = (await select_func.vRsvRoomsRequire(conn, {
       room_rsv_id,
-      is_require_cancel_accept: 1,
     })).results;
-    
-    let update_result = await update_func.room_rsv_status(conn, {
-      room_rsv_id,
-      rsv_status: (require_cancel_results[0]) ? info.CANCEL_REQ_RSV_STATUS : info.CANCEL_RSV_STATUS,
-    })
-    foo.setRes(res, update_result, {
-      message: require_cancel_results[0] ? '예약 취소 요청을 성공 했습니다.' : '예약을 취소 했습니다.'
-    })
+    let is_require_cancel_accept = false;
+    let date_message;
+    for (let i in room_results) {
+      let now = foo.resetTime(moment());
+      let min_date = (() => {
+        let _min_date = moment();
+        foo.resetTime(_min_date)
+        _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
+        return _min_date;
+      })();
+      if (room_results[i].is_require_cancel_accept == 1) {
+        is_require_cancel_accept = true;
+      }
+      if (now < min_date) {
+        date_message = `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
+      }
+    }
+    if (date_message) {
+      res.status(401).json({
+        message: date_message,
+      })
+    } else {
+      let update_result = await update_func.room_rsv_status(conn, {
+        room_rsv_id,
+        rsv_status: (is_require_cancel_accept) ? info.CANCEL_REQ_RSV_STATUS : info.CANCEL_RSV_STATUS,
+      })
+      foo.setRes(res, update_result, {
+        message: require_cancel_results[0] ? '예약 취소 요청을 성공 했습니다.' : '예약을 취소 했습니다.'
+      })
+    }
   }
 }));
 router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {

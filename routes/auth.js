@@ -12,7 +12,7 @@ const {
 
 const foo = require('../global/foo');
 const db_func = require('../global/db_func');
-const redis_func = require('../global/redis_func');
+const redis_func = (process.env.REDIS_ENABLE == 1) ? require('../global/redis_func') : undefined;
 const sgMail = require('../global/sgMail');
 
 
