@@ -18,6 +18,9 @@ const {
   getRerservationLookup,
 } = require('../global/middlewares');
 
+router.get('/', isAdmin, async (req, res, next) => {
+  res.redirect('/admin/reservation/lookup?page=1');
+});
 router.get('/user/lookup', isAdmin, async (req, res, next) => {
   let {
     page,
