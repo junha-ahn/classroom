@@ -26,13 +26,13 @@
           <input v-model="joinForm.email" type="email" class="form-control" placeholder="이메일을 입력하세요">
           <button type="submit" class="btn btn-default">확인하기</button>
         </div>
-        <div class="form-inline">
-          <label>암호</label>
+        <div :class="classPassDiff()">
+          <label class="control-label">암호</label>
           <input v-model="joinForm.password" type="password" class="form-control" placeholder="암호">
         </div>
-        <div class="form-inline">
-          <label>암호 확인</label>
-          <input type="password" class="form-control" placeholder="암호 확인">
+        <div :class="classPassDiff()">
+          <label class="control-label">암호 확인</label>
+          <input v-model="joinForm.password_check" type="password" class="form-control" placeholder="암호 확인">
         </div>
         <div class="form-inline">
           <label>이름</label>
@@ -42,7 +42,7 @@
           <label>전화번호</label>
           <input v-model="joinForm.phone" type="text" class="form-control" placeholder="전화번호">
         </div>
-        <div class="form-inline">
+        <div class="form-inline" v-if="joinForm.is_student == 1">
           <label>학번</label>
           <input v-model="joinForm.student_number" type="text" class="form-control" placeholder="학번">
         </div>
@@ -76,6 +76,7 @@
             building_id: null,
             email: null,
             password: null,
+            password_check: null,
             name: null,
             phone: null,
             student_number: null,
@@ -105,6 +106,9 @@
             'password': {
               is_require: true,
             },
+            'password_check': {
+              is_require: true,
+            },
             'name': {
               is_require: true,
             },
@@ -117,6 +121,8 @@
           });
           if (_validate) {
             alert(_validate)
+          } else if (this.matchingPass() != true) {
+            alert('암호, 암호 확인을 다시 입력해주세요')
           } else {
             var __this = this;
             global.ajax({
@@ -131,6 +137,23 @@
               function (message, status, data) {
                 alert(message);
               });
+          }
+        },
+        matchingPass: function() {
+          if (this.joinForm.password_check != null && this.joinForm.password_check.trim() != '') {
+            if (this.joinForm.password_check != this.joinForm.password) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+        },
+        classPassDiff: function () {
+          let is_mach = this.matchingPass();
+          return {
+            'form-inline has-success': is_mach == true,
+            'form-inline has-error': is_mach == false,
+            'form-inline ': is_mach == undefined,
           }
         },
       }

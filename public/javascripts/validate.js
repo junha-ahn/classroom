@@ -42,6 +42,10 @@ var config = {
     name: '암호',
     data_type: 'string',
   },
+  'password_check' : {
+    name: '암호 확인',
+    data_type: 'string',
+  },
   'name' : {
     name: '이름',
     data_type: 'string',
