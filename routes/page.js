@@ -44,7 +44,7 @@ router.get('/reservation', async (req, res, next) => {
   if (req.user && req.user.building_id) {
     res.redirect('/reservation/intro/'+ req.user.building_id);
   } else {
-    res.cookie('message', '비회원은 학습관 선택 후 예약 가능합니다.', {
+    res.cookie('message', '비회원은 메인 페이지를 통해 예약 가능합니다.', {
       maxAge: 5 * 1000,
     });
     res.redirect('/');

@@ -1,14 +1,20 @@
 <script type="text/x-template" id="input-template">
   <form class="form-lnline" v-on:submit="onSubmitForm">
-    <label>학과</label>
-    <select class="form-control" v-model="group.department_id">
+    <label class="col-sm-2 control-label">학과</label>
+    <div v-if="mod=='GET'" class="col-sm-10">
+      <p class="form-control-static">{{ group.department_name }}</p>
+    </div>
+    <select v-else class="form-control" v-model="group.department_id">
       <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
         :selected="group.department_id == department.department_id" :key="i" :disabled="mod != 'POST'">
         {{ department.name }}
       </option>
     </select>
-    <label>학습관</label>
-    <select class="form-control" v-model="group.building_id">
+    <label class="col-sm-2 control-label">학습관</label>
+    <div v-if="mod=='GET'" class="col-sm-10">
+      <p class="form-control-static">{{ group.building_name }}</p>
+    </div>
+    <select v-else class="form-control" v-model="group.building_id">
       <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j"
         :disabled="mod != 'POST'">
         {{ building.name }}
