@@ -135,10 +135,26 @@
     }, 
     methods: {
       cancelRsv: function(e, reservation) {
+        this.chageRsvStatus(e, reservation, global.CANCEL_RSV_STATUS)
+      },
+      chageRsvStatus: function(e, reservation, rsv_status) {
         if (e) {
           e.preventDefault();
         }
-        alert('하이')
+        var url = '/api/room_rsv/status/' + reservation.room_rsv_id;
+        global.ajax({
+          url: url,
+          type: 'PUT',
+          data: {
+            rsv_status: rsv_status,
+          },
+        },
+        function (data, status) {
+          alert(data.message);
+        },
+        function (message, status, data) {
+          alert(message);
+        });
       },
       setMod: function(mod, e) {
         if (e) {

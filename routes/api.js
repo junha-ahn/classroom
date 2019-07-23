@@ -21,6 +21,13 @@ const {
   isNotLoggedIn,
   isAdmin,
   checkReqInfo,
+  checkRequireInsertStudyGroup,
+  checkRequirtUpdateStudyGroup,
+  checkRequirePerson,
+  checkRequireInsertRoom,
+  checkRequireUpdateRoom,
+  checkRequireInsertRoomRsv,
+  checkRequireUpdateRoomRsvStatus,
 } = require('../global/middlewares');
 
 
@@ -32,7 +39,7 @@ router.get('/departemnt', async (req, res, next) => {
   })
 });
 
-router.get('/study_group', async (req, res, next) => {
+router.get('/study_group', db_func.inDBStream(async (req, res, next, conn) => {
   const {
     page,
     page_length,
@@ -42,36 +49,28 @@ router.get('/study_group', async (req, res, next) => {
     is_join,
   } = req.query;
 
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-    let {
-      results,
-      list_count,
-    } = await select_func.vStudyGroup(connection, {
-      page,
-      page_length,
-      department_id,
-      building_id,
-      is_mine,
-      is_join,
-      user_id: (req.user) ? req.user.user_id : null,
-    })
+  let {
+    results,
+    list_count,
+  } = await select_func.vStudyGroup(conn, {
+    page,
+    page_length,
+    department_id,
+    building_id,
+    is_mine,
+    is_join,
+    user_id: (req.user) ? req.user.user_id : null,
+  })
 
-    foo.cleaningList(results);
-    res.status(200).json({
-      results,
-      list_count,
-      query: req.query,
-    });
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
-  }
-});
+  foo.cleaningList(results);
+  res.status(200).json({
+    results,
+    list_count,
+    query: req.query,
+  });
+}));
 
-router.post('/study_group', isLoggedIn, checkReqInfo, async (req, res, next) => {
+router.post('/study_group', isLoggedIn, checkReqInfo, checkRequireInsertStudyGroup, db_func.inDBStream(async (req, res, next, conn) => {
   let {
     department_id,
     building_id,
@@ -79,122 +78,76 @@ router.post('/study_group', isLoggedIn, checkReqInfo, async (req, res, next) => 
     description,
   } = req.body;
 
-  if (name == undefined || department_id == undefined || building_id == undefined) {
-    res.status(401).json({
-      message: '필수값을 입력해주세요'
-    })
-  } else {
-    let connection;
-    try {
-      connection = await db_func.getDBConnection();
-
-      let insert_result = await insert_func.studyGroup(connection, {
-        user_id: req.user.user_id,
-        department_id,
-        building_id,
-        name,
-        description,
-      })
-      foo.setRes(res, insert_result, {
-        message: '성공했습니다'
-      })
-    } catch (error) {
-      next(error);
-    } finally {
-      db_func.release(connection);
-    }
-  }
-});
-router.put('/study_group/:study_group_id', isLoggedIn, async (req, res, next) => {
+  let insert_result = await insert_func.studyGroup(conn, {
+    user_id: req.user.user_id,
+    department_id,
+    building_id,
+    name,
+    description,
+  })
+  foo.setRes(res, insert_result, {
+    message: '성공했습니다'
+  })
+}));
+router.put('/study_group/:study_group_id', isLoggedIn, checkRequirtUpdateStudyGroup, db_func.inDBStream(async (req, res, next, conn) => {
   let study_group_id = req.params.study_group_id;
   let {
     name,
     description,
   } = req.body;
 
-  if (name == undefined) {
+  let update_result = await update_func.studyGroup(conn, {
+    study_group_id,
+    user_id: req.user.user_id,
+    name,
+    description,
+  })
+  foo.setRes(res, update_result, {
+    message: '성공했습니다'
+  })
+}));
+
+router.post('/study_group/join/:study_group_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let study_group_id = req.params.study_group_id;
+
+  let {
+    results,
+  } = await select_func.studyGroup(conn, {
+    study_group_id,
+    user_id: req.user.user_id,
+  })
+  if (!results[0]) {
     res.status(401).json({
-      message: '필수값을 입력해주세요'
+      message: '그룹을 다시 선택해주세요'
+    })
+  } else if (results[0].is_join) {
+    res.status(401).json({
+      message: '이미 가입한 그룹입니다'
     })
   } else {
-    let connection;
-    try {
-      connection = await db_func.getDBConnection();
-
-      let update_result = await update_func.studyGroup(connection, {
-        study_group_id,
-        user_id: req.user.user_id,
-        name,
-        description,
-      })
-      foo.setRes(res, update_result, {
-        message: '성공했습니다'
-      })
-    } catch (error) {
-      next(error);
-    } finally {
-      db_func.release(connection);
-    }
-  }
-});
-
-router.post('/study_group/join/:study_group_id', isLoggedIn, async (req, res, next) => {
-  let study_group_id = req.params.study_group_id;
-
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-    let {
-      results,
-    } = await select_func.studyGroup(connection, {
+    let insert_result = await insert_func.studyGroupUser(conn, {
       study_group_id,
       user_id: req.user.user_id,
     })
-    if (!results[0]) {
-      res.status(401).json({
-        message: '그룹을 다시 선택해주세요'
-      })
-    } else if (results[0].is_join) {
-      res.status(401).json({
-        message: '이미 가입한 그룹입니다'
-      })
-    } else {
-      let insert_result = await insert_func.studyGroupUser(connection, {
-        study_group_id,
-        user_id: req.user.user_id,
-      })
-      foo.setRes(res, insert_result, {
-        message: '성공했습니다'
-      })
-    }
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
-  }
-});
-router.delete('/study_group/join/:study_group_id', isLoggedIn, async (req, res, next) => {
-  let study_group_id = req.params.study_group_id;
-
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-
-    let delete_result = await delete_func.studyGroupUser(connection, {
-      study_group_id,
-      user_id: req.user.user_id,
-    })
-    foo.setRes(res, delete_result, {
+    foo.setRes(res, insert_result, {
       message: '성공했습니다'
     })
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
   }
-});
+}));
+router.delete('/study_group/join/:study_group_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let study_group_id = req.params.study_group_id;
 
-router.put('/person/:person_id', isLoggedIn, checkReqInfo, async (req, res, next) => {
+
+  let delete_result = await delete_func.studyGroupUser(conn, {
+    study_group_id,
+    user_id: req.user.user_id,
+  })
+  foo.setRes(res, delete_result, {
+    message: '성공했습니다'
+  })
+}));
+
+router.put('/person/:person_id', isLoggedIn, checkReqInfo, checkRequirePerson, db_func.inDBStream(async (req, res, next, conn) => {
   let person_id = req.params.person_id;
   let {
     campus_id,
@@ -205,47 +158,34 @@ router.put('/person/:person_id', isLoggedIn, checkReqInfo, async (req, res, next
     student_number,
   } = req.body;
   is_student = is_student ? 1 : 0;
-  if (campus_id == undefined || building_id == undefined || is_student == undefined || name == undefined) {
+
+  let {
+    results,
+  } = await select_func.studyGroup(conn, {
+    person_id,
+    user_id: req.user.user_id,
+  })
+  if (!results[0]) {
     res.status(401).json({
-      message: '필수값을 입력해주세요'
+      message: '다시 선택해주세요'
     })
   } else {
-    let connection;
-    try {
-      connection = await db_func.getDBConnection();
-      let {
-        results,
-      } = await select_func.studyGroup(connection, {
-        person_id,
-        user_id: req.user.user_id,
-      })
-      if (!results[0]) {
-        res.status(401).json({
-          message: '다시 선택해주세요'
-        })
-      } else {
-        let update_result = await update_func.person(connection, {
-          person_id,
-          campus_id,
-          building_id,
-          is_student,
-          name,
-          phone,
-          student_number,
-        })
-        foo.setRes(res, update_result, {
-          message: '성공했습니다'
-        })
-      }
-    } catch (error) {
-      next(error);
-    } finally {
-      db_func.release(connection);
-    }
+    let update_result = await update_func.person(conn, {
+      person_id,
+      campus_id,
+      building_id,
+      is_student,
+      name,
+      phone,
+      student_number,
+    })
+    foo.setRes(res, update_result, {
+      message: '성공했습니다'
+    })
   }
-});
+}));
 
-router.get('/room', async (req, res, next) => {
+router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
   let {
     building_id,
     sort_by_floor,
@@ -253,77 +193,69 @@ router.get('/room', async (req, res, next) => {
     start_time,
     end_time,
   } = req.query;
-  
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-    let {
-      results,
-      list_count,
-    } = await select_func.room(connection, {
-      building_id,
-      sort_key: 'room_number',
-    });
-    let room_id_array = [];
 
+  let {
+    results,
+    list_count,
+  } = await select_func.room(conn, {
+    building_id,
+    sort_key: 'room_number',
+  });
+  let room_id_array = [];
+
+  for (let i in results) {
+    results[i].is_active = 1;
+    room_id_array.push(results[i].room_id)
+  }
+
+  if (date && start_time && end_time && room_id_array[0]) {
+    date = foo.parseDate(date);
+
+    let start_datetime = moment(`${date} ${foo.parseTimeString(start_time)}`);
+    let end_datetime = moment(`${date} ${foo.parseTimeString(end_time)}`);
+    let rsvQeuryString = squel.select()
+      .from('room_to_use')
+      .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
+      .where('room_to_use.room_id IN ?', room_id_array)
+      .where('room_rsv.rsv_status = ?', info.SUBMIT_RSV_STATUS)
+      .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime.format('YYYY-MM-DD HH:mm'), start_datetime.format('YYYY-MM-DD HH:mm'))
+      .field('room_to_use.room_id')
+      .group('room_to_use.room_id')
+      .toParam();
+    let holidayQueryString = squel.select()
+      .from('holiday')
+      .where('room_id IN ?', room_id_array)
+      .where('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)
+      .toParam();
+    let holiday_results = await db_func.sendQueryToDB(conn, holidayQueryString);
+    let rsv_results = await db_func.sendQueryToDB(conn, rsvQeuryString);
     for (let i in results) {
-      results[i].is_active = 1;
-      room_id_array.push(results[i].room_id)
-    }
-
-    if (date && start_time && end_time && room_id_array[0]) {
-      date = foo.parseDate(date);
-
-      let start_datetime = moment(`${date} ${foo.parseTimeString(start_time)}`);
-      let end_datetime = moment(`${date} ${foo.parseTimeString(end_time)}`);
-      let rsvQeuryString = squel.select()
-        .from('room_to_use')
-        .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
-        .where('room_to_use.room_id IN ?', room_id_array)
-        .where('room_rsv.rsv_status = ?', info.SUBMIT_RSV_STATUS)
-        .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime.format('YYYY-MM-DD HH:mm'), start_datetime.format('YYYY-MM-DD HH:mm'))
-        .field('room_to_use.room_id')
-        .group('room_to_use.room_id')
-        .toParam();
-      let holidayQueryString = squel.select()
-        .from('holiday')
-        .where('room_id IN ?',room_id_array)
-        .where('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)
-        .toParam();
-      let holiday_results = await db_func.sendQueryToDB(connection, holidayQueryString);
-      let rsv_results = await db_func.sendQueryToDB(connection, rsvQeuryString);
-      for (let i in results) {
-        for (let j in holiday_results) {
-          if (holiday_results[j].room_id == results[i].room_id) {
-            results[i].is_active = 0;
-            results[i].message = `[ ${holiday_results[j].name }]\n다른 날짜를 선택해주세요`
-            break;
-          }
+      for (let j in holiday_results) {
+        if (holiday_results[j].room_id == results[i].room_id) {
+          results[i].is_active = 0;
+          results[i].message = `[ ${holiday_results[j].name }]\n다른 날짜를 선택해주세요`
+          break;
         }
-        if (results[i].is_active == 0) 
-          continue;
-        for (let j in rsv_results) {
-          if (rsv_results[j].room_id == results[i].room_id) {
-            results[i].is_active = 0;
-            results[i].message = `이미 예약됬습니다.`
-            break;
-          }
+      }
+      if (results[i].is_active == 0)
+        continue;
+      for (let j in rsv_results) {
+        if (rsv_results[j].room_id == results[i].room_id) {
+          results[i].is_active = 0;
+          results[i].message = `이미 예약됬습니다.`
+          break;
         }
       }
     }
-    foo.cleaningList(results, req.user);
-    res.status(200).json({
-      results: sort_by_floor ? roomSortByFloor(results) : results,
-      list_count,
-    })
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
   }
-});
+  foo.cleaningList(results, req.user);
+  res.status(200).json({
+    results: sort_by_floor ? roomSortByFloor(results) : results,
+    list_count,
+  })
+}));
 
-router.post('/room', isAdmin, checkReqInfo, async (req, res, next) => {
+router.post('/room', isAdmin, checkReqInfo, checkRequireInsertRoom, db_func.inDBStream(async (req, res, next, conn) => {
   const {
     building_id,
     room_category_id,
@@ -340,53 +272,36 @@ router.post('/room', isAdmin, checkReqInfo, async (req, res, next) => {
     rsv_cancel_min_day,
   } = req.body;
 
-  if (building_id == undefined || room_category_id == undefined || auth_rsv_create == undefined ||
-    auth_rsv_cancel == undefined || name == undefined || room_number == undefined ||
-    floor == undefined || is_require_rsv_accept == undefined || is_require_cancel_accept == undefined) {
-    res.status(401).json({
-      message: '필수값을 입력해주세요'
+  let can_manage = await checkAdminManager(conn, {
+    user_id: req.user.user_id,
+    TYPE: 'room'
+  });
+  if (!can_manage) {
+    res.status(403).json({
+      message: '관리 권한이 없습니다'
     })
   } else {
-    let connection;
-    try {
-      connection = await db_func.getDBConnection();
-
-      let can_manage = await checkAdminManager(connection, {
-        user_id: req.user.user_id,
-        TYPE: 'room'
-      });
-      if (!can_manage) {
-        res.status(403).json({
-          message: '관리 권한이 없습니다'
-        })
-      } else {
-        let insert_result = await insert_func.room(connection, {
-          building_id,
-          room_category_id,
-          auth_rsv_create,
-          auth_rsv_cancel,
-          name,
-          room_number,
-          floor,
-          seat_count,
-          description,
-          is_require_rsv_accept,
-          is_require_cancel_accept,
-          rsv_apply_min_day,
-          rsv_cancel_min_day,
-        })
-        foo.setRes(res, insert_result, {
-          message: '성공했습니다'
-        })
-      }
-    } catch (error) {
-      next(error);
-    } finally {
-      db_func.release(connection);
-    }
+    let insert_result = await insert_func.room(conn, {
+      building_id,
+      room_category_id,
+      auth_rsv_create,
+      auth_rsv_cancel,
+      name,
+      room_number,
+      floor,
+      seat_count,
+      description,
+      is_require_rsv_accept,
+      is_require_cancel_accept,
+      rsv_apply_min_day,
+      rsv_cancel_min_day,
+    })
+    foo.setRes(res, insert_result, {
+      message: '성공했습니다'
+    })
   }
-});
-router.put('/room/:room_id', isAdmin, checkReqInfo, async (req, res, next) => {
+}));
+router.put('/room/:room_id', isAdmin, checkReqInfo, checkRequireUpdateRoom, db_func.inDBStream(async (req, res, next, conn) => {
   let room_id = req.params.room_id;
 
   const {
@@ -404,52 +319,35 @@ router.put('/room/:room_id', isAdmin, checkReqInfo, async (req, res, next) => {
     rsv_cancel_min_day,
   } = req.body;
 
-  if (room_category_id == undefined || auth_rsv_create == undefined ||
-    auth_rsv_cancel == undefined || name == undefined || room_number == undefined ||
-    floor == undefined || is_require_rsv_accept == undefined || is_require_cancel_accept == undefined) {
-    res.status(401).json({
-      message: '필수값을 입력해주세요'
+  let can_manage = await checkAdminManager(conn, {
+    user_id: req.user.user_id,
+    TYPE: 'room'
+  });
+  if (!can_manage) {
+    res.status(403).json({
+      message: '관리 권한이 없습니다'
     })
   } else {
-    let connection;
-    try {
-      connection = await db_func.getDBConnection();
-
-      let can_manage = await checkAdminManager(connection, {
-        user_id: req.user.user_id,
-        TYPE: 'room'
-      });
-      if (!can_manage) {
-        res.status(403).json({
-          message: '관리 권한이 없습니다'
-        })
-      } else {
-        let update_result = await update_func.room(connection, {
-          room_id,
-          room_category_id,
-          auth_rsv_create,
-          auth_rsv_cancel,
-          name,
-          room_number,
-          floor,
-          seat_count,
-          description,
-          is_require_rsv_accept,
-          is_require_cancel_accept,
-          rsv_apply_min_day,
-          rsv_cancel_min_day,
-        })
-        foo.setRes(res, update_result, {
-          message: '성공했습니다'
-        })
-      }
-    } catch (error) {
-      next(error);
-    } finally {
-      db_func.release(connection);
-    }
+    let update_result = await update_func.room(conn, {
+      room_id,
+      room_category_id,
+      auth_rsv_create,
+      auth_rsv_cancel,
+      name,
+      room_number,
+      floor,
+      seat_count,
+      description,
+      is_require_rsv_accept,
+      is_require_cancel_accept,
+      rsv_apply_min_day,
+      rsv_cancel_min_day,
+    })
+    foo.setRes(res, update_result, {
+      message: '성공했습니다'
+    })
   }
-});
+}));
 
 router.get('/holiday', async (req, res, next) => {
   let {
@@ -506,7 +404,7 @@ router.get('/available_time', async (req, res, next) => {
     let connection;
     try {
       connection = await db_func.getDBConnection();
-      
+
       let {
         results,
         list_count,
@@ -519,9 +417,9 @@ router.get('/available_time', async (req, res, next) => {
       if (room_id) {
         rsv_results = (await select_func.vRoomRsv(connection, {
           room_id: room_id,
-          rsv_status : info.SUBMIT_RSV_STATUS,
-          start_datetime : moment(`${foo.parseDate(date)} 00:00`).format('YYYY-MM-DD HH:mm'),
-          end_datetime : moment(`${foo.parseDate(date)} 24:00`).format('YYYY-MM-DD HH:mm'),
+          rsv_status: info.SUBMIT_RSV_STATUS,
+          start_datetime: moment(`${foo.parseDate(date)} 00:00`).format('YYYY-MM-DD HH:mm'),
+          end_datetime: moment(`${foo.parseDate(date)} 24:00`).format('YYYY-MM-DD HH:mm'),
         })).results;
 
       }
@@ -559,7 +457,7 @@ router.get('/available_time', async (req, res, next) => {
   }
 });
 
-router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
+router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {
   const {
     room_id,
     date,
@@ -574,121 +472,120 @@ router.post('/room_rsv', checkReqInfo, async (req, res, next) => {
   } = req.body;
 
   let _date = foo.resetTime(moment(date));
-  if (room_id == undefined || date == undefined || time_id_array == undefined) {
-    res.status(401).json({
-      message: '필수값을 입력해주세요'
-    })
-  } else if (date != undefined && !_date.isValid()) {
+  if (date != undefined && !_date.isValid()) {
     res.status(401).json({
       message: '날짜를 다시 입력해주세요'
     })
   } else {
-    let connection;
-    try {
-      connection = await db_func.getDBConnection();
-      let {
-        results
-      } = await select_func.room(connection, {
-        room_id,
-      });
+    let {
+      results
+    } = await select_func.room(conn, {
+      room_id,
+    });
 
-      let min_date = (() => {
-        let _min_date = moment();
-        foo.resetTime(_min_date)
-        _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
-        return _min_date;
-      })();
-      if (!results[0]) {
+    let min_date = (() => {
+      let _min_date = moment();
+      foo.resetTime(_min_date)
+      _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
+      return _min_date;
+    })();
+    if (!results[0]) {
+      res.status(401).json({
+        message: '강의실을 다시 선택해주세요'
+      })
+    } else if (!foo.checkPermission(req.user, results[0].auth_rsv_create)) {
+      res.status(401).json({
+        message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
+      })
+    } else if (_date < min_date) {
+      res.status(401).json({
+        message: `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
+      })
+    } else {
+      let is_holiday = (await select_func.vRoomHoliday(conn, {
+        room_id: results[0].room_id,
+        building_id: results[0].building_id,
+        date: moment(date).format('YYYY-MM-DD'),
+      })).results[0] ? true : false;
+
+      if (is_holiday) {
         res.status(401).json({
-          message: '강의실을 다시 선택해주세요'
-        })
-      } else if (!foo.checkPermission(req.user, results[0].auth_rsv_create)) {
-        res.status(401).json({
-          message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
-        })
-      } else if (_date < min_date) {
-        res.status(401).json({
-          message: `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
+          message: '휴일입니다. 다른 날짜를 선택해주세요'
         })
       } else {
-        let is_holiday = (await select_func.vRoomHoliday(connection, {
-          room_id: results[0].room_id,
+        let available_time_results = (await select_func.vRoomAvailableTime(conn, {
           building_id: results[0].building_id,
-          date: moment(date).format('YYYY-MM-DD'),
-        })).results[0] ? true : false;
-
-        if (is_holiday) {
+          room_id: results[0].room_id,
+          time_id_array,
+          day_of_the_week: _date.day(),
+          sort_key: 'start_time',
+          sort_type: true,
+        })).results;
+        if (!available_time_results[0] || time_id_array.length != available_time_results.length) {
           res.status(401).json({
-            message: '휴일입니다. 다른 날짜를 선택해주세요'
+            message: '시간을 다시 선택해주세요'
           })
         } else {
-          let available_time_results = (await select_func.vRoomAvailableTime(connection, {
-            building_id: results[0].building_id,
+          let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[0].start_time)}`);
+          let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[available_time_results.length - 1].end_time)}`);
+          let rsv_results = (await select_func.vRoomRsv(conn, {
             room_id: results[0].room_id,
-            time_id_array,
-            day_of_the_week: _date.day(),
-            sort_key: 'start_time',
-            sort_type: true,
+            rsv_status: info.SUBMIT_RSV_STATUS,
+            start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+            end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
           })).results;
-          if (!available_time_results[0] || time_id_array.length != available_time_results.length) {
+          if (rsv_results[0]) {
             res.status(401).json({
-              message: '시간을 다시 선택해주세요'
+              message: '이미 예약되었습니다.'
             })
           } else {
-            let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[0].start_time)}`);
-            let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[available_time_results.length - 1].end_time)}`);
-            let rsv_results = (await select_func.vRoomRsv(connection, {
-              room_id: results[0].room_id,
-              rsv_status : info.SUBMIT_RSV_STATUS,
-              start_datetime : start_datetime.format('YYYY-MM-DD HH:mm'),
-              end_datetime : end_datetime.format('YYYY-MM-DD HH:mm'),
-            })).results;
-            if (rsv_results[0]) {
-              res.status(401).json({
-                message: '이미 예약되었습니다.'
-              })
-            } else {
-              await db_func.beginTransaction(connection);
-              let insert_result = await insert_func.room_rsv(connection, {
-                isTransaction: true,
-                rsv_status : (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS,
-                room_rsv_category_id: 1,
-                department_id,
-                study_group_id,
-                user_id: req.user ? req.user.user_id : null,
-                start_datetime : start_datetime.format('YYYY-MM-DD HH:mm'),
-                end_datetime : end_datetime.format('YYYY-MM-DD HH:mm'),
-                student_count,
-                non_student_count,
-                representative_name,
-                representative_phone,
-                description,
-              });
-              await insert_func.room_to_use(connection, {
-                isTransaction: true,
-                room_rsv_id: insert_result.insertId,
-                room_id_array: [room_id],
-              })
-              await insert_func.room_rsv_time(connection, {
-                isTransaction: true,
-                room_rsv_id: insert_result.insertId,
-                time_array: available_time_results,
-              })
-              await db_func.commit(connection);
-              foo.setRes(res, insert_result, {
-                message: '성공했습니다'
-              })
-            }
+            await db_func.beginTransaction(conn);
+            let insert_result = await insert_func.room_rsv(conn, {
+              isTransaction: true,
+              rsv_status: (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS,
+              room_rsv_category_id: 1,
+              department_id,
+              study_group_id,
+              user_id: req.user ? req.user.user_id : null,
+              start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+              end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+              student_count,
+              non_student_count,
+              representative_name,
+              representative_phone,
+              description,
+            });
+            await insert_func.room_to_use(conn, {
+              isTransaction: true,
+              room_rsv_id: insert_result.insertId,
+              room_id_array: [room_id],
+            })
+            await insert_func.room_rsv_time(conn, {
+              isTransaction: true,
+              room_rsv_id: insert_result.insertId,
+              time_array: available_time_results,
+            })
+            await db_func.commit(conn);
+            foo.setRes(res, insert_result, {
+              message: '성공했습니다'
+            })
           }
         }
       }
-    } catch (error) {
-      next(error);
-    } finally {
-      db_func.release(connection);
     }
   }
-});
+}));
+
+
+router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {
+  const room_rsv_id = req.params.room_rsv_id;
+  let {
+    rsv_status
+  } = req.body;
+  res.status(200).json({
+    message: 'hi!'
+  })
+}));
 
 function roomSortByFloor(room_results) {
   let rooms = {};

@@ -110,6 +110,11 @@ function makeGlobal() {
   return {
     USER_TYPE: USER_TYPE,
     ADMIN_TYPE: ADMIN_TYPE,
+    REQ_RSV_STATUS : 20,
+    CANCEL_RSV_STATUS : 40,
+    CANCEL_REQ_RSV_STATUS : 60,
+    SUBMIT_RSV_STATUS : 80,
+
     resetTime : resetTime,
     parseDate : parseDate,
     parseDateTime : parseDateTime,
