@@ -1,5 +1,5 @@
 <% include ../sub/header %>
-  <h1>개발용 건물 : 인천지역대학</h1>
+  <h1>학습관을 선택해주세요 (인천지역대학)</h1>
       <div class="campuses">
         <dl>
           <dt v-for="(campus, i) in campuses" :key="i">
@@ -28,6 +28,7 @@
   <script>
     var global = makeGlobal();
     var campuses = <%-JSON.stringify(campuses) %>;
+    var message = '<%-locals.message %>';
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -38,6 +39,7 @@
           header_menu_name: 'main',
           campuses : campuses,
           campus_id: <%- campus_id %>,
+          message:message,
         }
       },
       methods : {
@@ -54,7 +56,12 @@
         locationHref: function (link) {
           location.href= link;
         }
-      }
+      },
+      mounted: function() {
+        if (this.message) {
+          alert(this.message)
+        }
+      }, 
     })
   </script>
 

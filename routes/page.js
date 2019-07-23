@@ -32,9 +32,12 @@ router.get('/join', isNotLoggedIn, async (req, res, next) => {
 });
 
 router.get('/', async (req, res, next) => {
+  let message = req.cookies.message;
+  res.clearCookie('message');
   res.render('user/main', foo.getResJson(req.user, {
     campuses: info.campuses,
     campus_id: req.user ? req.user.campus_id : 0,
+    message,
   }));
 });
 
@@ -42,6 +45,9 @@ router.get('/reservation', async (req, res, next) => {
   if (req.user && req.user.building_id) {
     res.redirect('/reservation/intro/'+ req.user.building_id);
   } else {
+    res.cookie('message', '비회원은 학습관 선택 후 예약 가능합니다.', {
+      maxAge: 5 * 1000,
+    });
     res.redirect('/');
   }
 });
