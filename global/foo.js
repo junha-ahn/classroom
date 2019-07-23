@@ -194,6 +194,7 @@ let self = {
   },
   setRes: (res, set_result, json) => {
     if (set_result.affectedRows) {
+      json.insertId = set_result.insertId;
       res.status(200).json(json)
     } else {
       res.status(constant.UNCHANGED_STATUS).json({

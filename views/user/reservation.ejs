@@ -378,7 +378,8 @@
               data: this.formData,
             },
             function(data, status) {
-              alert(data.message)
+              alert(data.message);
+              location.href = '/reservation/single/' + data.insertId;
             },
             function(message, status, data) {
               alert(message);

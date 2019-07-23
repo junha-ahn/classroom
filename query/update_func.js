@@ -103,6 +103,7 @@ let self = {
         let roomString = squel.update()
           .table('room_rsv')
           .set('rsv_status', rsv_status)
+          .set('date_last_updated', squel.str('NOW()'))
           .where('room_rsv_id = ?', room_rsv_id)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, roomString));
