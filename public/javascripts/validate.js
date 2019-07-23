@@ -63,11 +63,35 @@ var config = {
     data_type: 'string',
   },
   'representative_name' : {
-    name: '대표명',
+    name: '대표자 이름',
     data_type: 'string',
   },
   'description' : {
     name: '설명',
+    data_type: 'string',
+  },
+  'title' : {
+    name: '제목',
+    data_type: 'string',
+  },
+  'date' : {
+    name: '날짜',
+    data_type: 'object',
+  },
+  'room_id' : {
+    name: '강의실',
+    data_type: 'number',
+  },
+  'student_count' : {
+    name: '학생 인원',
+    data_type: 'number',
+  },
+  'non_student_count' : {
+    name: '비학생 인원',
+    data_type: 'number',
+  },
+  'representative_phone' : {
+    name: '대표자 번호',
     data_type: 'string',
   },
 }

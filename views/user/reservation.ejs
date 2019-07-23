@@ -44,7 +44,8 @@
     </footer>
   </div>
 
-<% include ../component/datepicker %>
+  <% include ../component/datepicker %>
+  <script type="text/javascript" src="/javascripts/validate.js"></script>
   <script>
     var global = makeGlobal();
     var app = new Vue({
@@ -366,24 +367,61 @@
             alert(message);
           })
         },
-        // DETAIL & Lar
+        // DETAIL
         detailSubmit: function(e) {
           e.preventDefault();
           if (this.menu_step == 'detail') {
             this.nextMenuStep();
-          } else {
-            global.ajax({
-              url: '/api/room_rsv',
-              type: 'POST',
-              data: this.formData,
-            },
-            function(data, status) {
-              alert(data.message);
-              location.href = '/reservation/single/' + data.insertId;
-            },
-            function(message, status, data) {
-              alert(message);
-            })
+          } else { 
+            
+            var _validate = validate(this.formData, {
+              'room_id': {
+                is_require: true,
+              },
+              'title': {
+                is_require: true,
+              },
+              'date': {
+                is_require: true,
+              },
+              'department_id': {
+                is_require: true,
+              },
+              'study_group_id': {
+                is_require: false,
+              },
+              'student_count': {
+                is_require: false,
+              },
+              'non_student_count': {
+                is_require: false,
+              },
+              'representative_name': {
+                is_require: true,
+              },
+              'representative_phone': {
+                is_require: true,
+              },
+              'description': {
+                is_require: false,
+              },
+            });
+            if (_validate) {
+              alert(_validate)
+            } else {
+              global.ajax({
+                url: '/api/room_rsv',
+                type: 'POST',
+                data: this.formData,
+              },
+              function(data, status) {
+                alert(data.message);
+                location.href = '/reservation/single/' + data.insertId;
+              },
+              function(message, status, data) {
+                alert(message);
+              })
+            }
           }
         },
         
