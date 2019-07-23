@@ -559,15 +559,49 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
 }));
 
 
-router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isLoggedIn, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {
+router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  const room_rsv_id = req.params.room_rsv_id;
+
+  let {
+    results
+  } = await select_func.room_rsv(conn, {
+    room_rsv_id,
+  });
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택해주세요'
+    })
+  } else if (results[0].user_id != req.user.user_id) {
+    res.status(401).json({
+      message: '본인의 예약을 선택해주세요'
+    })
+  } else if (results[0].rsv_status != info.REQ_RSV_STATUS) {
+    res.status(401).json({
+      message: '요청상태가 아닌 예약은 취소 불가능합니다'
+    })
+  } else {
+    //rsv_cancel_min_day 설정
+    //is_require_cancel_accept 설정
+    let require_cancel_results = (await select_func.vRsvRoomsRequire(conn, {
+      room_rsv_id,
+      is_require_cancel_accept: 1,
+    })).results;
+    
+    let update_result = await update_func.room_rsv_status(conn, {
+      room_rsv_id,
+      rsv_status: (require_cancel_results[0]) ? info.CANCEL_REQ_RSV_STATUS : info.CANCEL_RSV_STATUS,
+    })
+    foo.setRes(res, update_result, {
+      message: require_cancel_results[0] ? '예약 취소 요청을 성공 했습니다.' : '예약을 취소 했습니다.'
+    })
+  }
+}));
+router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
   let {
-    rsv_status
+    rsv_status,
   } = req.body;
-  // 유저일경우 본인 체크
-  // 관리자일경우 권한 체크
 
-  // 유저일경우 요청일때만 취소 가능.
   let {
     results
   } = await select_func.room_rsv(conn, {
@@ -581,8 +615,18 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isLoggedIn, checkRequi
     res.status(401).json({
       message: '본인의 예약을 선택해주세요'
     })
+  } else if (req.user.user_type == info.USER_TYPE && results[0].rsv_status != info.REQ_RSV_STATUS) {
+    res.status(401).json({
+      message: '요청상태가 아닌 예약은 취소 불가능합니다'
+    })
   } else {
-
+    let update_result = await update_func.room_rsv_status(conn, {
+      room_rsv_id,
+      rsv_status,
+    })
+    foo.setRes(res, update_result, {
+      message: '예약 상태 변경을 성공했습니다'
+    })
   }
 }));
 

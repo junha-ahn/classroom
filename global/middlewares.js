@@ -200,10 +200,6 @@ let self = {
       res.status(401).json({
         message: "필수값을 입력해주세요: " + flag,
       })
-    } else if (req.user && req.user.user_type == info.USER_TYPE && req.body.rsv_status != info.CANCEL_RSV_STATUS) {
-      res.status(401).json({
-        message: '예약 상태(rsv_status)를 다시 선택해주세요. 회원은 취소만 가능합니다'
-      })
     } else {
       next();
     }
@@ -222,9 +218,9 @@ let self = {
   },
 
 
-  getRerservationLookup: (is_admin) => {
+  getRerservationLookup: (is_adminpage) => {
     return async function (req, res, next) {
-      let building_id = (is_admin) ? req.user.building_id : req.params.building_id;
+      let building_id = (is_adminpage) ? req.user.building_id : req.params.building_id;
       let {
         department_id,
         study_group_id,
@@ -268,8 +264,9 @@ let self = {
           })).results;
           foo.cleaningList(results, req.user);
           foo.cleaningList(study_group_results);
-          res.render((is_admin ? 'admin' : 'user') + '/reservation_lookup'
+          res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup'
           ,  foo.getResJson(req.user, {
+            is_adminpage,
             params: req.params,
             query: {
               ...req.query,
@@ -291,7 +288,7 @@ let self = {
       }
     }
   },
-  getRerservationSingle: (is_admin) => {
+  getRerservationSingle: (is_adminpage) => {
     return db_func.inDBStream(async (req, res, next, conn) => {
       let room_rsv_id = req.params.room_rsv_id;
       let {
@@ -315,8 +312,9 @@ let self = {
         })).results;
         foo.cleaningList(results, req.user);
         foo.cleaningList(room_rsv_time_results);
-        res.render((is_admin ? 'admin' : 'user') + '/reservation_single'
+        res.render((is_adminpage ? 'admin' : 'user') + '/reservation_single'
         , foo.getResJson(req.user, {
+          is_adminpage,
           params: req.params,
           reservation: results[0],
           room_to_use_results,

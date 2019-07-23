@@ -38,7 +38,7 @@
     <th>제목</th>
     <th>날짜</th>
     <th>시간</th>
-    <th>자세히보기</th>
+    <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
   </thead>
   <tbody>
     <tr v-for="(room_rsv, i) in results" :key="i">
@@ -49,8 +49,27 @@
       <td>{{room_rsv.title}}</td>
       <td>{{room_rsv.rsv_date}}</td>
       <td>{{room_rsv.rsv_start_time}} ~ {{room_rsv.rsv_end_time}}</td>
-      <td><button type="button" class="btn btn-default"
-          @click="location.href='/reservation/single/' + room_rsv.room_rsv_id"> 조회 </button></td>
+      <td>
+        <button 
+          type="button" 
+          class="btn btn-default"
+          @click="location.href='/reservation/single/' + room_rsv.room_rsv_id">조회</button>
+        <button 
+          type="button" 
+          class="btn btn-default"
+          v-if="is_adminpage"
+          @click="chageRsvStatus($event, reservation, global.REQ_RSV_STATUS)">요청</button> 
+        <button 
+          type="button" 
+          class="btn btn-default"
+          v-if="is_adminpage"
+          @click="chageRsvStatus($event, reservation, global.SUBMIT_RSV_STATUS)">승인</button> 
+        <button 
+          type="button" 
+          class="btn btn-default"
+          v-if="is_adminpage"
+          @click="chageRsvStatus($event, reservation, global.CANCEL_RSV_STATUS)">취소</button> 
+      </td>
     </tr>
   </tbody>
 </table>

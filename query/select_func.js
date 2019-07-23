@@ -1201,6 +1201,41 @@ let self = {
       }
     });
   },
+  vRsvRoomsRequire: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          room_rsv_id,
+          is_require_rsv_accept,
+          is_require_cancel_accept,
+        } = object;
+
+        let queryString = squel.select()
+          .from('room_to_use')
+          .join('room', null, 'room.room_id = room_to_use.room_id')
+          .where(squel.case()
+            .when('? IS NULL', room_rsv_id)
+            .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+            .else(squel.expr().and('room_to_use.room_rsv_id = ?', room_rsv_id)))
+          .where(squel.case()
+            .when('? IS NULL', is_require_rsv_accept)
+            .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+            .else(squel.expr().and('room.is_require_rsv_accept = ?', is_require_rsv_accept)))
+          .where(squel.case()
+            .when('? IS NULL', is_require_cancel_accept)
+            .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+            .else(squel.expr().and('room.is_require_cancel_accept = ?', is_require_cancel_accept)))
+          .toParam();
+
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        resolve({
+          results,
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   vRoomRsv: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {

@@ -87,8 +87,25 @@ let self = {
           .set('rsv_cancel_min_day', rsv_cancel_min_day)
           .where('room_id = ?', room_id)
           .toParam();
-        await db_func.sendQueryToDB(connection, roomString);
-        resolve();
+        resolve(await db_func.sendQueryToDB(connection, roomString));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  room_rsv_status: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          room_rsv_id,
+          rsv_status,
+        } = object;
+        let roomString = squel.update()
+          .table('room_rsv')
+          .set('rsv_status', rsv_status)
+          .where('room_rsv_id = ?', room_rsv_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, roomString));
       } catch (error) {
         reject(error);
       }

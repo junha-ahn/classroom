@@ -16,6 +16,7 @@
           header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
+          is_adminpage: <%- is_adminpage %>,
           params : <%-JSON.stringify(params) %>,
           query : <%-JSON.stringify(query) %>,
           results : <%-JSON.stringify(results) %>,
@@ -26,6 +27,25 @@
         }
       },
       methods: {
+        chageRsvStatus: function(e, room_rsv, rsv_status) {
+          if (e) {
+            e.preventDefault();
+          }
+          var url = '/api/room_rsv/status/' + room_rsv.room_rsv_id;
+          global.ajax({
+            url: url,
+            type: 'PUT',
+            data: {
+              rsv_status: rsv_status,
+            },
+          },
+          function (data, status) {
+            alert(data.message);
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        },
         makeDisplayName: function (room_rsv) {
           var name = ''
           if (room_rsv.department_name)

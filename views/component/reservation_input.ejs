@@ -103,14 +103,14 @@
       <button 
       type="button" 
       class="btn btn-warning" 
-      v-if="is_userpage && reservation.is_mine == 1 && reservation.rsv_status == 20"
+      v-if="!is_adminpage && reservation.is_mine == 1 && reservation.rsv_status == global.REQ_RSV_STATUS"
       @click="cancelRsv($event, reservation)">
       취소
       </button>
     </div>
    
 
-    <div v-if="!is_userpage && is_admin==1">
+    <div v-if="is_adminpage && is_admin==1">
       <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
     </div>
   </form>
@@ -120,7 +120,7 @@
   Vue.component('reservation-input', {
     template: '#input-template',
     props: {
-      is_userpage: Boolean,
+      is_adminpage: Boolean,
       mod: String,
       is_admin: Number,
       reservation: Object,
@@ -135,7 +135,20 @@
     }, 
     methods: {
       cancelRsv: function(e, reservation) {
-        this.chageRsvStatus(e, reservation, global.CANCEL_RSV_STATUS)
+        if (e) {
+          e.preventDefault();
+        }
+        var url = '/api/room_rsv/cancel/' + reservation.room_rsv_id;
+        global.ajax({
+          url: url,
+          type: 'PUT',
+        },
+        function (data, status) {
+          alert(data.message);
+        },
+        function (message, status, data) {
+          alert(message);
+        });
       },
       chageRsvStatus: function(e, reservation, rsv_status) {
         if (e) {
