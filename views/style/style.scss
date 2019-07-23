@@ -7,8 +7,12 @@
   clear: both;
 }
 
+.text-left {
+  text-align: left;
+}
+
 div {
-  // border: 1px solid red;
+  //border: 1px solid red;
 }
 
 body {
@@ -190,52 +194,55 @@ thead {
 }
 
 //login 끝
-@each $lookup_page in group, reservation, uesr, room {
+@each $lookup_page in group,
+reservation,
+uesr,
+room {
   .#{$lookup_page}_lookup {
     main {
       .btn {
         font-size: 1.8vmin !important;
       }
-  
+
       select {
         font-size: 1.8vmin !important;
       }
-  
+
       nav {
         text-align: center;
-  
+
       }
-  
+
       .lookup_button {
         float: right;
       }
-  
+
       .lookup_select {
         text-align: center;
         margin-bottom: 1%;
-  
+
         label {
           margin-bottom: 0 !important;
           margin: 2% 1% !important;
           font-size: 2.5vmin;
         }
-  
+
         .form-control {
           display: inline-block !important;
           width: 30% !important;
-  
+
           option {}
         }
       }
-  
+
       .table {
-  
+
         text-align: center;
-  
+
         thead {
           tr {
             background: #337ab7;
-  
+
             th {
               text-align: center;
               color: #fff;
@@ -296,6 +303,10 @@ thead {
 }
 
 .reservation {
+  button {
+    font-size: 2vmin !important;
+  }
+
   .rsv_menu {
     margin: 0 auto;
     width: 80%;
@@ -359,11 +370,78 @@ thead {
 
         }
       }
+
       .step_date {
         .vdp-datepicker {
-          width:80%;
+          width: 80%;
+
           .vdp-datepicker__calendar {
+            width: 100%;
+          }
+        }
+      }
+
+      .step_time {
+        dl {
+          dt {
+            width: 100%;
+            margin-bottom: 1%;
+
+            button {
+              width: 50%;
+            }
+          }
+        }
+      }
+
+      .step_detail {
+        .form-inline {
+          .div_right{
             width:100%;
+            input{
+              width:100%;
+            }
+          }
+        }
+        .pack_div {
+          width: 100%;
+          padding-bottom: 1%;
+          border-bottom:1px solid #ccc;
+          margin-bottom:2%;
+
+          .div_left {
+            float: left;
+            width: 30%;
+            display: inline-block;
+            vertical-align: center;
+
+            label {
+              font-size: 2vmin;
+              font-weight: bold;
+            }
+          }
+
+          .div_right {
+            display: inline-block;
+            float: right;
+            width: 70%;
+
+            textarea {
+              width:100% !important;;
+            }
+
+            .text-left {
+              width: 100%;
+
+              span {
+                display: inline-block;
+                color: #333333;
+                width: 20%;
+              }
+              input {
+                width:78%;
+              }
+            }
           }
         }
       }
@@ -373,7 +451,7 @@ thead {
 
 /*달력*/
 .step_date {
-text-align:center;
+  text-align: center;
 }
 
 
