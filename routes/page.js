@@ -8,14 +8,13 @@ const foo = require('../global/foo');
 
 const {
   select_func,
-  update_func,
-  insert_func,
-  delete_func,
 } = require('../query/index');
 
 const {
   isLoggedIn,
-  isNotLoggedIn
+  isNotLoggedIn,
+  getRerservationLookup,
+  getRerservationSingle,
 } = require('../global/middlewares');
 
 router.get('/login', isNotLoggedIn, async (req, res, next) => {
@@ -100,105 +99,9 @@ router.get('/reservation/:building_id', async (req, res, next) => {
     next(error)
   }
 });
-router.get('/reservation/lookup/:building_id', async (req, res, next) => {
-  let building_id = req.params.building_id;
-  let {
-    department_id,
-    study_group_id,
-    rsv_status,
-    is_mine,
-    date,
-    page,
-    page_length,
-  } = req.query;
-  page_length = page_length || 10;
-  rsv_status = rsv_status ? rsv_status : null;
-  let connection;
-  try {
-    let building = info.building_object[building_id];
-    if (!building) {
-      res.render('error', foo.getResJson(req.user, {
-        error_name: "건물을 찾을수 없습니다",
-        message: "다시 확인해주세요"
-      }));
-    } else {
-      connection = await db_func.getDBConnection();
-      let {
-        results,
-        list_count,
-      } = await select_func.vRoomRsvList(connection, {
-        department_id,
-        study_group_id,
-        rsv_status,
-        is_mine,
-        user_id: req.user ? req.user.user_id : null,
-        date,
-        page,
-        page_length,
-        sort_key: 'start_datetime',
-        sort_type: false,
-      })
-      let study_group_results = (await select_func.vStudyGroup(connection, {
-        department_id,
-        building_id,
-        user_id: (req.user) ? req.user.user_id : null,
-      })).results;
-      foo.cleaningList(results);
-      foo.cleaningList(study_group_results);
-      res.render('user/reservation_lookup', foo.getResJson(req.user, {
-        params: req.params,
-        query: {
-          ...req.query,
-          department_id: department_id || 0,
-          study_group_id: study_group_id || 0,
-          rsv_status : rsv_status || 0,
-        },
-        department_results: info.department_results,
-        rsv_status_results: info.rsv_status_results,
-        study_group_results,
-        results,
-        list_count,
-      }));
-    }
-  } catch (error) {
-    next(error)
-  } finally {
-    db_func.release(connection);
-  }
-});
-router.get('/reservation/single/:room_rsv_id', db_func.inDBStream(async (req, res, next, conn) => {
-  let room_rsv_id = req.params.room_rsv_id;
-  let {
-    results
-  } = await select_func.vRoomRsvSingle(conn, {
-    room_rsv_id,
-    user_id: req.user ? req.user.user_id : null,
-  });
 
-  if (!results[0]) {
-    res.render('error', foo.getResJson(req.user, {
-      error_name: "예약을 찾을수 없습니다",
-      message: "다시 확인해주세요"
-    }));
-  } else {
-    let room_to_use_results = (await select_func.vRoomToUse(conn, {
-      room_rsv_id,
-    })).results;
-    let room_rsv_time_results = (await select_func.room_rsv_time(conn, {
-      room_rsv_id,
-    })).results;
-    foo.cleaningList(results);
-    foo.cleaningList(room_rsv_time_results);
-    res.render('user/reservation_single', foo.getResJson(req.user, {
-      params: req.params,
-      reservation: results[0],
-      room_to_use_results,
-      room_rsv_time_results,
-      rsv_status_results: info.rsv_status_results,
-      room_rsv_category_results: info.room_rsv_category_results,
-    }));
-  }
-}));
+router.get('/reservation/lookup/:building_id', getRerservationLookup(false));
+router.get('/reservation/single/:room_rsv_id', getRerservationSingle(false));
 
 
 router.get('/study_group/lookup', async (req, res, next) => {
