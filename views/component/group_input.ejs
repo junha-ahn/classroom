@@ -14,16 +14,16 @@
         {{ building.name }}
       </option>
     </select>
-    <div class="form-group" v-if="mod!='POST'">
-      <label class="col-sm-2 control-label">대표</label>
-      <div class="col-sm-10">
-        <p class="form-control-static">{{group.representative_name}}</p>
-      </div>
-    </div>
     <div class="form-group">
       <label class="col-sm-2 control-label">이름</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" v-model="group.name" :disabled="mod == 'GET'">
+      </div>
+    </div>
+    <div class="form-group" v-if="mod!='POST'">
+      <label class="col-sm-2 control-label">대표</label>
+      <div class="col-sm-10">
+        <p class="form-control-static">{{group.representative_name}}</p>
       </div>
     </div>
     <div class="form-group">
@@ -52,6 +52,7 @@
   </form>
 </script>
 
+<script type="text/javascript" src="/javascripts/validate.js"></script>
 <script>
   Vue.component('group-input', {
     template: '#input-template',
@@ -84,26 +85,48 @@
       },
       onSubmitForm: function(e) {
         e.preventDefault();
-        var __this = this;
-        var mod = this.mod;
-        let need_location_href = mod == 'POST' ? true : false;
-        var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.group.study_group_id : '');
-        global.ajax({
-          url: url,
-          type: mod,
-          data: this.group,
-        },
-        function (data, status) {
-          alert(data.message);
-          if (need_location_href) {
-            location.href='/study_group/lookup?page=1'
-          } else {
-            __this.setMod('GET');
-          }
-        },
-        function (message, status, data) {
-          alert(message);
+        
+        var _validate = validate(this.group, {
+          'department_id': {
+            is_require: this.mod == 'POST' ? true : false,
+          },
+          'building_id': {
+            is_require: this.mod == 'POST' ? true : false,
+          },
+          'name': {
+            is_require: true,
+          },
+          'representative_name': {
+            is_require: false,
+          },
+          'description': {
+            is_require: false,
+          },
         });
+        if (_validate) {
+          alert(_validate)
+        } else {
+          var __this = this;
+          var mod = this.mod;
+          let need_location_href = mod == 'POST' ? true : false;
+          var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.group.study_group_id : '');
+          global.ajax({
+            url: url,
+            type: mod,
+            data: this.group,
+          },
+          function (data, status) {
+            alert(data.message);
+            if (need_location_href) {
+              location.href='/study_group/lookup?page=1'
+            } else {
+              __this.setMod('GET');
+            }
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        }
       }
     },
   })

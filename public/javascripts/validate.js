@@ -58,4 +58,12 @@ var config = {
     name: '학번',
     data_type: 'string',
   },
+  'representative_name' : {
+    name: '대표명',
+    data_type: 'string',
+  },
+  'description' : {
+    name: '설명',
+    data_type: 'string',
+  },
 }
