@@ -464,9 +464,9 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
       room_id,
     });
 
+    let now = foo.resetTime(moment());
     let min_date = (() => {
-      let _min_date = moment();
-      foo.resetTime(_min_date)
+      let _min_date = now;
       _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
       return _min_date;
     })();
@@ -478,9 +478,9 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
       res.status(401).json({
         message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
       })
-    } else if (_date < min_date) {
+    } else if (now < min_date) {
       res.status(401).json({
-        message: `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
+        message: `날짜를 다시 선택해주세요. ${foo.parseDate(min_date)}일 이전에는 예약 불가능합니다.`
       })
     } else {
       let is_holiday = (await select_func.vRoomHoliday(conn, {
@@ -580,26 +580,26 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
       message: '요청상태가 아닌 예약은 취소 불가능합니다'
     })
   } else {
-    //rsv_cancel_min_day 설정
-    //is_require_cancel_accept 설정
     let room_results = (await select_func.vRsvRoomsRequire(conn, {
       room_rsv_id,
     })).results;
+
     let is_require_cancel_accept = false;
     let date_message;
+    
     for (let i in room_results) {
       let now = foo.resetTime(moment());
       let min_date = (() => {
-        let _min_date = moment();
+        let _min_date = moment(results[i].start_datetime);
         foo.resetTime(_min_date)
-        _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
+        _min_date.date(_min_date.date() - room_results[i].rsv_cancel_min_day);
         return _min_date;
       })();
       if (room_results[i].is_require_cancel_accept == 1) {
         is_require_cancel_accept = true;
       }
-      if (now < min_date) {
-        date_message = `날짜를 다시 선택해주세요 현재로부터, ${results[0].rsv_apply_min_day}일 이후에 예약 가능합니다.`
+      if (now > min_date) {
+        date_message = `${foo.parseDate(min_date)}일 이후에 취소 불가능합니다.`
       }
     }
     if (date_message) {
@@ -612,7 +612,7 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
         rsv_status: (is_require_cancel_accept) ? info.CANCEL_REQ_RSV_STATUS : info.CANCEL_RSV_STATUS,
       })
       foo.setRes(res, update_result, {
-        message: require_cancel_results[0] ? '예약 취소 요청을 성공 했습니다.' : '예약을 취소 했습니다.'
+        message: is_require_cancel_accept ? '예약 취소 요청을 성공 했습니다.' : '예약을 취소 했습니다.'
       })
     }
   }
