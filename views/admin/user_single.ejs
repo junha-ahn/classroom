@@ -1,10 +1,10 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
       <user-input 
-      v-bind:user="user" 
+      mod="GET"
+      :user="user" 
       :is_admin="is_admin"
       :is_adminpage="true"
-      mod="GET"
       :department_results="department_results"
       :campus_results="campus_results"
       :buildings="buildings"
@@ -17,7 +17,7 @@
     </footer>
   </div>
 
-  <% include ../component/reservation_input %>
+  <% include ../component/user_input %>
   <script>
     var global = makeGlobal();
     var app = new Vue({
