@@ -303,15 +303,6 @@ room {
   }
 }
 
-
-// 예약 페이지
-.reservation {
-
-  main {}
-
-}
-
-
 .vdp-datepicker__calendar .cell {
   color: black !important;
   font-weight: bold !important;
@@ -411,15 +402,15 @@ room {
 
         }
       }
-
+      
       .step_date {
         .vdp-datepicker {
           width: 80%;
-
           .vdp-datepicker__calendar {
             width: 100%;
           }
         }
+        text-align: center;
       }
 
       .step_time {
@@ -494,11 +485,33 @@ room {
   }
 }
 
-/*달력*/
-.step_date {
-  text-align: center;
+
+.admin_menu {
+  float: left;
+  width:15%;
+  height:100%;
+  padding-top:1%;
+  ul{
+    height:auto;
+
+    li{
+
+    }
+  }
 }
 
+//관리자_예약
+.admin_reservation_lookup {
+  main{
+    margin:0 auto;
+    width:100%;
+    .admin_reservation_Contents{
+      float:right;
+      margin-left:1%;
+      width:84%;
+    }
+  }
+}
 
 /********** 상단nav틀어지는부분 **********/
 
@@ -539,32 +552,5 @@ room {
   .navbar-right {
     float: right !important;
     margin-right: -15px;
-  }
-}
-
-//관리자_예약
-.admin_reservation_lookup {
-  main{
-    margin:0 auto;
-    width:100%;
-    .sidebar{
-      float: left;
-      width:15%;
-      height:100%;
-      padding-top:1%;
-      padding-bottom:85%;
-      ul{
-        height:auto;
-
-        li{
-
-        }
-      }
-    }
-    .admin_reservation_Contents{
-      float:right;
-      margin-left:1%;
-      width:84%;
-    }
   }
 }
