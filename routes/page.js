@@ -8,6 +8,7 @@ const foo = require('../global/foo');
 
 const {
   select_func,
+  update_func,
 } = require('../query/index');
 
 const {
@@ -199,15 +200,51 @@ router.get('/study_group/write', isLoggedIn, async (req, res, next) => {
 });
 
 
-router.get('/mypage', isLoggedIn, async (req, res, next) => {
-  res.render('user/mypage', foo.getResJson(req.user, {
-
+router.get('/mypage/dashboard', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    results,
+    list_count,
+  } = await select_func.vNotificationRsv(conn, { 
+    receiver_id: req.user.user_id,
+    sort_key: 'date_last_updated',
+    sort_type: false,
+  });
+  foo.cleaningList(results);
+  console.log(results)
+  res.render('user/mypage_dashboard', foo.getResJson(req.user, {
+    query:req.query,
+    params:req.params,
+    results,
+    list_count,
   }))
-});
-router.get('/myaccount', isLoggedIn, async (req, res, next) => {
+}));
+router.get('/mypage/myaccount', isLoggedIn, async (req, res, next) => {
   res.render('user/myaccount', foo.getResJson(req.user, {
 
   }))
 });
+
+
+router.get('/notification/read/:notification_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let notification_id = req.params.notification_id;
+  let {
+    results,
+    list_count,
+  } = await select_func.notification(conn, { 
+    notification_id,
+    receiver_id: req.user.user_id,
+  });
+  if (!results[0]) {
+    res.status(401).render('error', foo.getResJson(req.user, {
+      error_name: '404 NOT FOUND',
+      message: '알림을 찾을 수 없습니다',
+    }));
+  } else {
+    await update_func.notificationRead(conn, {
+      notification_id,
+    })
+    res.redirect('/reservation/single/' + results[0].room_rsv_id);
+  }
+}));
 
 module.exports = router;

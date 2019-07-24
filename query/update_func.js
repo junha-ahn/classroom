@@ -8,6 +8,7 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let {
+          isTransaction,
           person_id,
           campus_id,
           building_id,
@@ -16,7 +17,7 @@ let self = {
           phone,
           student_number,
         } = object;
-        let personString = squel.update()
+        let queryString = squel.update()
           .table('person')
           .set('campus_id', campus_id)
           .set('building_id', building_id)
@@ -26,7 +27,7 @@ let self = {
           .set('student_number', student_number)
           .where('person_id = ?', person_id)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, personString));
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }
@@ -36,19 +37,20 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let {
+          isTransaction,
           study_group_id,
           user_id,
           name,
           description,
         } = object;
-        let studyGroupString = squel.update()
+        let queryString = squel.update()
           .table('study_group')
           .set('name', name)
           .set('description', description)
           .where('study_group_id = ?', study_group_id)
           .where('user_id = ?', user_id)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, studyGroupString));
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }
@@ -58,9 +60,11 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let {
+          isTransaction,
           room_id,
           room_category_id,
           auth_rsv_create,
+          auth_rsv_cancel,
           name,
           room_number,
           floor,
@@ -71,7 +75,7 @@ let self = {
           rsv_apply_min_day,
           rsv_cancel_min_day,
         } = object;
-        let roomString = squel.update()
+        let queryString = squel.update()
           .table('room')
           .set('room_category_id', room_category_id)
           .set('auth_rsv_create', auth_rsv_create)
@@ -87,7 +91,7 @@ let self = {
           .set('rsv_cancel_min_day', rsv_cancel_min_day)
           .where('room_id = ?', room_id)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, roomString));
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }
@@ -97,16 +101,73 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let {
+          isTransaction,
           room_rsv_id,
           rsv_status,
         } = object;
-        let roomString = squel.update()
+        let queryString = squel.update()
           .table('room_rsv')
           .set('rsv_status', rsv_status)
           .set('date_last_updated', squel.str('NOW()'))
           .where('room_rsv_id = ?', room_rsv_id)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, roomString));
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  notificationCount: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          notification_id,
+        } = object;
+        let queryString = squel.update()
+          .table('notification')
+          .set('notification_count = notification_count + 1')
+          .set('date_last_updated', squel.str('NOW()'))
+          .where('notification_id = ?', notification_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  notificationReadAll: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          receiver_id,
+        } = object;
+        let queryString = squel.update()
+          .table('notification')
+          .set('is_read = 1')
+          .where('receiver_id = ?', receiver_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  notificationRead: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          notification_id,
+        } = object;
+        let queryString = squel.update()
+          .table('notification')
+          .set('is_read = 1')
+          .where('notification_id = ?', notification_id)
+          .toParam();
+          console.log(notification_id);
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }

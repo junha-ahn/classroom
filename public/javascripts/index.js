@@ -43,7 +43,8 @@ function makeGlobal() {
     'study_group_lookup' : 'study_group',
     'study_group_single' : 'study_group',
     'study_group_write' : 'study_group',
-    'mypage' : 'mypage',
+    'mypage_dashboard' : 'mypage',
+    'mypage_myaccount' : 'mypage',
     'login' : 'login',
     'reservation_intro' : 'reservation',
     'reservation' : 'reservation',
@@ -55,11 +56,18 @@ function makeGlobal() {
     'admin_room_lookup' : 'room',
     'admin_reservation_lookup' : 'reservation',
   };
+  var mypage_name_by_class = {
+    'mypage_dashboard' : 'dashboard',
+    'mypage_myaccount' : 'myaccount',
+  };
   var getHeaderMenuName = function (page_class_name) {
     return header_name_by_class[page_class_name];
   };
   var getAdminMenuName = function (page_class_name) {
     return admin_name_by_class[page_class_name];
+  };
+  var getMypageMenuName = function (page_class_name) {
+    return mypage_name_by_class[page_class_name];
   };
   var serializeQuery =  function(query) {
     if (!query)
@@ -123,6 +131,7 @@ function makeGlobal() {
     ajax: ajax,
     getHeaderMenuName: getHeaderMenuName,
     getAdminMenuName: getAdminMenuName,
+    getMypageMenuName: getMypageMenuName,
     message : message,
   }
 }

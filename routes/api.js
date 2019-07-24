@@ -586,7 +586,7 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
 
     let is_require_cancel_accept = false;
     let date_message;
-    
+
     for (let i in room_results) {
       let now = foo.resetTime(moment());
       let min_date = (() => {
@@ -664,10 +664,26 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
         message: '이미 승인된 예약이 있습니다.',
       })
     } else {
+      let isTransaction = false;
+      if (results[0].user_id) {
+        await db_func.beginTransaction(conn);
+        isTransaction = true;
+      }
       let update_result = await update_func.room_rsv_status(conn, {
+        isTransaction,
         room_rsv_id,
         rsv_status,
       })
+      if (isTransaction) {
+        await addNotification(conn, {
+          isTransaction,
+          notification_type: 1,
+          sender_id: req.user.user_id,
+          receiver_id: results[0].user_id,
+          room_rsv_id,
+        })
+        await db_func.commit(conn);
+      }
       foo.setRes(res, update_result, {
         message: '예약 상태 변경을 성공했습니다'
       })
@@ -708,5 +724,47 @@ function getDateRange(startDate, endDate, listDate) {
     }
   }
   return listDate;
+}
+
+
+function addNotification(conn, object) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let {
+        isTransaction,
+        notification_type,
+        sender_id,
+        receiver_id,
+        room_rsv_id,
+      } = object;
+      let {
+        results,
+      } = await select_func.notification(conn, {
+        isTransaction,
+        notification_type,
+        sender_id,
+        receiver_id,
+        room_rsv_id,
+        is_read: 0,
+      });
+      if (results[0]) {
+        await update_func.notificationCount(conn, {
+          isTransaction,
+          notification_id: results[0].notification_id,
+        });
+      } else {
+        await insert_func.notification(conn, {
+          isTransaction,
+          notification_type,
+          sender_id,
+          receiver_id,
+          room_rsv_id,
+        });
+      }
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
 module.exports = router;

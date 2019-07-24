@@ -1668,7 +1668,10 @@ let self = {
         let countString
         let {
           notification_id,
+          sender_id,
           receiver_id,
+          room_rsv_id,
+          is_read,
           page,
           page_length,
           sort_key,
@@ -1686,9 +1689,21 @@ let self = {
               .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.notification_id = ?', notification_id)))
             .where(squel.case()
+              .when('? IS NULL', sender_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.sender_id = ?', sender_id)))
+            .where(squel.case()
               .when('? IS NULL', receiver_id)
-              .then(squel.expr().and('notification.receiver_id IS NOT NULL'))
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.room_rsv_id = ?', room_rsv_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_read)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.is_read = ?', is_read)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -1698,9 +1713,21 @@ let self = {
               .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.notification_id = ?', notification_id)))
             .where(squel.case()
+              .when('? IS NULL', sender_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.sender_id = ?', sender_id)))
+            .where(squel.case()
               .when('? IS NULL', receiver_id)
               .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.room_rsv_id = ?', room_rsv_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_read)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.is_read = ?', is_read)))
             .order(`notification.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -1713,9 +1740,136 @@ let self = {
               .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.notification_id = ?', notification_id)))
             .where(squel.case()
+              .when('? IS NULL', sender_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.sender_id = ?', sender_id)))
+            .where(squel.case()
               .when('? IS NULL', receiver_id)
               .then(squel.expr().and('notification.notification_id IS NOT NULL'))
               .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.room_rsv_id = ?', room_rsv_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_read)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.is_read = ?', is_read)))
+            .order(`notification.${sort_key}`, sort_type)
+            .toParam();
+        }
+
+        let results = await db_func.sendQueryToDB(connection, queryString);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        resolve({
+          results,
+          list_count
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  vNotificationRsv: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let queryString;
+        let countString
+        let {
+          notification_id,
+          sender_id,
+          receiver_id,
+          room_rsv_id,
+          is_read,
+          page,
+          page_length,
+          sort_key,
+          sort_type
+        } = object;
+
+        sort_key = (sort_key) ? sort_key : 'notification_id';
+        sort_type = (sort_type == false) ? false : true;
+
+        if (page && page_length) {
+          countString = squel.select()
+            .from('notification')
+            .where(squel.case()
+              .when('? IS NULL', notification_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.notification_id = ?', notification_id)))
+            .where(squel.case()
+              .when('? IS NULL', sender_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.sender_id = ?', sender_id)))
+            .where(squel.case()
+              .when('? IS NULL', receiver_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.room_rsv_id = ?', room_rsv_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_read)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.is_read = ?', is_read)))
+            .field('COUNT(*)', 'list_count')
+            .toParam();
+          queryString = squel.select()
+            .from('notification')
+            .left_join('room_rsv', null, 'room_rsv.room_rsv_id = notification.room_rsv_id')
+            .where(squel.case()
+              .when('? IS NULL', notification_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.notification_id = ?', notification_id)))
+            .where(squel.case()
+              .when('? IS NULL', sender_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.sender_id = ?', sender_id)))
+            .where(squel.case()
+              .when('? IS NULL', receiver_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.room_rsv_id = ?', room_rsv_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_read)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.is_read = ?', is_read)))
+            .field('notification.*')
+            .field('room_rsv.title')
+            .order(`notification.${sort_key}`, sort_type)
+            .limit(page_length)
+            .offset((parseInt(page) - 1) * page_length)
+            .toParam();
+        } else {
+          queryString = squel.select()
+            .from('notification')
+            .left_join('room_rsv', null, 'room_rsv.room_rsv_id = notification.room_rsv_id')
+            .where(squel.case()
+              .when('? IS NULL', notification_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.notification_id = ?', notification_id)))
+            .where(squel.case()
+              .when('? IS NULL', sender_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.sender_id = ?', sender_id)))
+            .where(squel.case()
+              .when('? IS NULL', receiver_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.receiver_id = ?', receiver_id)))
+            .where(squel.case()
+              .when('? IS NULL', room_rsv_id)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.room_rsv_id = ?', room_rsv_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_read)
+              .then(squel.expr().and('notification.notification_id IS NOT NULL'))
+              .else(squel.expr().and('notification.is_read = ?', is_read)))
+            .field('notification.*')
+            .field('room_rsv.title')
             .order(`notification.${sort_key}`, sort_type)
             .toParam();
         }

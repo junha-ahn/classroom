@@ -254,6 +254,29 @@ let self = {
       }
     });
   },
+  notification: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          notification_type,
+          sender_id,
+          receiver_id,
+          room_rsv_id,
+        } = object;
+        let queryString = squel.insert()
+          .into('notification')
+          .set('notification_type',notification_type)
+          .set('sender_id',sender_id)
+          .set('receiver_id',receiver_id)
+          .set('room_rsv_id',room_rsv_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }
 
 module.exports = self;
