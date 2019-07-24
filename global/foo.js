@@ -198,7 +198,7 @@ let self = {
       res.status(200).json(json)
     } else {
       res.status(constant.UNCHANGED_STATUS).json({
-        display_message: constant.UNCHANGED_MESSAGE
+        message: constant.UNCHANGED_MESSAGE
       })
     }
   },

@@ -691,6 +691,32 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
   }
 }));
 
+
+
+router.put('/notification/read', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    notification_id
+  } = req.body;
+  let update_result = await update_func.notificationRead(conn, {
+    notification_id,
+    receiver_id: req.user.user_id,
+  })
+  foo.setRes(res, update_result, {
+    message: '성공했습니다'
+  })
+}));
+router.delete('/notification', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    notification_id
+  } = req.body;
+  let delete_result = await delete_func.notification(conn, {
+    notification_id,
+    receiver_id: req.user.user_id,
+  })
+  foo.setRes(res, delete_result, {
+    message: '성공했습니다'
+  })
+}));
 function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {

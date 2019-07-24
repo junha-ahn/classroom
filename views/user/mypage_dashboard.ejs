@@ -2,6 +2,14 @@
 <% include ../sub/mypage_menu %>
 <h1>대시보드</h1>
 
+<button type="button" class="btn btn-success" 
+  @click="readNotification()">
+  전체읽음
+</button>
+<button type="button" class="btn btn-danger" 
+  @click="deleteNotification()">
+  전체삭제
+</button>
 <table class="table table-hover">
   <thead>
     <th>메세지</th>
@@ -11,13 +19,12 @@
   <tbody>
     <tr v-for="(notification, i) in results" :key="i">
       <td>
-
         <a v-if="notification.is_read == 0" v-bind:href="'/notification/read/' + notification.notification_id">
           <strong>
             {{makeDisplayMsg(notification)}}
           </strong>
         </a>
-        
+
         <a v-else v-bind:href="'/notification/read/' + notification.notification_id">
           {{makeDisplayMsg(notification)}}
         </a>
@@ -26,9 +33,9 @@
       <td>{{notification.datetime_last_updated}}</td>
       <td>
         <button type="button" class="btn btn-danger" 
-          @click="deleteNotification($event, notification.notification_id)">
+          @click="deleteNotification(notification.notification_id)">
           삭제
-          </button>
+        </button>
       </td>
     </tr>
   </tbody>
@@ -71,7 +78,38 @@
         return message;
       },
       deleteNotification: function(notification_id) {
-        return '테스트';
+        var __this = this;
+        var url = '/api/notification'
+        global.ajax({
+          url: url,
+          type: 'DELETE',
+          data: {
+            notification_id: notification_id,
+          }
+        },
+        function (data, status) {
+          __this.refresh();
+        },
+        function (message, status, data) {
+          alert(message);
+        });
+      },
+      readNotification: function() {
+        var __this = this;
+        var url = '/api/notification/read'
+        global.ajax({
+          url: url,
+          type: 'PUT',
+        },
+        function (data, status) {
+          __this.refresh();
+        },
+        function (message, status, data) {
+          alert(message);
+        });
+      },
+      refresh: function() {
+        location.href= '/mypage/dashboard'
       },
     }
   })

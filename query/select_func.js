@@ -9,6 +9,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           user_id,
           email,
           page,
@@ -62,8 +63,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -79,6 +80,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           user_id,
           campus_id,
           building_id,
@@ -174,8 +176,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -191,6 +193,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           study_group_id,
           department_id,
           building_id,
@@ -272,8 +275,8 @@ let self = {
             .order(`study_group.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -289,6 +292,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           study_group_id,
           department_id,
           building_id,
@@ -401,8 +405,8 @@ let self = {
             .order(`study_group.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -418,6 +422,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           study_group_id,
           page,
           page_length,
@@ -469,8 +474,8 @@ let self = {
             .order(`study_group_user.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -486,6 +491,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           department_id,
           page,
           page_length,
@@ -526,8 +532,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -543,6 +549,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           campus_id,
           page,
           page_length,
@@ -583,8 +590,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -600,6 +607,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           building_id,
           campus_id,
           page,
@@ -653,8 +661,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -670,6 +678,7 @@ let self = {
         let queryString;
         let countString;
         let {
+          isTransaction,
           room_id,
           building_id,
           floor,
@@ -748,8 +757,8 @@ let self = {
             .order(`room.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -765,6 +774,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           holiday_id,
           building_id,
           room_id,
@@ -830,8 +840,8 @@ let self = {
             .order(`holiday.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -847,6 +857,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           holiday_id,
           building_id,
           room_id,
@@ -944,8 +955,8 @@ let self = {
             .order(`holiday.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -961,6 +972,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           available_time_id,
           building_id,
           room_id,
@@ -1039,8 +1051,8 @@ let self = {
             .order(`available_time.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1056,6 +1068,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           building_id,
           room_id,
           time_id_array,
@@ -1134,8 +1147,8 @@ let self = {
             .order(`available_time.${sort_key}`, sort_type)
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1151,6 +1164,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           room_rsv_id,
           page,
           page_length,
@@ -1190,8 +1204,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1205,6 +1219,7 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let {
+          isTransaction,
           room_rsv_id,
           is_require_rsv_accept,
           is_require_cancel_accept,
@@ -1227,7 +1242,7 @@ let self = {
             .else(squel.expr().and('room.is_require_cancel_accept = ?', is_require_cancel_accept)))
           .toParam();
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
         resolve({
           results,
         });
@@ -1242,6 +1257,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           room_id,
           room_id_list,
           rsv_status,
@@ -1327,8 +1343,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1344,6 +1360,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           room_rsv_id,
           user_id,
           page,
@@ -1399,8 +1416,8 @@ let self = {
             .group('room_rsv.room_rsv_id')
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1416,6 +1433,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           department_id,
           study_group_id,
           rsv_status,
@@ -1534,8 +1552,8 @@ let self = {
             .group('room_rsv.room_rsv_id')
             .toParam();
         }
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1551,6 +1569,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           room_rsv_id,
           page,
           page_length,
@@ -1594,8 +1613,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1611,6 +1630,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           room_rsv_id,
           page,
           page_length,
@@ -1650,8 +1670,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1667,6 +1687,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           notification_id,
           sender_id,
           receiver_id,
@@ -1759,8 +1780,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count
@@ -1776,6 +1797,7 @@ let self = {
         let queryString;
         let countString
         let {
+          isTransaction,
           notification_id,
           sender_id,
           receiver_id,
@@ -1874,8 +1896,8 @@ let self = {
             .toParam();
         }
 
-        let results = await db_func.sendQueryToDB(connection, queryString);
-        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString))[0].list_count;
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,
           list_count

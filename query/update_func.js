@@ -166,7 +166,6 @@ let self = {
           .set('is_read = 1')
           .where('notification_id = ?', notification_id)
           .toParam();
-          console.log(notification_id);
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);

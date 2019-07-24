@@ -210,7 +210,6 @@ router.get('/mypage/dashboard', isLoggedIn, db_func.inDBStream(async (req, res, 
     sort_type: false,
   });
   foo.cleaningList(results);
-  console.log(results)
   res.render('user/mypage_dashboard', foo.getResJson(req.user, {
     query:req.query,
     params:req.params,
@@ -242,6 +241,7 @@ router.get('/notification/read/:notification_id', isLoggedIn, db_func.inDBStream
   } else {
     await update_func.notificationRead(conn, {
       notification_id,
+      receiver_id: req.user.user_id,
     })
     res.redirect('/reservation/single/' + results[0].room_rsv_id);
   }

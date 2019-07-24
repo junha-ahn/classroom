@@ -14,17 +14,46 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let {
+          isTransaction,
           user_id,
           study_group_id,
         } = object;
 
-        let userString = squel.delete()
+        let queryString = squel.delete()
           .from('study_group_user')
-          .where('user_id = ?',user_id)
+          .where('user_id = ?', user_id)
           .where('study_group_id = ?', study_group_id)
           .toParam();
-        let delete_result = await db_func.sendQueryToDB(connection, userString);
-        resolve(delete_result);
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  notification: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          notification_id,
+          receiver_id,
+        } = object;
+
+        let queryString;
+        if (notification_id) {
+          queryString = squel.delete()
+            .from('notification')
+            .where('notification_id = ?', notification_id)
+            .where('receiver_id = ?', receiver_id)
+            .toParam();
+        } else {
+          queryString = squel.delete()
+            .from('notification')
+            .where('receiver_id = ?', receiver_id)
+            .toParam();
+        }
+
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }
