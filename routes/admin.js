@@ -71,7 +71,8 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
       list_count
     } = await select_func.vUser(connection, {
       user_id,
-      // 내 건물에 속한 유저만 보이게 하기?...
+      campus_id: req.user.campus_id,
+      building_id: req.user.building_id,
     });
 
     if (!results[0]) {
@@ -81,10 +82,13 @@ router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
       }));
     } else {
       foo.cleaningList(results);
-      res.render('admin/user', foo.getResJson(req.user, {
+      res.render('admin/user_single', foo.getResJson(req.user, {
         user: results[0],
         query: req.query,
-        params: req.params
+        params: req.params,
+        department_results: info.department_results,
+        campus_results: info.campus_results,
+        buildings: info.buildings,
       }))
     }
   } catch (error) {

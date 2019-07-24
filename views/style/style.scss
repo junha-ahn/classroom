@@ -194,7 +194,7 @@ thead {
 }
 
 //login 끝
-@each $lookup_page in group,
+@each $lookup_page in study_group,
 reservation,
 uesr,
 room {

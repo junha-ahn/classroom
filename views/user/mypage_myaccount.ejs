@@ -1,0 +1,34 @@
+<% include ../sub/header %>
+<% include ../sub/mypage_menu %>
+<h1>설정</h1>
+
+</main>
+
+<footer>
+  <% include ../sub/footer %>
+</footer>
+</div>
+
+<script>
+  var global = makeGlobal();
+  var app = new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+        mypage_menu_name: global.getMypageMenuName("<%-pagename %>"),
+        is_user: <%- is_user %>,
+        is_admin: <%- is_admin %>,
+      }
+    },
+    methods: {
+      refresh: function() {
+        location.href= '/mypage/myaccount'
+      },
+    }
+  })
+</script>
+
+</body>
+
+</html>

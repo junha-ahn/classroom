@@ -1,17 +1,15 @@
 <% include ../sub/header %>
-      <template>
-        <reservation-input 
-        v-bind:reservation="reservation" 
-        :is_admin="is_admin"
-        mod="GET"
-        :rsv_status_results="rsv_status_results"
-        :room_rsv_category_results="room_rsv_category_results"
-        :room_rsv_time_results="room_rsv_time_results"
-        :room_to_use_results="room_to_use_results"
-        :is_adminpage="false"
-        >
-        </group-input>
-      </template>
+      <reservation-input 
+      v-bind:reservation="reservation" 
+      :is_admin="is_admin"
+      mod="GET"
+      :rsv_status_results="rsv_status_results"
+      :room_rsv_category_results="room_rsv_category_results"
+      :room_rsv_time_results="room_rsv_time_results"
+      :room_to_use_results="room_to_use_results"
+      :is_adminpage="false"
+      >
+      </reservation-input>
 
 
     </main>

@@ -177,7 +177,7 @@ router.get('/study_group/single/:study_group_id', async (req, res, next) => {
         study_group_id,
       });
       foo.cleaningList(results, req.user, true);
-      res.render('user/study_group', foo.getResJson(req.user, {
+      res.render('user/study_group_single', foo.getResJson(req.user, {
         group: groupObject.results[0],
         results,
         department_results: info.department_results,
@@ -218,7 +218,7 @@ router.get('/mypage/dashboard', isLoggedIn, db_func.inDBStream(async (req, res, 
   }))
 }));
 router.get('/mypage/myaccount', isLoggedIn, async (req, res, next) => {
-  res.render('user/myaccount', foo.getResJson(req.user, {
+  res.render('user/mypage_myaccount', foo.getResJson(req.user, {
 
   }))
 });
