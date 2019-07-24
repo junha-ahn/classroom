@@ -221,6 +221,13 @@ room {
         text-align: center;
         margin-bottom: 1%;
 
+        .pack_div {
+
+          .div_left {}
+
+          .div_right {}
+        }
+
         label {
           margin-bottom: 0 !important;
           margin: 2% 1% !important;
@@ -396,18 +403,20 @@ room {
 
       .step_detail {
         .form-inline {
-          .div_right{
-            width:100%;
-            input{
-              width:100%;
+          .div_right {
+            width: 100%;
+
+            input {
+              width: 100%;
             }
           }
         }
+
         .pack_div {
           width: 100%;
           padding-bottom: 1%;
-          border-bottom:1px solid #ccc;
-          margin-bottom:2%;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2%;
 
           .div_left {
             float: left;
@@ -427,7 +436,8 @@ room {
             width: 70%;
 
             textarea {
-              width:100% !important;;
+              width: 100% !important;
+              ;
             }
 
             .text-left {
@@ -438,8 +448,9 @@ room {
                 color: #333333;
                 width: 20%;
               }
+
               input {
-                width:78%;
+                width: 78%;
               }
             }
           }
