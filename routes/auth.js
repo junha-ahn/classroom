@@ -8,6 +8,7 @@ const {
   isNotLoggedIn,
   checkReqInfo,
   checkRequireEmailPassword,
+  checkRequireJoin,
 } = require('../global/middlewares');
 
 const foo = require('../global/foo');
@@ -16,7 +17,7 @@ const redis_func = (process.env.REDIS_ENABLE == 1) ? require('../global/redis_fu
 const sgMail = require('../global/sgMail');
 
 
-const  {
+const {
   select_func,
   update_func,
   insert_func,
@@ -50,7 +51,7 @@ router.post('/email/password', isNotLoggedIn, checkRequireEmailPassword, db_func
   }
 }));
 
-router.post('/join', isNotLoggedIn, checkReqInfo, async (req, res, next) => {
+router.post('/join', isNotLoggedIn, checkReqInfo, checkRequireJoin, db_func.inDBStream(async (req, res, next, conn) => {
   const {
     is_student,
     email,
@@ -63,53 +64,47 @@ router.post('/join', isNotLoggedIn, checkReqInfo, async (req, res, next) => {
     phone,
     student_number,
   } = req.body;
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-    let email_is_unique = (await select_func.user(connection, {
-      email
-    })).results[0] ? false : true;
-    if (email_is_unique) {
-      let _email_password = await redis_func.get(email);
-      if (email_password != _email_password) {
-        res.status(401).json({
-          message: _email_password == null ? 
-          '다시 이메일 인증 암호를 발급해주세요'
-          : '이메일 인증 암호가 다릅니다.'
-        })
-      } else {
-        let hashed_password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
-        await insert_func.user(connection, {
-          is_student,
-          email,
-          hashed_password,
-          campus_id,
-          building_id,
-          department_id,
-          name,
-          phone,
-          student_number,
-        });
-        res.status(200).json({
-          message: '가입 성공',
-        })
-      }
-    } else {
+
+  let email_is_unique = (await select_func.user(conn, {
+    email
+  })).results[0] ? false : true;
+
+  if (email_is_unique) {
+    let _email_password = await redis_func.get(email);
+    if (email_password != _email_password) {
       res.status(401).json({
-        message: '이미 가입된 이메일 입니다',
+        message: _email_password == null ?
+          '다시 이메일 인증 암호를 발급해주세요' :
+          '이메일 인증 암호가 다릅니다.'
+      })
+    } else {
+      let hashed_password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
+      await insert_func.user(conn, {
+        is_student,
+        email,
+        hashed_password,
+        campus_id,
+        building_id,
+        department_id,
+        name,
+        phone,
+        student_number,
+      });
+      res.status(200).json({
+        message: '가입 성공',
       })
     }
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
+  } else {
+    res.status(401).json({
+      message: '이미 가입된 이메일 입니다',
+    })
   }
-});
+}));
 
 router.post('/login', isNotLoggedIn, async (req, res, next) => {
   if (req.body.email == undefined || req.body.password == undefined) {
     res.status(401).json({
-      message : "모두 입력해주세요"
+      message: "모두 입력해주세요"
     })
   } else {
     passport.authenticate('local', (authError, user, info) => {
@@ -137,4 +132,22 @@ router.get('/logout', isLoggedIn, async (req, res) => {
   res.redirect('/');
 });
 
+
+router.get('/me', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    results
+  } = await select_func.vUser(conn, {
+    user_id: req.user.user_id
+  });
+  if (!results[0]) {
+    res.status(403).json({
+      message: '다시 로그인 해 주세요'
+    })
+  } else {
+    foo.cleaningList(results);
+    res.status(200).json({
+      result: results[0],
+    })
+  }
+}));
 module.exports = router;

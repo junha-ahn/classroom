@@ -142,17 +142,24 @@
         },
         nextMenuStep: function() {
           var now_menu_step = this.menu_step;
+          if (now_menu_step == 'time') {
+            if (this.formData.time_id_array == null || !this.formData.time_id_array[0]) {
+              alert('시간을 선택해주세요');
+              return;
+            }
+          }
           var menu_step_array = this.menu_steps[this.method];
           for (var i = 0; i < menu_step_array.length; i ++ ) {
+            var new_step = menu_step_array[parseInt(i) + 1];
             if (now_menu_step == menu_step_array[i] && i != menu_step_array.length - 1) {
-              if (menu_step_array[parseInt(i) + 1] == 'last') {
+              if (new_step == 'last') {
                 var _validate = this.validate();
                 if (_validate) {
                   alert(_validate)
                   return;
                 }
               }
-              this.menu_step = menu_step_array[parseInt(i) + 1];
+              this.menu_step = new_step;
             }
           }
         },
@@ -374,7 +381,30 @@
             alert(message);
           })
         },
-        // DETAIL
+        getPersonInfo: function() {
+          if (this.is_user) {
+            var __this = this;
+            global.ajax({
+              url: '/auth/me',
+              type: 'GET',
+              data: null,
+              query: {
+                is_personal: 1,
+              }
+            },
+            function(data, status) {
+              __this.setRepresentative(data.result.name, data.result.phone)
+            },
+            function(message, status, data) {
+              alert(message);
+            })
+          }
+        },
+        setRepresentative: function(name, phone) {
+          this.formData.representative_name = name;
+          this.formData.representative_phone = phone;
+        },
+        // LAST
         detailSubmit: function(e) {
           e.preventDefault();
           if (this.menu_step == 'detail') {
@@ -450,6 +480,8 @@
           this.info.time_array = null;
           this.info.start_time = null;
           this.info.end_time = null;
+
+          this.formData.time_id_array = [];
         },
         resetDetail: function() {
           this.formData.department_id = null;
@@ -484,6 +516,8 @@
                 this.resetDetail();
                 this.getDepartment();
                 this.getStudyGroup();
+                
+                this.getPersonInfo();
                 break;
             }
           } else {
@@ -509,6 +543,8 @@
                 this.resetDetail();
                 this.getDepartment();
                 this.getStudyGroup();
+
+                this.getPersonInfo();
                 break;
             }
           }

@@ -60,11 +60,11 @@
         <div class="div_right">
           <div class="text-left">
               <span>성명</span>
-              <input v-model="formData.representative_name" type="text" class="form-control" placeholder="대표자 성명을 입력하세요" :disabled="menu_step != 'detail'">
+              <input v-model="formData.representative_name"  v-bind:text="formData.representative_name" type="text" class="form-control" placeholder="대표자 성명을 입력하세요" :disabled="menu_step != 'detail'">
           </div>
           <div class="text-left">
               <span>전화번호</span>
-              <input v-model="formData.representative_phone" type="text" class="form-control" placeholder="대표자 연락처를 입력하세요" :disabled="menu_step != 'detail'">
+              <input v-model="formData.representative_phone" v-bind:text="formData.representative_phone" type="text" class="form-control" placeholder="대표자 연락처를 입력하세요" :disabled="menu_step != 'detail'">
           </div>
         </div>
       </div>
