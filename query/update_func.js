@@ -136,36 +136,29 @@ let self = {
       }
     });
   },
-  notificationReadAll: (connection, object) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let {
-          isTransaction,
-          receiver_id,
-        } = object;
-        let queryString = squel.update()
-          .table('notification')
-          .set('is_read = 1')
-          .where('receiver_id = ?', receiver_id)
-          .toParam();
-        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
-      } catch (error) {
-        reject(error);
-      }
-    });
-  },
   notificationRead: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
         let {
           isTransaction,
           notification_id,
+          receiver_id,
         } = object;
-        let queryString = squel.update()
-          .table('notification')
-          .set('is_read = 1')
-          .where('notification_id = ?', notification_id)
-          .toParam();
+        let queryString;
+        if (notification_id) {
+          queryString = squel.update()
+            .table('notification')
+            .set('is_read = 1')
+            .where('notification_id = ?', notification_id)
+            .where('receiver_id = ?', receiver_id)
+            .toParam();
+        } else {
+          queryString = squel.update()
+            .table('notification')
+            .set('is_read = 1')
+            .where('receiver_id = ?', receiver_id)
+            .toParam();
+        }
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
