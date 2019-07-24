@@ -1,12 +1,12 @@
 <% include ../sub/header %>
       <div class="lookup_select"> 
 
-        <div class="pack_div">
-          <div class="div_left">
-            <div>
+        <div class="pack_div clearfix">
+          <div class="div_left clearfix">
+            <div class="div_l">
               <label>학과</label>
             </div>
-            <div>
+            <div class="div_r">
               <select class="form-control" v-model="query.department_id" @change="onChange()">
                 <option v-bind:value="0" :selected="query.department_id===0">전체</option>
                 <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :selected="query.department_id == department.department_id" :key="i">
@@ -17,10 +17,10 @@
           </div>
           
           <div class="div_right">
-            <div>
+            <div class="div_l">
               <label>학습관</label>
             </div>
-            <div>
+            <div class="div_r">
               <select class="form-control" v-model="query.building_id" @change="onChange()">
                 <option v-bind:value="0" :selected="query.building_id===0">전체</option>
                 <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">

@@ -1,90 +1,93 @@
-<div class="lookup_select">
-  <label>날짜</label>
-  <custom-datepicker :inline="false" :selected_date="query.date" :default_date="new Date()"
-    :building_id="params.building_id" :on-selected="onSelected" maximum-view="day"></custom-datepicker>
-
-  <label>예약 상태</label>
-  <select class="form-control" v-model="query.rsv_status" @change="onChange()">
-    <option v-bind:value="0" :selected="query.rsv_status==0">전체</option>
-    <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
-      :selected="query.rsv_status == status.rsv_status" :key="i">
-      {{ status.name }}
-    </option>
-  </select>
+<div class="admin_reservation_Contents">
+  <h1>관리자_교실예약목록</h1>
+  <div class="lookup_select">
+    <label>날짜</label>
+    <custom-datepicker :inline="false" :selected_date="query.date" :default_date="new Date()"
+      :building_id="params.building_id" :on-selected="onSelected" maximum-view="day"></custom-datepicker>
   
-  <label>학과</label>
-  <select class="form-control" v-model="query.department_id" @change="onChange()">
-    <option v-bind:value="0" :selected="query.department_id===0">전체</option>
-    <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
-      :selected="query.department_id == department.department_id" :key="i">
-      {{ department.name }}
-    </option>
-  </select>
-
-  <label>스터디</label>
-  <select class="form-control" v-model="query.study_group_id" @change="onChange()" :disabled="query.department_id===0">
-    <option v-bind:value="0" :selected="query.study_group_id===0">전체</option>
-    <option v-for="(study_group, j) in study_group_results" v-bind:value="study_group.study_group_id" :key="j">
-      {{ study_group.name }}
-    </option>
-  </select>
-</div>
-
-<table class="table table-hover">
-  <thead>
-    <th>교실</th>
-    <th>카테고리</th>
-    <th>학과(스터디)</th>
-    <th>상태</th>
-    <th>제목</th>
-    <th>날짜</th>
-    <th>시간</th>
-    <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
-  </thead>
-  <tbody>
-    <tr v-for="(room_rsv, i) in results" :key="i">
-      <td>{{room_rsv.rooms_name}}</td>
-      <td>{{room_rsv.room_rsv_category_name}}</td>
-      <td>{{makeDisplayName(room_rsv)}}</td>
-      <td><p :class="classRsvStatus(room_rsv.rsv_status)">{{room_rsv.rsv_status_name}}</p></td>
-      <td>{{room_rsv.title}}</td>
-      <td>{{room_rsv.rsv_date}}</td>
-      <td>{{room_rsv.rsv_start_time}} ~ {{room_rsv.rsv_end_time}}</td>
-      <td>
-        <button 
-          type="button" 
-          class="btn btn-default"
-          @click="location.href='/reservation/single/' + room_rsv.room_rsv_id">조회</button>
-        <button 
-          type="button" 
-          class="btn btn-info"
-          v-if="is_adminpage"
-          @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
-        <button 
-          type="button" 
-          class="btn btn-success"
-          v-if="is_adminpage"
-          @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
-        <button 
-          type="button" 
-          class="btn btn-danger"
-          v-if="is_adminpage"
-          @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
-      </td>
-    </tr>
-  </tbody>
-</table>
-<nav>
-  <ul class="pagination">
-    <li v-for="page in pagenation" :key="page.value" :class="{active: page.isSelf}">
-      <a @click="chagePage(page.value)" aria-label="Previous">
-        <span aria-hidden="true" v-html="page.name"></span>
-      </a>
-    </li>
-  </ul>
-</nav>
-<div class="lookup_button" v-if="is_user">
-  <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
-  <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
+    <label>예약 상태</label>
+    <select class="form-control" v-model="query.rsv_status" @change="onChange()">
+      <option v-bind:value="0" :selected="query.rsv_status==0">전체</option>
+      <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
+        :selected="query.rsv_status == status.rsv_status" :key="i">
+        {{ status.name }}
+      </option>
+    </select>
+    
+    <label>학과</label>
+    <select class="form-control" v-model="query.department_id" @change="onChange()">
+      <option v-bind:value="0" :selected="query.department_id===0">전체</option>
+      <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
+        :selected="query.department_id == department.department_id" :key="i">
+        {{ department.name }}
+      </option>
+    </select>
+  
+    <label>스터디</label>
+    <select class="form-control" v-model="query.study_group_id" @change="onChange()" :disabled="query.department_id===0">
+      <option v-bind:value="0" :selected="query.study_group_id===0">전체</option>
+      <option v-for="(study_group, j) in study_group_results" v-bind:value="study_group.study_group_id" :key="j">
+        {{ study_group.name }}
+      </option>
+    </select>
+  </div>
+  
+  <table class="table table-hover">
+    <thead>
+      <th>교실</th>
+      <th>카테고리</th>
+      <th>학과(스터디)</th>
+      <th>상태</th>
+      <th>제목</th>
+      <th>날짜</th>
+      <th>시간</th>
+      <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
+    </thead>
+    <tbody>
+      <tr v-for="(room_rsv, i) in results" :key="i">
+        <td>{{room_rsv.rooms_name}}</td>
+        <td>{{room_rsv.room_rsv_category_name}}</td>
+        <td>{{makeDisplayName(room_rsv)}}</td>
+        <td><p :class="classRsvStatus(room_rsv.rsv_status)">{{room_rsv.rsv_status_name}}</p></td>
+        <td>{{room_rsv.title}}</td>
+        <td>{{room_rsv.rsv_date}}</td>
+        <td>{{room_rsv.rsv_start_time}} ~ {{room_rsv.rsv_end_time}}</td>
+        <td>
+          <button 
+            type="button" 
+            class="btn btn-default"
+            @click="location.href='/reservation/single/' + room_rsv.room_rsv_id">조회</button>
+          <button 
+            type="button" 
+            class="btn btn-info"
+            v-if="is_adminpage"
+            @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
+          <button 
+            type="button" 
+            class="btn btn-success"
+            v-if="is_adminpage"
+            @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
+          <button 
+            type="button" 
+            class="btn btn-danger"
+            v-if="is_adminpage"
+            @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <nav>
+    <ul class="pagination">
+      <li v-for="page in pagenation" :key="page.value" :class="{active: page.isSelf}">
+        <a @click="chagePage(page.value)" aria-label="Previous">
+          <span aria-hidden="true" v-html="page.name"></span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div class="lookup_button" v-if="is_user">
+    <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
+    <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
+  </div>
 </div>
 <% include ../component/datepicker %>

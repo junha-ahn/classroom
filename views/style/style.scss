@@ -200,6 +200,8 @@ uesr,
 room {
   .#{$lookup_page}_lookup {
     main {
+      margin:0 auto;
+      width:80%;
       .btn {
         font-size: 1.8vmin !important;
       }
@@ -222,16 +224,48 @@ room {
         margin-bottom: 1%;
 
         .pack_div {
+          margin:0 auto;
+          width:80%;
+          padding:2% 0;
+          margin-left:7%;
 
-          .div_left {}
+          .div_left {
+            float: left;
+            width:50%;
+            .div_l{
+              float:left;
+              width:40%;
+            }
+            .div_r{
+              float:right;
+              width:60%;
+              .form-control{
+                width:100% !important;
+              }
+            }
+          }
 
-          .div_right {}
+          .div_right {
+            float:right;
+            width:50%;
+            .div_l{
+              float:left;
+              width:40%;
+            }
+            .div_r{
+              float:right;
+              width:60%;
+              .form-control{
+                width:100% !important;
+              }
+            }
+          }
         }
 
         label {
           margin-bottom: 0 !important;
           margin: 2% 1% !important;
-          font-size: 2.5vmin;
+          font-size: 3vmin;
         }
 
         .form-control {
@@ -505,5 +539,32 @@ room {
   .navbar-right {
     float: right !important;
     margin-right: -15px;
+  }
+}
+
+//관리자_예약
+.admin_reservation_lookup {
+  main{
+    margin:0 auto;
+    width:100%;
+    .sidebar{
+      float: left;
+      width:15%;
+      height:100%;
+      padding-top:1%;
+      padding-bottom:85%;
+      ul{
+        height:auto;
+
+        li{
+
+        }
+      }
+    }
+    .admin_reservation_Contents{
+      float:right;
+      margin-left:1%;
+      width:84%;
+    }
   }
 }
