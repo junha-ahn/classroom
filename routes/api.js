@@ -590,7 +590,7 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
     for (let i in room_results) {
       let now = foo.resetTime(moment());
       let min_date = (() => {
-        let _min_date = moment(results[i].start_datetime);
+        let _min_date = moment(foo.parseDateTime(results[i].start_datetime, true));
         foo.resetTime(_min_date)
         _min_date.date(_min_date.date() - room_results[i].rsv_cancel_min_day);
         return _min_date;
@@ -617,7 +617,7 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
     }
   }
 }));
-// 예약 승인시, 시간 체크 (같은 시간 중복 승인)
+
 router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
   let {
@@ -633,22 +633,45 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
     res.status(401).json({
       message: '다시 선택해주세요'
     })
-  } else if (req.user.user_type == info.USER_TYPE && results[0].user_id != req.user.user_id) {
+  } else if (results[0].rsv_status == rsv_status) {
     res.status(401).json({
-      message: '본인의 예약을 선택해주세요'
-    })
-  } else if (req.user.user_type == info.USER_TYPE && results[0].rsv_status != info.REQ_RSV_STATUS) {
-    res.status(401).json({
-      message: '요청상태가 아닌 예약은 취소 불가능합니다'
+      message: '이미 해당 예약상태입니다'
     })
   } else {
-    let update_result = await update_func.room_rsv_status(conn, {
-      room_rsv_id,
-      rsv_status,
-    })
-    foo.setRes(res, update_result, {
-      message: '예약 상태 변경을 성공했습니다'
-    })
+    let already_reserved = false;
+    if (rsv_status == info.SUBMIT_RSV_STATUS) {
+      let room_results = (await select_func.vRsvRoomsRequire(conn, {
+        room_rsv_id,
+      })).results;
+      let room_id_list = [];
+      for (let i in room_results) {
+        room_id_list.push(room_results[i].room_id);
+      }
+      let start_datetime = moment(foo.parseDateTime(results[0].start_datetime, true));
+      let end_datetime = moment(foo.parseDateTime(results[0].end_datetime, true));
+      let rsv_results = (await select_func.vRoomRsv(conn, {
+        room_id_list,
+        rsv_status: info.SUBMIT_RSV_STATUS,
+        start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+        end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+      })).results;
+      if (rsv_results[0]) {
+        already_reserved = true;
+      }
+    }
+    if (already_reserved) {
+      res.status(401).json({
+        message: '이미 승인된 예약이 있습니다.',
+      })
+    } else {
+      let update_result = await update_func.room_rsv_status(conn, {
+        room_rsv_id,
+        rsv_status,
+      })
+      foo.setRes(res, update_result, {
+        message: '예약 상태 변경을 성공했습니다'
+      })
+    }
   }
 }));
 

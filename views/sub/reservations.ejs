@@ -11,6 +11,7 @@
       {{ status.name }}
     </option>
   </select>
+  
   <label>학과</label>
   <select class="form-control" v-model="query.department_id" @change="onChange()">
     <option v-bind:value="0" :selected="query.department_id===0">전체</option>
@@ -45,7 +46,7 @@
       <td>{{room_rsv.rooms_name}}</td>
       <td>{{room_rsv.room_rsv_category_name}}</td>
       <td>{{makeDisplayName(room_rsv)}}</td>
-      <td>{{room_rsv.rsv_status_name}}</td>
+      <td><p :class="classRsvStatus(room_rsv.rsv_status)">{{room_rsv.rsv_status_name}}</p></td>
       <td>{{room_rsv.title}}</td>
       <td>{{room_rsv.rsv_date}}</td>
       <td>{{room_rsv.rsv_start_time}} ~ {{room_rsv.rsv_end_time}}</td>
@@ -56,17 +57,17 @@
           @click="location.href='/reservation/single/' + room_rsv.room_rsv_id">조회</button>
         <button 
           type="button" 
-          class="btn btn-default"
+          class="btn btn-info"
           v-if="is_adminpage"
           @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
         <button 
           type="button" 
-          class="btn btn-default"
+          class="btn btn-success"
           v-if="is_adminpage"
           @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
         <button 
           type="button" 
-          class="btn btn-default"
+          class="btn btn-danger"
           v-if="is_adminpage"
           @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
       </td>

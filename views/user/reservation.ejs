@@ -144,7 +144,14 @@
           var now_menu_step = this.menu_step;
           var menu_step_array = this.menu_steps[this.method];
           for (var i = 0; i < menu_step_array.length; i ++ ) {
-            if(now_menu_step == menu_step_array[i] && i != menu_step_array.length - 1) {
+            if (now_menu_step == menu_step_array[i] && i != menu_step_array.length - 1) {
+              if (menu_step_array[parseInt(i) + 1] == 'last') {
+                var _validate = this.validate();
+                if (_validate) {
+                  alert(_validate)
+                  return;
+                }
+              }
               this.menu_step = menu_step_array[parseInt(i) + 1];
             }
           }
@@ -372,9 +379,28 @@
           e.preventDefault();
           if (this.menu_step == 'detail') {
             this.nextMenuStep();
-          } else { 
-            
-            var _validate = validate(this.formData, {
+          } else {
+            var _validate = this.validate();
+            if (_validate) {
+              alert(_validate)
+            } else {
+              global.ajax({
+                url: '/api/room_rsv',
+                type: 'POST',
+                data: this.formData,
+              },
+              function(data, status) {
+                alert(data.message);
+                location.href = '/reservation/single/' + data.insertId;
+              },
+              function(message, status, data) {
+                alert(message);
+              })
+            }
+          }
+        },
+        validate: function (params) {
+           var _validate = validate(this.formData, {
               'room_id': {
                 is_require: true,
               },
@@ -406,25 +432,8 @@
                 is_require: false,
               },
             });
-            if (_validate) {
-              alert(_validate)
-            } else {
-              global.ajax({
-                url: '/api/room_rsv',
-                type: 'POST',
-                data: this.formData,
-              },
-              function(data, status) {
-                alert(data.message);
-                location.href = '/reservation/single/' + data.insertId;
-              },
-              function(message, status, data) {
-                alert(message);
-              })
-            }
-          }
+            return _validate;
         },
-        
         // =====================
         resetRoom: function() {
           this.info.floor = null;

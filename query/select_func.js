@@ -1243,6 +1243,7 @@ let self = {
         let countString
         let {
           room_id,
+          room_id_list,
           rsv_status,
           start_datetime,
           end_datetime,
@@ -1253,7 +1254,7 @@ let self = {
         } = object;
         sort_key = (sort_key) ? sort_key : 'room_rsv_id';
         sort_type = (sort_type == false) ? false : true;
-
+        let is_search_array = room_id_list && room_id_list[0] ? true : null;
         if (page && page_length) {
           countString = squel.select()
             .from('room_to_use')
@@ -1262,6 +1263,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_search_array)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id IN ?', room_id_list || [0])))
             .where(squel.case()
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
@@ -1280,6 +1285,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_search_array)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id IN ?', room_id_list || [0])))
             .where(squel.case()
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
@@ -1301,6 +1310,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_search_array)
+              .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id IN ?', room_id_list || [0])))
             .where(squel.case()
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
