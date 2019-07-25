@@ -28,8 +28,51 @@ const {
   checkRequireUpdateRoom,
   checkRequireInsertRoomRsv,
   checkRequireUpdateRoomRsvStatus,
+  checkRequirtUpdateUser,
 } = require('../global/middlewares');
 
+
+router.put('/user/:user_id', isLoggedIn, checkRequirtUpdateUser, db_func.inDBStream(async (req, res, next, conn) => {
+  let user_id = req.params.user_id;
+  let {
+    department_id,
+    campus_id,
+    building_id,
+    name,
+    phone,
+    is_student,
+    student_number,
+  } = req.body;
+
+  if (req.user.user_type == info.USER_TYPE && req.user.user_id != user_id) {
+    res.status(403).json({
+      message: '권한이 없습니다'
+    })
+  } else if (req.user.user_type == info.ADMIN_TYPE && !(await select_func.vUser(conn, {
+      user_id,
+      campus_id: req.user.campus_id,
+      building_id: req.user.building_id,
+    })).results[0]
+  ) {
+    res.status(403).json({
+      message: '권한이 없습니다'
+    })
+  } else {
+    let update_result = await update_func.person(conn, {
+      user_id,
+      department_id,
+      campus_id,
+      building_id,
+      name,
+      phone,
+      is_student,
+      student_number,
+    })
+    foo.setRes(res, update_result, {
+      message: '성공했습니다'
+    })
+  }
+}));
 
 router.get('/departemnt', async (req, res, next) => {
   res.status(200).json({
@@ -717,6 +760,7 @@ router.delete('/notification', isLoggedIn, db_func.inDBStream(async (req, res, n
     message: '성공했습니다'
   })
 }));
+
 function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {

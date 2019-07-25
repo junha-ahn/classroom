@@ -1,7 +1,7 @@
 <script type="text/x-template" id="input-template">
   <form class="form-lnline" v-on:submit="onSubmitForm">
     <label class="col-sm-2 control-label">학과</label>
-    <div v-if="mod='GET'" class="col-sm-10">
+    <div v-if="mod=='GET'" class="col-sm-10">
       <p class="form-control-static">{{ user.department_name }}</p>
     </div>
     <select v-else class="form-control" v-model="user.department_id">
@@ -11,17 +11,17 @@
     </select>
     
     <label class="col-sm-2 control-label">캠퍼스</label>
-    <div v-if="mod='GET'" class="col-sm-10">
+    <div v-if="mod=='GET'" class="col-sm-10">
       <p class="form-control-static">{{ user.campus_name }}</p>
     </div>
-    <select v-else class="form-control" v-model="user.campus_id">
+    <select v-else class="form-control" v-model="user.campus_id"  @change="replaceBuildings()">
       <option v-for="(campus, i) in campus_results" v-bind:value="campus.campus_id" :key="i">
         {{ campus.name }}
       </option>
     </select>
 
     <label class="col-sm-2 control-label">학습관</label>
-    <div v-if="mod='GET'" class="col-sm-10">
+    <div v-if="mod=='GET'" class="col-sm-10">
       <p class="form-control-static">{{ user.building_name }}</p>
     </div>
     <select v-else class="form-control" v-model="user.building_id">
@@ -39,16 +39,21 @@
     <div>
       <input type="text" class="form-control" v-model="user.name" :disabled="mod == 'GET'">
     </div>
-    <label class="col-sm-2 control-label">학생</label>
+    <label class="col-sm-2 control-label">전화번호</label>
     <div>
-        <input type="checkbox" v-model="user.is_student" true-value="1" false-value="0" :disabled="mod == 'GET'">
+      <input type="text" class="form-control" v-model="user.phone" :disabled="mod == 'GET'">
     </div>
-    <template v-if="user.is_student==1">
-      <label class="col-sm-2 control-label">학번</label>
-      <div>
-        <input type="text" class="form-control" v-model="user.student_number" :disabled="mod == 'GET'">
-      </div>
-    </template>
+    
+    <label class="col-sm-2 control-label">학생/교직원</label>
+    <div v-if="mod=='GET'" class="col-sm-10">
+      <p class="form-control-static">{{ user.is_student == 1 ? '학생' : '교직원' }}</p>
+    </div>
+    <input v-else type="checkbox" v-model="user.is_student" true-value="1" false-value="0">
+
+    <label class="col-sm-2 control-label">학번</label>
+    <div class="checkbox">
+      <input type="text" class="form-control" v-model="user.student_number" :disabled="mod == 'GET'">
+    </div>
 
     <div class="form-group" v-if="mod!='POST'">
       <label class="col-sm-2 control-label">최근 수정일</label>
@@ -62,9 +67,15 @@
         <p class="form-control-static">{{user.datetime_created}}</p>
       </div>
     </div>
+    
+    <div v-if="user.is_mine == 1 || is_adminpage == 1">
+      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
+      <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
+    </div>
   </form>
 </script>
 
+<script type="text/javascript" src="/javascripts/validate.js"></script>
 <script>
   Vue.component('user-input', {
     template: '#input-template',
@@ -79,9 +90,13 @@
     },
     data: function () {
       return {
+        building_results: this.buildings[this.user.campus_id],
       }
     }, 
     methods: {
+      replaceBuildings: function (event) {
+        this.building_results = this.buildings[this.user.campus_id];
+      },
       setMod: function(mod, e) {
         if (e) {
           e.preventDefault();
@@ -90,26 +105,42 @@
       },
       onSubmitForm: function(e) {
         e.preventDefault();
-        var __this = this;
-        var mod = this.mod;
-        let need_location_href = mod == 'POST' ? true : false;
-        var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.user.study_group_id : '');
-        global.ajax({
-          url: url,
-          type: mod,
-          data: this.group,
-        },
-        function (data, status) {
-          alert(data.message);
-          if (need_location_href) {
-            location.href='/study_group/lookup?page=1'
-          } else {
-            __this.setMod('GET');
-          }
-        },
-        function (message, status, data) {
-          alert(message);
+        var _validate = validate(this.user, {
+          'campus_id': {
+            is_require: true,
+          },
+          'building_id': {
+            is_require: true,
+          },
+          'name': {
+            is_require: true,
+          },
+          'is_student': {
+            is_require: true,
+          },
+          'student_number': {
+            is_require: this.user.is_student == 1 ? true : false,
+          },
         });
+        if (_validate) {
+          alert(_validate);
+        } else {
+          var __this = this;
+          var mod = this.mod;
+          var url = '/api/user' + (mod == 'PUT' ? '/' + this.user.user_id : '');
+          global.ajax({
+            url: url,
+            type: mod,
+            data: this.user,
+          },
+          function (data, status) {
+            alert(data.message);
+              __this.setMod('GET');
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        }
       }
     },
   })

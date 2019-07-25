@@ -219,6 +219,21 @@ let self = {
       next();
     }
   },
+  checkRequirtUpdateUser: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'campus_id',
+      'building_id',
+      'name',
+      'is_student',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
 
 
   getRerservationLookup: (is_adminpage) => {

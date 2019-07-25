@@ -94,4 +94,8 @@ var config = {
     name: '대표자 번호',
     data_type: 'string',
   },
+  'is_student' : {
+    name: '학생/교직원',
+    data_type: 'number',
+  },
 }

@@ -10,6 +10,7 @@ let self = {
         let {
           isTransaction,
           person_id,
+          user_id,
           campus_id,
           building_id,
           is_student,
@@ -17,16 +18,30 @@ let self = {
           phone,
           student_number,
         } = object;
-        let queryString = squel.update()
-          .table('person')
-          .set('campus_id', campus_id)
-          .set('building_id', building_id)
-          .set('is_student', is_student)
-          .set('name', name)
-          .set('phone', phone)
-          .set('student_number', student_number)
-          .where('person_id = ?', person_id)
-          .toParam();
+        let queryString;
+        if (person_id) {
+          queryString = squel.update()
+            .table('person')
+            .set('campus_id', campus_id)
+            .set('building_id', building_id)
+            .set('is_student', is_student)
+            .set('name', name)
+            .set('phone', phone)
+            .set('student_number', student_number)
+            .where('person_id = ?', person_id)
+            .toParam();
+        } else {
+          queryString = squel.update()
+            .table('person')
+            .set('campus_id', campus_id)
+            .set('building_id', building_id)
+            .set('is_student', is_student)
+            .set('name', name)
+            .set('phone', phone)
+            .set('student_number', student_number)
+            .where('user_id = ?', user_id)
+            .toParam();
+        }
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
