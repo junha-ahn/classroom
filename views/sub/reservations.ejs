@@ -14,6 +14,14 @@
       </option>
     </select>
     
+    <label>강의실</label>
+    <select class="form-control" v-model="query.room_id" @change="onChange()">
+      <option v-bind:value="0" :selected="query.room_id===0">전체</option>
+      <option v-for="(room, j) in room_results" v-bind:value="room.room_id" :key="j">
+        {{ room.name }}
+      </option>
+    </select>
+
     <label>학과</label>
     <select class="form-control" v-model="query.department_id" @change="onChange()">
       <option v-bind:value="0" :selected="query.department_id===0">전체</option>

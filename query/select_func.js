@@ -1434,6 +1434,7 @@ let self = {
         let countString
         let {
           isTransaction,
+          room_id,
           department_id,
           study_group_id,
           rsv_status,
@@ -1452,6 +1453,7 @@ let self = {
         if (page && page_length) {
           countString = squel.select()
             .from('room_rsv')
+            .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
             .where(squel.case()
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1472,10 +1474,16 @@ let self = {
               .when('? IS NULL', date)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
             .field('COUNT(*)', 'list_count')
+            .group('room_rsv.room_rsv_id')
             .toParam();
           queryString = squel.select()
             .from('room_rsv')
+            .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
             .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
             .where(squel.case()
               .when('? IS NULL', rsv_status)
@@ -1497,6 +1505,10 @@ let self = {
               .when('? IS NULL', date)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()
@@ -1516,6 +1528,7 @@ let self = {
         } else {
           queryString = squel.select()
             .from('room_rsv')
+            .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
             .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
             .where(squel.case()
               .when('? IS NULL', rsv_status)
@@ -1537,6 +1550,10 @@ let self = {
               .when('? IS NULL', date)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('DATE(room_rsv.start_datetime) = DATE(?)', date)))
+            .where(squel.case()
+              .when('? IS NULL', room_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()

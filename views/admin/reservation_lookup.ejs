@@ -20,13 +20,15 @@
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           is_adminpage: <%- is_adminpage %>,
+          building_id: <%- building_id %>,
           params : <%-JSON.stringify(params) %>,
           query : <%-JSON.stringify(query) %>,
           results : <%-JSON.stringify(results) %>,
           list_count : <%-JSON.stringify(list_count) %>,
           department_results : <%-JSON.stringify(department_results) %>,
           rsv_status_results : <%-JSON.stringify(rsv_status_results) %>,
-          study_group_results : <%-JSON.stringify(study_group_results) %>,
+          study_group_results : [],
+          room_results: [],
         }
       },
       methods: {
@@ -81,6 +83,7 @@
           if (!this.query.department_id) {
             this.query.study_group_id = 0;
           }
+          this.query.room_id = this.query.room_id || undefined;
           this.query.study_group_id = this.query.study_group_id || undefined;
           this.query.rsv_status = this.query.rsv_status || undefined;
           location.href= '/admin/reservation/lookup' + global.serializeQuery(this.query);
@@ -92,7 +95,37 @@
             'bg-warning': rsv_status == global.CANCEL_REQ_RSV_STATUS,
             'bg-success': rsv_status == global.SUBMIT_RSV_STATUS,
           }
-        }
+        },
+        getRoomResults: function() {
+          var __this = this;
+          global.ajax({
+            url: '/api/room' + global.serializeQuery({
+              building_id: this.building_id,
+            }),
+            type: 'GET',
+          },
+          function (data, status) {
+            __this.room_results = data.results;
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        },
+        getStudyGroupResults: function() {
+          var __this = this;
+          global.ajax({
+            url: '/api/study_group' + global.serializeQuery({
+              department_id: this.query.department_id,
+            }),
+            type: 'GET',
+          },
+          function (data, status) {
+            __this.study_group_results = data.results;
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        },
       },
       computed: {
         pagenation: function() {
@@ -106,7 +139,13 @@
             nextText:'&raquo;',
           })
         },
-      }, 
+      },
+      created: function() {
+        this.getRoomResults();
+        if (this.query.department_id) {
+          this.getStudyGroupResults();
+        }
+      },
     })
   </script>
 

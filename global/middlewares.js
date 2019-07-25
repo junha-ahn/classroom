@@ -253,6 +253,7 @@ let self = {
     return async function (req, res, next) {
       let building_id = (is_adminpage) ? req.user.building_id : req.params.building_id;
       let {
+        room_id,
         department_id,
         study_group_id,
         rsv_status,
@@ -277,6 +278,7 @@ let self = {
             results,
             list_count,
           } = await select_func.vRoomRsvList(connection, {
+            room_id,
             department_id,
             study_group_id,
             rsv_status,
@@ -288,26 +290,21 @@ let self = {
             sort_key: 'start_datetime',
             sort_type: false,
           })
-          let study_group_results = (await select_func.vStudyGroup(connection, {
-            department_id,
-            building_id,
-            user_id: (req.user) ? req.user.user_id : null,
-          })).results;
           foo.cleaningList(results, req.user);
-          foo.cleaningList(study_group_results);
           res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup'
           ,  foo.getResJson(req.user, {
             is_adminpage,
             params: req.params,
             query: {
               ...req.query,
+              room_id: room_id || 0,
               department_id: department_id || 0,
               study_group_id: study_group_id || 0,
               rsv_status: rsv_status || 0,
             },
+            building_id: is_adminpage ? req.user.building_id : req.params.building_id,
             department_results: info.department_results,
             rsv_status_results: info.rsv_status_results,
-            study_group_results,
             results,
             list_count,
           }));
