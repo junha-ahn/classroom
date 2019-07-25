@@ -9,6 +9,7 @@ const {
   checkReqInfo,
   checkRequireEmailPassword,
   checkRequireJoin,
+  checkRequireUpdatePassword,
 } = require('../global/middlewares');
 
 const foo = require('../global/foo');
@@ -74,8 +75,7 @@ router.post('/join', isNotLoggedIn, checkReqInfo, checkRequireJoin, db_func.inDB
     if (email_password != _email_password) {
       res.status(401).json({
         message: _email_password == null ?
-          '다시 이메일 인증 암호를 발급해주세요' :
-          '이메일 인증 암호가 다릅니다.'
+          '다시 이메일 인증 암호를 발급해주세요' : '이메일 인증 암호가 다릅니다.'
       })
     } else {
       let hashed_password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
@@ -150,4 +150,38 @@ router.get('/me', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) =>
     })
   }
 }));
+
+router.put('/password', isLoggedIn, checkRequireUpdatePassword, db_func.inDBStream(async (req, res, next, conn) => {
+  const {
+    old_password,
+    password,
+  } = req.body;
+  let {
+    results
+  } = await select_func.user(conn, {
+    user_id: req.user.user_id
+  });
+  let passwordIsValid = bcrypt.compareSync(`${old_password}`, results[0].password);
+  let hashed_password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
+
+  if (!passwordIsValid) {
+    res.status(403).json({
+      message: "기존 비밀번호를 다시 입력해주세요."
+    });
+  } else if (bcrypt.compareSync(password, results[0].password)) {
+    res.status(401).json({
+      message: "기존 비밀번호와 다른 새 비밀번호를 입력해주세요."
+    })
+  } else {
+
+    let update_result = await update_func.userPassword(conn, {
+      user_id: req.user.user_id,
+      hashed_password,
+    })
+    foo.setRes(res, update_result, {
+      message: '성공했습니다'
+    })
+  }
+}));
+
 module.exports = router;

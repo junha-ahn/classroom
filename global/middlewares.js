@@ -234,6 +234,19 @@ let self = {
       next();
     }
   },
+  checkRequireUpdatePassword: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'old_password',
+      'password',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
 
 
   getRerservationLookup: (is_adminpage) => {

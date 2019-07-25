@@ -9,6 +9,31 @@
   :buildings="buildings"
   >
   </user-input>
+  <div class="change_password">
+    <h1>암호 변경</h1>
+    <p v-if="user.datetime_last_password_changed">마지막 암호 변경 ({{user.datetime_last_password_changed}})</p>
+    <form v-on:submit="onSubmitChagePassword">
+      <div class="form-inline">
+        <label>기존 암호</label>
+        <input v-model="chagePasswordForm.old_password" type="password" class="form-control" placeholder="기존 암호 입력해주세요">
+      </div>
+
+      <div :class="classPassDiff()">
+        <label class="control-label">새 암호</label>
+        <input v-model="chagePasswordForm.password" type="password" class="form-control" placeholder="새 암호를 입력하세요">
+      </div>
+      <div :class="classPassDiff()">
+        <label class="control-label">새 암호 확인</label>
+        <input v-model="chagePasswordForm.password_check" type="password" class="form-control" placeholder="새 암호 다시 한번 입력하세요">
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary">변경</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </main>
 
 <footer>
@@ -31,9 +56,67 @@
         department_results: <%-JSON.stringify(department_results) %> ,
         campus_results: <%-JSON.stringify(campus_results) %>,
         buildings: <%-JSON.stringify(buildings) %>,
+        chagePasswordForm: {
+          old_password: '',
+          password: '',
+          password_check: '',
+        },
       }
     },
     methods: {
+      onSubmitChagePassword: function(e) {
+        e.preventDefault();
+        var _validate = validate(this.chagePasswordForm, {
+          'old_password': {
+            is_require: true,
+          },
+          'password': {
+            is_require: true,
+          },
+          'password_check': {
+            is_require: true,
+          },
+        });
+        if (_validate) {
+          alert(_validate);
+        } else if (this.matchingPass(this.chagePasswordForm) != true) {
+          alert('새 암호, 새 암호 확인을 다시 입력해주세요')
+        } else {
+          var __this = this;
+          global.ajax({
+            url: '/auth/password',
+            type: 'PUT',
+            data: this.chagePasswordForm,
+          },
+          function (data, status) {
+            alert(data.message);
+            __this.refresh();
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+          this.chagePasswordForm.old_password = '';
+          this.chagePasswordForm.password = '';
+          this.chagePasswordForm.password_check = '';
+        }
+      },
+      matchingPass: function(form) {
+        if (form.password_check != null && form.password_check.trim() != '') {
+          if (form.password_check != form.password) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      },
+      classPassDiff: function () {
+        let is_mach = this.matchingPass(this.chagePasswordForm);
+        return {
+          'form-inline has-success': is_mach == true,
+          'form-inline has-error': is_mach == false,
+          'form-inline ': is_mach == undefined,
+        }
+      },
       refresh: function() {
         location.href= '/mypage/myaccount'
       },

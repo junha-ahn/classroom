@@ -107,6 +107,10 @@ let self = {
         array[i].datetime_last_updated = self.parseDateTime(array[i].date_last_updated, true);
         array[i].date_last_updated = self.parseDate(array[i].date_last_updated, true);
       }
+      if (array[i].date_last_password_changed) {
+        array[i].datetime_last_password_changed = self.parseDateTime(array[i].date_last_password_changed, true);
+        array[i].date_last_password_changed = self.parseDate(array[i].date_last_password_changed, true);
+      }
 
       if (array[i].start_datetime && array[i].end_datetime) {
         let dateString = self.parseDate(array[i].start_datetime, true);

@@ -4,6 +4,27 @@ const db_func = require('../global/db_func.js');
 const constant = require('../global/constant.js');
 
 let self = {
+  userPassword: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          user_id,
+          hashed_password,
+        } = object;
+
+        let queryString = squel.update()
+          .table('user')
+          .set('password', hashed_password)
+          .set('date_last_password_changed', squel.str('NOW()'))
+          .where('user_id = ?',user_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   person: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {

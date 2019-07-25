@@ -22,16 +22,17 @@ let self = {
 
         user_type = 10;
         await db_func.beginTransaction(connection);
+        let isTransaction = true;
         let queryString = squel.insert()
           .into('user')
           .set('user_type', user_type)
           .set('email', email)
           .set('password', hashed_password)
           .toParam();
-        let insert_result = await db_func.sendQueryToDB(connection, queryString, true);
+        let insert_result = await db_func.sendQueryToDB(connection, queryString, isTransaction);
         let user_id = insert_result.insertId;
         await self.person(connection, {
-          isTransaction: true,
+          isTransaction,
           user_id,
           is_student,
           campus_id,
@@ -108,6 +109,7 @@ let self = {
     return new Promise(async (resolve, reject) => {
       try {
         let {
+          isTransaction,
           user_id,
           study_group_id,
         } = object;
@@ -117,7 +119,7 @@ let self = {
           .set('user_id', user_id)
           .set('study_group_id', study_group_id)
           .toParam();
-        resolve(await db_func.sendQueryToDB(connection, queryString, true));
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
       } catch (error) {
         reject(error);
       }

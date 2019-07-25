@@ -157,7 +157,7 @@
           });
           if (_validate) {
             alert(_validate)
-          } else if (this.matchingPass() != true) {
+          } else if (this.matchingPass(this.joinForm) != true) {
             alert('암호, 암호 확인을 다시 입력해주세요')
           } else {
             var __this = this;
@@ -175,9 +175,9 @@
               });
           }
         },
-        matchingPass: function() {
-          if (this.joinForm.password_check != null && this.joinForm.password_check.trim() != '') {
-            if (this.joinForm.password_check != this.joinForm.password) {
+        matchingPass: function(form) {
+          if (form.password_check != null && form.password_check.trim() != '') {
+            if (form.password_check != form.password) {
               return false;
             } else {
               return true;
@@ -185,7 +185,7 @@
           }
         },
         classPassDiff: function () {
-          let is_mach = this.matchingPass();
+          let is_mach = this.matchingPass(this.joinForm);
           return {
             'form-inline has-success': is_mach == true,
             'form-inline has-error': is_mach == false,

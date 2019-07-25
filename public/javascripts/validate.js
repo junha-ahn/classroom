@@ -50,6 +50,10 @@ var config = {
     name: '암호 확인',
     data_type: 'string',
   },
+  'old_password' : {
+    name: '기존 암호',
+    data_type: 'string',
+  },
   'name' : {
     name: '이름',
     data_type: 'string',
