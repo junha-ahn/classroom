@@ -16,6 +16,7 @@ const {
   isNotLoggedIn,
   isAdmin,
   getRerservationLookup,
+  getRerservationSingle,
   getUserSingle,
 } = require('../global/middlewares');
 
@@ -162,11 +163,7 @@ router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
 });
 
 router.get('/reservation/lookup', isAdmin, getRerservationLookup(true));
-router.get('/reservation/single/:room_rsv_id', isAdmin, async (req, res, next) => {
-  res.render('admin/reservation', foo.getResJson(req.user, {
-
-  }))
-});
+router.get('/reservation/single/:room_rsv_id', isAdmin, getRerservationSingle(true));
 
 
 module.exports = router;

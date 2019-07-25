@@ -1,17 +1,16 @@
 <% include ../sub/header %>
-      <reservation-input 
-      v-bind:reservation="reservation" 
-      :is_admin="is_admin"
-      :is_adminpage="false"
-      mod="GET"
-      :rsv_status_results="rsv_status_results"
-      :room_rsv_category_results="room_rsv_category_results"
-      :room_rsv_time_results="room_rsv_time_results"
-      :room_to_use_results="room_to_use_results"
-      >
-      </reservation-input>
-
-
+      <% include ../sub/admin_menu %>
+        <reservation-input 
+        v-bind:reservation="reservation" 
+        :is_admin="is_admin"
+        :is_adminpage="true"
+        mod="GET"
+        :rsv_status_results="rsv_status_results"
+        :room_rsv_category_results="room_rsv_category_results"
+        :room_rsv_time_results="room_rsv_time_results"
+        :room_to_use_results="room_to_use_results"
+        >
+        </reservation-input>
     </main>
 
     <footer>
@@ -19,7 +18,7 @@
     </footer>
   </div>
 
-<% include ../component/reservation_input %>
+  <% include ../component/reservation_input %>
   <script>
     var global = makeGlobal();
     var reservation = <%-JSON.stringify(reservation) %>;
@@ -32,6 +31,7 @@
       data: function () {
         return {
           header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           reservation: reservation,
@@ -42,11 +42,11 @@
         }
       },
       methods: {
-        
-      },
+
+      }
     })
   </script>
 
 </body>
 
-</html> 
+</html>

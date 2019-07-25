@@ -1,8 +1,11 @@
 <script type="text/x-template" id="input-template">
   <form class="form-lnline" v-on:submit="onSubmitForm">
+
     <label class="col-sm-2 control-label">상태</label>
     <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ reservation.rsv_status_name }}</p>
+      <p class="form-control-static">
+        <label :class="classRsvStatus(reservation.rsv_status)">{{ reservation.rsv_status_name }}</label>
+      </p>
     </div>
     <select v-else class="form-control" v-model="reservation.rsv_status">
       <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
@@ -203,7 +206,15 @@
         function (message, status, data) {
           alert(message);
         });
-      }
+      },
+      classRsvStatus: function(rsv_status) {
+        return {
+          'bg-info': rsv_status == global.REQ_RSV_STATUS,
+          'bg-danger': rsv_status == global.CANCEL_RSV_STATUS,
+          'bg-warning': rsv_status == global.CANCEL_REQ_RSV_STATUS,
+          'bg-success': rsv_status == global.SUBMIT_RSV_STATUS,
+        }
+      },
     },
   })
 </script>
