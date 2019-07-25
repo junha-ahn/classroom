@@ -44,7 +44,7 @@ function makeGlobal() {
     'study_group_single' : 'study_group',
     'study_group_write' : 'study_group',
     'mypage_dashboard' : 'mypage',
-    'mypage_myaccount' : 'mypage',
+    'mypage_account' : 'mypage',
     'login' : 'login',
     'reservation_intro' : 'reservation',
     'reservation' : 'reservation',
@@ -58,7 +58,7 @@ function makeGlobal() {
   };
   var mypage_name_by_class = {
     'mypage_dashboard' : 'dashboard',
-    'mypage_myaccount' : 'myaccount',
+    'mypage_account' : 'myaccount',
   };
   var getHeaderMenuName = function (page_class_name) {
     return header_name_by_class[page_class_name];

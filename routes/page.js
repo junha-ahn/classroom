@@ -16,6 +16,7 @@ const {
   isNotLoggedIn,
   getRerservationLookup,
   getRerservationSingle,
+  getUserSingle,
 } = require('../global/middlewares');
 
 router.get('/login', isNotLoggedIn, async (req, res, next) => {
@@ -217,11 +218,7 @@ router.get('/mypage/dashboard', isLoggedIn, db_func.inDBStream(async (req, res, 
     list_count,
   }))
 }));
-router.get('/mypage/myaccount', isLoggedIn, async (req, res, next) => {
-  res.render('user/mypage_myaccount', foo.getResJson(req.user, {
-
-  }))
-});
+router.get('/mypage/myaccount', isLoggedIn, getUserSingle(false));
 
 
 router.get('/notification/read/:notification_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {

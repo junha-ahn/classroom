@@ -68,7 +68,7 @@
       </div>
     </div>
     
-    <div v-if="user.is_mine == 1 || is_adminpage == 1">
+    <div>
       <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
       <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
     </div>
@@ -96,6 +96,7 @@
     methods: {
       replaceBuildings: function (event) {
         this.building_results = this.buildings[this.user.campus_id];
+        this.user.building_id = null;
       },
       setMod: function(mod, e) {
         if (e) {

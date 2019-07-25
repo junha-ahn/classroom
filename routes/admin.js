@@ -16,6 +16,7 @@ const {
   isNotLoggedIn,
   isAdmin,
   getRerservationLookup,
+  getUserSingle,
 } = require('../global/middlewares');
 
 router.get('/', isAdmin, async (req, res, next) => {
@@ -59,44 +60,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
     db_func.release(connection);
   }
 });
-router.get('/user/single/:user_id', isAdmin, async (req, res, next) => {
-  let user_id = req.params.user_id;
-
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-
-    let {
-      results,
-      list_count
-    } = await select_func.vUser(connection, {
-      user_id,
-      campus_id: req.user.campus_id,
-      building_id: req.user.building_id,
-    });
-
-    if (!results[0]) {
-      res.status(401).render('error', foo.getResJson(req.user, {
-        error_name: '404 NOT FOUND',
-        message: '유저를 찾을 수 없습니다',
-      }));
-    } else {
-      foo.cleaningList(results);
-      res.render('admin/user_single', foo.getResJson(req.user, {
-        user: results[0],
-        query: req.query,
-        params: req.params,
-        department_results: info.department_results,
-        campus_results: info.campus_results,
-        buildings: info.buildings,
-      }))
-    }
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
-  }
-});
+router.get('/user/single/:user_id', isAdmin, getUserSingle(true));
 
 router.get('/schedule', isAdmin, async (req, res, next) => {
   let connection;

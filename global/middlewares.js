@@ -68,7 +68,7 @@ let self = {
       res.status(401).json({
         message: '캠퍼스를 다시 선택해주세요'
       })
-    } else if (req.body.building_id != null && info.building_object[req.body.building_id] == undefined) {
+    } else if (req.body.building_id != null && (info.building_object[req.body.building_id] == undefined || info.building_object[req.body.building_id].campus_id != req.body.campus_id)) {
       res.status(401).json({
         message: '건물을 다시 선택해주세요'
       })
@@ -76,7 +76,7 @@ let self = {
       res.status(401).json({
         message: '상태를 다시 선택해주세요'
       })
-    } else {
+    }  else {
       next();
     }
   },
@@ -340,6 +340,37 @@ let self = {
           rsv_status_results: info.rsv_status_results,
           room_rsv_category_results: info.room_rsv_category_results,
         }));
+      }
+    });
+  },
+  getUserSingle: (is_adminpage) => {
+    return db_func.inDBStream(async (req, res, next, conn) => {
+      let user_id = is_adminpage ? req.params.user_id : req.user.user_id;
+    
+      let {
+        results,
+        list_count
+      } = await select_func.vUser(conn, {
+        user_id,
+        campus_id: req.user.campus_id,
+        building_id: req.user.building_id,
+      });
+  
+      if (!results[0]) {
+        res.status(401).render('error', foo.getResJson(req.user, {
+          error_name: '404 NOT FOUND',
+          message: '유저를 찾을 수 없습니다',
+        }));
+      } else {
+        foo.cleaningList(results);
+        res.render(is_adminpage ? 'admin/user_single' : 'user/mypage_account', foo.getResJson(req.user, {
+          user: results[0],
+          query: req.query,
+          params: req.params,
+          department_results: info.department_results,
+          campus_results: info.campus_results,
+          buildings: info.buildings,
+        }))
       }
     });
   },
