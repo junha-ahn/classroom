@@ -113,8 +113,15 @@
       type="button" 
       class="btn btn-warning" 
       v-if="!is_adminpage && reservation.is_mine == 1 && reservation.rsv_status == global.REQ_RSV_STATUS"
+      @click="deleteRsv($event, reservation)">
+      요청 삭제
+      </button>
+      <button 
+      type="button" 
+      class="btn btn-warning" 
+      v-if="!is_adminpage && reservation.is_mine == 1 && reservation.rsv_status == global.SUBMIT_RSV_STATUS"
       @click="cancelRsv($event, reservation)">
-      취소
+      예약 취소
       </button>
     </div>
    
@@ -143,6 +150,23 @@
       }
     }, 
     methods: {
+      deleteRsv: function(e, reservation) {
+        if (e) {
+          e.preventDefault();
+        }
+        var url = '/api/room_rsv/' + reservation.room_rsv_id;
+        global.ajax({
+          url: url,
+          type: 'DELETE',
+        },
+        function (data, status) {
+          alert(data.message);
+          location.href="/reservation/lookup/11?page=1&is_mine=1"
+        },
+        function (message, status, data) {
+          alert(message);
+        });
+      },
       cancelRsv: function(e, reservation) {
         if (e) {
           e.preventDefault();

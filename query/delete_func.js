@@ -59,6 +59,24 @@ let self = {
       }
     });
   },
+  room_rsv: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          room_rsv_id,
+        } = object;
+
+        let queryString = squel.delete()
+          .from('room_rsv')
+          .where('room_rsv_id = ?', room_rsv_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }
 
 module.exports = self;

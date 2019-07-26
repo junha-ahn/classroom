@@ -26,6 +26,10 @@ var config = {
     name: '학과',
     data_type: 'number',
   },
+  'study_group_id' : {
+    name: '스터디',
+    data_type: 'number',
+  },
   'campus_id' : {
     name: '캠퍼스',
     data_type: 'number',

@@ -614,6 +614,36 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
 }));
 
 
+router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  const room_rsv_id = req.params.room_rsv_id;
+
+  let {
+    results
+  } = await select_func.room_rsv(conn, {
+    room_rsv_id,
+  });
+  // 관리자일때, 건물 체크!
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택해주세요'
+    })
+  } else if (req.user.user_type == info.USER_TYPE && results[0].user_id != req.user.user_id) {
+    res.status(401).json({
+      message: '본인의 예약을 선택해주세요'
+    })
+  } else if (req.user.user_type == info.USER_TYPE && results[0].rsv_status != info.REQ_RSV_STATUS) {
+    res.status(401).json({
+      message: '요청상태가 아닌 예약은 삭제 불가능합니다'
+    })
+  } else {
+    let delete_result = await delete_func.room_rsv(conn, {
+      room_rsv_id,
+    })
+    foo.setRes(res, delete_result, {
+      message: '예약 요청을 삭제했습니다.'
+    })
+  }
+}));
 router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
 
@@ -630,9 +660,9 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
     res.status(401).json({
       message: '본인의 예약을 선택해주세요'
     })
-  } else if (results[0].rsv_status != info.REQ_RSV_STATUS) {
+  } else if (results[0].rsv_status != info.SUBMIT_RSV_STATUS) {
     res.status(401).json({
-      message: '요청상태가 아닌 예약은 취소 불가능합니다'
+      message: '승인상태가 아닌 예약은 취소 불가능합니다'
     })
   } else {
     let room_results = (await select_func.vRsvRoomsRequire(conn, {
@@ -645,7 +675,7 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
     for (let i in room_results) {
       let now = foo.resetTime(moment());
       let min_date = (() => {
-        let _min_date = moment(foo.parseDateTime(results[i].start_datetime, true));
+        let _min_date = moment(foo.parseDateTime(room_results[i].start_datetime, true));
         foo.resetTime(_min_date)
         _min_date.date(_min_date.date() - room_results[i].rsv_cancel_min_day);
         return _min_date;
@@ -667,7 +697,7 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
         rsv_status: (is_require_cancel_accept) ? info.CANCEL_REQ_RSV_STATUS : info.CANCEL_RSV_STATUS,
       })
       foo.setRes(res, update_result, {
-        message: is_require_cancel_accept ? '예약 취소 요청을 성공 했습니다.' : '예약을 취소 했습니다.'
+        message: is_require_cancel_accept ? '예약 취소 요청 했습니다.' : '예약을 취소 했습니다.'
       })
     }
   }
