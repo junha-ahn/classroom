@@ -1,12 +1,22 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
       <div>
-        <div>
-          <button type="button" 
-          :class="classIsPrimary(query.is_admin)"
-           @click="clickIsAdmin(query.is_admin == 1 ? 0 : 1)">
-            관리자
-           </button>
+          <div class="lookup_select">
+          <div>
+            <button type="button" 
+            :class="classIsPrimary(query.is_admin)"
+            @click="clickIsAdmin(query.is_admin == 1 ? 0 : 1)">
+              관리자
+            </button>
+          </div>
+          <label>학과</label>
+          <select class="form-control" v-model="query.department_id" @change="onChange()">
+            <option v-bind:value="0" :selected="query.department_id===0">전체</option>
+            <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
+              :selected="query.department_id == department.department_id" :key="i">
+              {{ department.name }}
+            </option>
+          </select>
         </div>
         <div>
           <table class="table table-striped">
@@ -28,7 +38,6 @@
                 <td>
                   <button type="button" @click="changeToUser(user)" :class="classIsPrimary(user.user_type == global.USER_TYPE)">유저</button>
                   <button type="button" @click="changeToAdmin(user)" :class="classIsPrimary(user.user_type ==  global.ADMIN_TYPE)">관리자</button>
-                  {{user.user_type}}
                 </td>
               </tr>
             </tbody>
@@ -70,6 +79,7 @@
           list_count: <%-JSON.stringify(list_count) %> ,
           query: <%-JSON.stringify(query) %> ,
           params: <%-JSON.stringify(params) %> ,
+          department_results: <%-JSON.stringify(department_results) %> ,
         }
       },
       methods: {
@@ -104,12 +114,17 @@
             alert(message);
           });
         },
+        onChange: function() {
+          this.refresh();
+        },
         clickIsAdmin: function(is_admin) {
-          this.query.is_admin = is_admin  || undefined;
           this.query.page = 1;
+          this.query.is_admin = is_admin;
           this.refresh();
         },
         refresh: function() {
+          this.query.is_admin = this.query.is_admin  || undefined;
+          this.query.department_id = this.query.department_id  || undefined;
           location.href='/admin/user/lookup' + global.serializeQuery(this.query)
         },
         classIsPrimary: function(flag) {

@@ -150,6 +150,7 @@ let self = {
       if (array[i].room_rsv_category_id) {
         array[i].room_rsv_category_name = info.room_rsv_category_object[array[i].room_rsv_category_id].name;
       }
+
       if (array[i].rsv_status) {
         array[i].rsv_status_name = ((rsv_status) => {
           for (let i in info.rsv_status_results) {
@@ -157,6 +158,23 @@ let self = {
               return info.rsv_status_results[i].name;
           }
         })(array[i].rsv_status);
+      }
+      
+      if (array[i].auth_rsv_create) {
+        array[i].auth_rsv_create_name = ((auth_rsv_create) => {
+          for (let i in info.permission_results) {
+            if (info.permission_results[i].auth_rsv_create == auth_rsv_create) 
+              return info.permission_results[i].name;
+          }
+        })(array[i].auth_rsv_create);
+      }
+      if (array[i].auth_rsv_cancel) {
+        array[i].auth_rsv_cancel_name = ((auth_rsv_cancel) => {
+          for (let i in info.permission_results) {
+            if (info.permission_results[i].auth_rsv_cancel == auth_rsv_cancel) 
+              return info.permission_results[i].name;
+          }
+        })(array[i].auth_rsv_cancel);
       }
 
       if (!user || (user.user_id != array[i].user_id && user.user_type != info.ADMIN_TYPE)) {

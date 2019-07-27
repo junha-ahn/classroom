@@ -84,6 +84,7 @@ let self = {
           user_id,
           campus_id,
           building_id,
+          department_id,
           email,
           user_type,
           page,
@@ -119,6 +120,10 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('person.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.department_id = ?', department_id)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -144,6 +149,10 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('person.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.department_id = ?', department_id)))
             .order(`user.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -172,6 +181,10 @@ let self = {
               .when('? IS NULL', building_id)
               .then(squel.expr().and('user.user_id IS NOT NULL'))
               .else(squel.expr().and('person.building_id = ?', building_id)))
+            .where(squel.case()
+              .when('? IS NULL', department_id)
+              .then(squel.expr().and('user.user_id IS NOT NULL'))
+              .else(squel.expr().and('person.department_id = ?', department_id)))
             .order(`user.${sort_key}`, sort_type)
             .toParam();
         }
@@ -1478,8 +1491,7 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
-            .field('COUNT(room_rsv.room_rsv_id)', 'list_count')
-            .group('room_rsv.room_rsv_id')
+            .field('COUNT(DISTINCT room_rsv.room_rsv_id)', 'list_count')
             .toParam();
           queryString = squel.select()
             .from('room_rsv')
@@ -1570,7 +1582,6 @@ let self = {
             .toParam();
         }
         let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
-        console.log(countString)
         let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,

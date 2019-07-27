@@ -28,6 +28,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
     page,
     page_length,
     is_admin,
+    department_id,
   } = req.query
 
   page_length = page_length || 10;
@@ -46,14 +47,19 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
       user_type: is_admin ? info.ADMIN_TYPE : null,
       campus_id: req.user.campus_id,
       building_id: req.user.building_id,
+      department_id,
     });
     foo.cleaningList(results);
 
     res.render('admin/user_lookup', foo.getResJson(req.user, {
       results,
       list_count,
-      query: req.query,
+      query: {
+        ...req.query,
+        department_id: department_id || 0,
+      },
       params: req.params,
+      department_results: info.department_results
     }))
   } catch (error) {
     next(error);
@@ -153,11 +159,13 @@ router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
       }));
     } else {
       foo.cleaningList(results);
-      res.render('admin/room', foo.getResJson(req.user, {
+      res.render('admin/room_single', foo.getResJson(req.user, {
         room: results[0],
         list_count,
         query: req.query,
-        params: req.params
+        params: req.params,
+        room_category_results: info.room_category_results,
+        permission_results: info.permission_results,
       }))
     }
   } catch (error) {

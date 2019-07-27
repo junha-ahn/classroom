@@ -68,7 +68,11 @@ let self = {
       res.status(401).json({
         message: '캠퍼스를 다시 선택해주세요'
       })
-    } else if (req.body.building_id != null && (info.building_object[req.body.building_id] == undefined || info.building_object[req.body.building_id].campus_id != req.body.campus_id)) {
+    } else if (req.body.building_id != null && info.building_object[req.body.building_id] == undefined) {
+      res.status(401).json({
+        message: '건물을 다시 선택해주세요'
+      })
+    }  else if (req.body.building_id != null &&  req.body.campus_id != null  && info.building_object[req.body.building_id].campus_id != req.body.campus_id) {
       res.status(401).json({
         message: '건물을 다시 선택해주세요'
       })

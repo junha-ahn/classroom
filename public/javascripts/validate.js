@@ -106,4 +106,44 @@ var config = {
     name: '학생/교직원',
     data_type: 'number',
   },
+  'room_category_id' : {
+    name: '강의실 카테고리',
+    data_type: 'number',
+  },
+  'room_number' : {
+    name: '호수',
+    data_type: 'string',
+  },
+  'floor' : {
+    name: '호수',
+    data_type: 'number',
+  },
+  'seat_count' : {
+    name: '좌석수',
+    data_type: 'number',
+  },
+  'is_require_rsv_accept' : {
+    name: '예약 신청, 자동승인 여부',
+    data_type: 'number',
+  },
+  'is_require_cancel_accept' : {
+    name: '예약 취소, 자동승인 여부',
+    data_type: 'number',
+  },
+  'rsv_apply_min_day' : {
+    name: '예약 신청 불가능 일수',
+    data_type: 'number',
+  },
+  'rsv_cancel_min_day' : {
+    name: '예약 취소 불가능 일수',
+    data_type: 'number',
+  },
+  'auth_rsv_create' : {
+    name: '예약 신청 권한',
+    data_type: 'number',
+  },
+  'auth_rsv_cancel' : {
+    name: '예약 취소 권한',
+    data_type: 'number',
+  },
 }
