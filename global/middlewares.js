@@ -145,7 +145,6 @@ let self = {
   },
   checkRequireInsertRoom: (req, res, next) => {
     let flag = checkRequire(req.body, [
-      'building_id',
       'room_category_id',
       'auth_rsv_create',
       'auth_rsv_cancel',

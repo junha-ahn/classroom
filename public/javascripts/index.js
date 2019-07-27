@@ -50,6 +50,15 @@ function makeGlobal() {
     'reservation' : 'reservation',
     'reservation_lookup' : 'reservation',
     'reservation_single' : 'reservation',
+
+    'admin_user_lookup' : 'admin',
+    'admin_user_single' : 'admin',
+    'admin_room_lookup' : 'admin',
+    'admin_room_single' : 'admin',
+    'admin_room_write' : 'admin',
+    'admin_reservation_lookup' : 'admin',
+    'admin_reservation_single' : 'admin',
+    'admin_reservation_write' : 'admin',
   };
   var admin_name_by_class = {
     'admin_user_lookup' : 'user',

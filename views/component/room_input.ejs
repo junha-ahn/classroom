@@ -96,7 +96,7 @@
 
     <div>
       <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
-      <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
+      <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
     </div>
   </form>
 </script>
@@ -174,7 +174,11 @@
           },
           function (data, status) {
             alert(data.message);
-            __this.setMod('GET');
+            if (mod == 'POST') {
+              location.href='/admin/room/single/' + data.insertId;
+            } else {
+              __this.setMod('GET');
+            }
           },
           function (message, status, data) {
             alert(message);

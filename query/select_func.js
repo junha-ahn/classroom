@@ -781,6 +781,32 @@ let self = {
       }
     });
   },
+  floor: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          building_id,
+        } = object;
+        
+        let queryString = squel.select()
+          .from('room')
+          .where(squel.case()
+            .when('? IS NULL', building_id)
+            .then(squel.expr().and('room.room_id IS NOT NULL'))
+            .else(squel.expr().and('room.building_id = ?', building_id)))
+          .field('room.floor')
+          .group('room.floor')
+          .toParam();
+        let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        resolve({
+          results,
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   holiday: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {

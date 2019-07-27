@@ -23,6 +23,7 @@ const {
 router.get('/', isAdmin, async (req, res, next) => {
   res.redirect('/admin/reservation/lookup?page=1');
 });
+
 router.get('/user/lookup', isAdmin, async (req, res, next) => {
   let {
     page,
@@ -124,13 +125,13 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
       results,
       list_count,
       room_category_results: info.room_category_results,
-      floor_results: [1,2,3,4,5,6,7,8,9,10],
       query: {
         ...req.query,
         floor: req.query.floor || 0,
         room_category_id: req.query.room_category_id || 0,
       },
       params: req.params,
+      building_id: req.user.building_id,
     }))
   } catch (error) {
     next(error)
@@ -174,7 +175,12 @@ router.get('/room/single/:room_id', isAdmin, async (req, res, next) => {
     db_func.release(connection);
   }
 });
-
+router.get('/room/write', isAdmin, async (req, res, next) => {
+  res.render('admin/room_write', foo.getResJson(req.user, {
+    room_category_results: info.room_category_results,
+    permission_results: info.permission_results,
+  }))
+});
 router.get('/reservation/lookup', isAdmin, getRerservationLookup(true));
 router.get('/reservation/single/:room_rsv_id', isAdmin, getRerservationSingle(true));
 

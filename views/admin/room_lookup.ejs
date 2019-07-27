@@ -7,10 +7,10 @@
           <option v-bind:value="0" :selected="query.floor==0">전체</option>
           <option 
             v-for="(floor, i) in floor_results"
-            v-bind:value="floor"
-            :selected="query.floor == floor" 
+            v-bind:value="floor.floor"
+            :selected="query.floor == floor.floor" 
             :key="i">
-          {{floor}}
+          {{floor.floor}}
           </option>
         </select>
         <label>카테고리</label>
@@ -55,7 +55,7 @@
           </ul>
         </nav>
         <div class="lookup_button">
-          <button type="button" class="btn btn-primary">추가하기</button>
+          <button type="button" class="btn btn-primary"  @click="gotoWrite">추가하기</button>
         </div>
     </main>
 
@@ -78,11 +78,15 @@
           list_count: <%-JSON.stringify(list_count) %> ,
           query: <%-JSON.stringify(query) %> ,
           params: <%-JSON.stringify(params) %>,
+          building_id: <%-JSON.stringify(building_id) %>,
           room_category_results: <%-JSON.stringify(room_category_results) %>,
-          floor_results: <%-JSON.stringify(floor_results) %>,
+          floor_results: [],
         }
       },
       methods: {
+        gotoWrite: function() {
+          location.href='/admin/room/write'
+        },
         onChange: function() {
           alert(this.query.floor)
         },
@@ -94,6 +98,20 @@
           this.query.floor = this.query.floor || undefined;
           this.query.room_category_id = this.query.room_category_id || undefined;
           location.href='/admin/room/lookup' + global.serializeQuery(this.query)
+        },
+        getFloorResults: function() {
+          var __this = this;
+          global.ajax({
+            url: '/api/room/floor/' + this.building_id,
+            type: 'GET',
+          },
+          function (data, status) {
+            __this.floor_results = data.results;
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+
         },
       },
       computed: {
@@ -108,7 +126,10 @@
             nextText:'&raquo;',
           })
         },
-      }
+      },
+      created: function() {
+        this.getFloorResults();
+      },
     })
   </script>
 

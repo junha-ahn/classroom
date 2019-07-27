@@ -132,6 +132,7 @@ let self = {
           building_id,
           room_category_id,
           auth_rsv_create,
+          auth_rsv_cancel,
           name,
           room_number,
           floor,

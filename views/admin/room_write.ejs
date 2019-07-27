@@ -1,0 +1,40 @@
+<% include ../sub/header %>
+      <template>
+        <room-input 
+        v-bind:room="formData" 
+        :room_category_results="room_category_results" 
+        :permission_results="permission_results" 
+        mod="POST"></room-input>
+      </template>
+    <footer>
+      <% include ../sub/footer %>
+    </footer>
+  </div>
+
+  <% include ../component/room_input %>
+  <script>
+    var global = makeGlobal();
+    var room_category_results = <%-JSON.stringify(room_category_results) %>;
+    var permission_results = <%-JSON.stringify(permission_results) %>;
+
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+          room_category_results : room_category_results,
+          permission_results : permission_results,
+          formData : {
+            name:'',
+            description:'',
+          },
+        }
+      },
+    })
+  </script>
+
+</body>
+
+</html>

@@ -345,9 +345,22 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
   })
 }));
 
+router.get('/room/floor/:building_id', db_func.inDBStream(async (req, res, next, conn) => {
+  let building_id = req.params.building_id;
+
+  let {
+    results,
+  } = await select_func.floor(conn, {
+    building_id,
+  });
+
+  res.status(200).json({
+    results,
+  })
+}));
+
 router.post('/room', isAdmin, checkReqInfo, checkRequireInsertRoom, db_func.inDBStream(async (req, res, next, conn) => {
   const {
-    building_id,
     room_category_id,
     auth_rsv_create,
     auth_rsv_cancel,
@@ -363,7 +376,7 @@ router.post('/room', isAdmin, checkReqInfo, checkRequireInsertRoom, db_func.inDB
   } = req.body;
 
   let insert_result = await insert_func.room(conn, {
-    building_id,
+    building_id: req.user.building_id,
     room_category_id,
     auth_rsv_create,
     auth_rsv_cancel,
