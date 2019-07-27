@@ -111,14 +111,19 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
       floor,
       room_category_id,
       page,
-      page_length
+      page_length,
     });
     foo.cleaningList(results);
-
     res.render('admin/room_lookup', foo.getResJson(req.user, {
       results,
       list_count,
-      query: req.query,
+      room_category_results: info.room_category_results,
+      floor_results: [1,2,3,4,5,6,7,8,9,10],
+      query: {
+        ...req.query,
+        floor: req.query.floor || 0,
+        room_category_id: req.query.room_category_id || 0,
+      },
       params: req.params,
     }))
   } catch (error) {

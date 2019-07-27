@@ -2,62 +2,62 @@
       <% include ../sub/admin_menu %>
 
       <h1>교실목록</h1>
-      <div>
-        <div>
-          <button type="button" class="btn btn-default">층</button>
-          <select class="form-control">
-            <option value="1" selected>1</option>
-            <option value="">2</option>
-            <option value="">3</option>
-            <option value="">4</option>
-          </select>
+      <div class="lookup_select">
+        <label>층</label>
+        <select v-model="query.floor" class="form-control" @change="refresh">
+          <option v-bind:value="0" :selected="query.floor==0">전체</option>
+          <option 
+            v-for="(floor, i) in floor_results"
+            v-bind:value="floor"
+            :selected="query.floor == floor" 
+            :key="i">
+          {{floor}}
+          </option>
+        </select>
+        <label>카테고리</label>
+        <select v-model="query.room_category_id" class="form-control" @change="refresh">
+          <option v-bind:value="0" :selected="query.room_category_id==0">전체</option>
+          <option 
+            v-for="(room_category, i) in room_category_results"
+            v-bind:value="room_category.room_category_id"
+            :selected="query.room_category_id == room_category.room_category_id" 
+            :key="i">
+          {{room_category.name}}
+          </option>
+        </select>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <td>카테고리</td>
+              <td>호실(층)</td>
+              <td>이름</td>
+              <td>상세</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(room, i) in results" :key="i"> 
+              <td> {{ room.room_category_name }}</td>
+              <td> {{ room.room_number }}</td>
+              <td> {{ room.name }} </td>
+              <td> <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
+                    상세조회
+                    </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <nav>
+          <ul class="pagination">
+            <li v-for="page in pagenation" :key="page.value" :class="{active: page.isSelf}">
+              <a @click="chagePage(page.value)" aria-label="Previous">
+                <span aria-hidden="true" v-html="page.name"></span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="lookup_button">
+          <button type="button" class="btn btn-primary">추가하기</button>
         </div>
-        <div>
-          <button type="button" class="btn btn-default">교실카테고리</button>
-          <select class="form-control">
-            <option value="L1">강의실1</option>
-            <option value="C1" selected>전산실1</option>
-            <option value="">강의실2</option>
-            <option value="">전산실2</option>
-          </select>
-        </div>
-        <div>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <td>카테고리</td>
-                <td>호실(층)</td>
-                <td>이름</td>
-                <td>상세</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(room, i) in results" :key="i"> 
-                <td> {{ room.room_category_name }}</td>
-                <td> {{ room.room_number }}</td>
-                <td> {{ room.name }} </td>
-                <td> <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
-                      상세조회
-                     </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <button type="button" class="btn btn-primary">추가하기</button>
-        <div>
-          <nav>
-            <ul class="pagination">
-              <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-              <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#">2 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#">3 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#">4 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
     </main>
 
     <footer>
@@ -78,11 +78,24 @@
           results: <%-JSON.stringify(results) %> ,
           list_count: <%-JSON.stringify(list_count) %> ,
           query: <%-JSON.stringify(query) %> ,
-          params: <%-JSON.stringify(params) %> 
+          params: <%-JSON.stringify(params) %>,
+          room_category_results: <%-JSON.stringify(room_category_results) %>,
+          floor_results: <%-JSON.stringify(floor_results) %>,
         }
       },
       methods: {
-
+        onChange: function() {
+          alert(this.query.floor)
+        },
+        chagePage: function(page) {
+          this.query.page = page;
+          this.refresh();
+        },
+        refresh: function(){
+          this.query.floor = this.query.floor || undefined;
+          this.query.room_category_id = this.query.room_category_id || undefined;
+          location.href='/admin/room/lookup' + global.serializeQuery(this.query)
+        },
       },
       computed: {
         pagenation: function() {

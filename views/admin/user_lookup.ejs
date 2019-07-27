@@ -3,7 +3,11 @@
       <h1>관리자_회원목록</h1>
       <div>
         <div>
-          <button type="button" class="btn btn-default">관리자</button>
+          <button type="button" 
+          :class="classIsAdmin()"
+           @click="clickIsAdmin(query.is_admin == 1 ? 0 : 1)">
+            관리자
+           </button>
         </div>
         <div>
           <table class="table table-striped">
@@ -66,7 +70,20 @@
         }
       },
       methods: {
-
+        clickIsAdmin: function(is_admin) {
+          this.query.is_admin = is_admin  || undefined;
+          this.query.page = 1;
+          this.refresh();
+        },
+        refresh: function() {
+          location.href='/admin/user/lookup' + global.serializeQuery(this.query)
+        },
+        classIsAdmin: function() {
+          return {
+            'btn btn-primary': this.query.is_admin == 1,
+            'btn btn-default': this.query.is_admin != 1,
+          }
+        },
       },
       computed: {
         pagenation: function() {
