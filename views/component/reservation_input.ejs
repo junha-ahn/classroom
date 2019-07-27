@@ -108,13 +108,17 @@
       </div>
     </div>
     <div class="btn-group" role="group">
-      <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
+
+      <div v-if="is_adminpage && is_admin==1">
+        <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
+      </div>
+
       <button 
       type="button" 
-      class="btn btn-warning" 
-      v-if="!is_adminpage && reservation.is_mine == 1 && reservation.rsv_status == global.REQ_RSV_STATUS"
+      class="btn btn-danger" 
+      v-if="is_adminpage || (reservation.is_mine == 1 && reservation.rsv_status == global.REQ_RSV_STATUS)"
       @click="deleteRsv($event, reservation)">
-      요청 삭제
+      삭제
       </button>
       <button 
       type="button" 
@@ -123,12 +127,11 @@
       @click="cancelRsv($event, reservation)">
       예약 취소
       </button>
+
+      <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
     </div>
    
 
-    <div v-if="is_adminpage && is_admin==1">
-      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
-    </div>
   </form>
 </script>
 
@@ -155,13 +158,18 @@
           e.preventDefault();
         }
         var url = '/api/room_rsv/' + reservation.room_rsv_id;
+        var __this;
         global.ajax({
           url: url,
           type: 'DELETE',
         },
         function (data, status) {
           alert(data.message);
-          location.href="/reservation/lookup/11?page=1&is_mine=1"
+          if (__this.is_adminpage) {
+            location.href='/admin/reservation/lookup?page=1'
+          } else {
+            location.href='/reservation/lookup/' + __this.building_id +'?page=1&is_mine=1'
+          }
         },
         function (message, status, data) {
           alert(message);

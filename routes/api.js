@@ -636,12 +636,28 @@ router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (re
       message: '요청상태가 아닌 예약은 삭제 불가능합니다'
     })
   } else {
-    let delete_result = await delete_func.room_rsv(conn, {
-      room_rsv_id,
-    })
-    foo.setRes(res, delete_result, {
-      message: '예약 요청을 삭제했습니다.'
-    })
+    let my_building = true;
+    if (req.user.user_type == info.ADMIN_TYPE) {
+      let {
+        results,
+      } = await select_func.vRoomToUse(conn, {
+        room_rsv_id,
+      })
+      my_building = results[0] && results[0].building_id == req.user.building_id 
+        ? true : false;
+    }
+    if (!my_building) {
+      res.status(403).json({
+        message: '본인의 학습관 예약을 선택해주세요'
+      })
+    } else {
+      let delete_result = await delete_func.room_rsv(conn, {
+        room_rsv_id,
+      })
+      foo.setRes(res, delete_result, {
+        message: '예약 요청을 삭제했습니다.'
+      })
+    }
   }
 }));
 router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
