@@ -247,6 +247,18 @@ let self = {
       next();
     }
   },
+  checkRequirtUpdateUserType: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'user_type',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
 
 
   getRerservationLookup: (is_adminpage) => {

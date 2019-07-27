@@ -29,6 +29,7 @@ const {
   checkRequireInsertRoomRsv,
   checkRequireUpdateRoomRsvStatus,
   checkRequirtUpdateUser,
+  checkRequirtUpdateUserType,
 } = require('../global/middlewares');
 
 
@@ -83,6 +84,40 @@ router.put('/user/:user_id', isLoggedIn, checkReqInfo, checkRequirtUpdateUser, d
         message: '성공했습니다'
       })
     }
+  }
+}));
+
+
+router.put('/user/user_type/:user_id', isAdmin, checkRequirtUpdateUserType, db_func.inDBStream(async (req, res, next, conn) => {
+  let user_id = req.params.user_id;
+  let {
+    user_type,
+  } = req.body;
+
+  let {
+    results 
+  } = await select_func.vUser(conn, {
+    user_id,
+    campus_id: req.user.campus_id,
+    building_id: req.user.building_id,
+  });
+
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택해주세요'
+    })
+  } else if (results[0].user_type == user_type) {
+    res.status(401).json({
+      message: '이미 해당 권한입니다'
+    })
+  } else {
+    let update_result = await update_func.userType(conn, {
+      user_id,
+      user_type,
+    })
+    foo.setRes(res, update_result, {
+      message: '성공했습니다'
+    })
   }
 }));
 

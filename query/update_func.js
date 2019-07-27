@@ -25,6 +25,26 @@ let self = {
       }
     });
   },
+  userType: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          user_id,
+          user_type,
+        } = object;
+
+        let queryString = squel.update()
+          .table('user')
+          .set('user_type', user_type)
+          .where('user_id = ?',user_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   person: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {

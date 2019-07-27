@@ -1,10 +1,9 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
-      <h1>관리자_회원목록</h1>
       <div>
         <div>
           <button type="button" 
-          :class="classIsAdmin()"
+          :class="classIsPrimary(query.is_admin)"
            @click="clickIsAdmin(query.is_admin == 1 ? 0 : 1)">
             관리자
            </button>
@@ -26,7 +25,11 @@
                 <td>{{user.student_number}}</td>
                 <td>{{user.phone}}</td>
                 <td><button type="button" class="btn btn-default" @click="location.href='/admin/user/single/' + user.user_id">상세보기</button></td>
-                <td><button type="button" class="btn btn-primary">관리자</button></td>
+                <td>
+                  <button type="button" @click="changeToUser(user)" :class="classIsPrimary(user.user_type == global.USER_TYPE)">유저</button>
+                  <button type="button" @click="changeToAdmin(user)" :class="classIsPrimary(user.user_type ==  global.ADMIN_TYPE)">관리자</button>
+                  {{user.user_type}}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -70,6 +73,37 @@
         }
       },
       methods: {
+        changeToUser: function(user) {
+          if (user.user_type == global.USER_TYPE) {
+            alert('이미 해당 권한입니다.')
+          } else {
+            this.chageUserType(user.user_id, global.USER_TYPE);
+          }
+        },
+        changeToAdmin: function(user) {
+          if (user.user_type == global.ADMIN_TYPE) {
+            alert('이미 해당 권한입니다.')
+          } else {
+            this.chageUserType(user.user_id, global.ADMIN_TYPE);
+          }
+        },
+        chageUserType: function(user_id, user_type) {
+          var __this = this;
+          global.ajax({
+            url: '/api/user/user_type/' + user_id,
+            type: 'PUT',
+            data: {
+              user_type: user_type,
+            },
+          },
+          function (data, status) {
+            alert(data.message);
+            __this.refresh();
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        },
         clickIsAdmin: function(is_admin) {
           this.query.is_admin = is_admin  || undefined;
           this.query.page = 1;
@@ -78,10 +112,10 @@
         refresh: function() {
           location.href='/admin/user/lookup' + global.serializeQuery(this.query)
         },
-        classIsAdmin: function() {
+        classIsPrimary: function(flag) {
           return {
-            'btn btn-primary': this.query.is_admin == 1,
-            'btn btn-default': this.query.is_admin != 1,
+            'btn btn-primary': flag,
+            'btn btn-default': !flag,
           }
         },
       },
