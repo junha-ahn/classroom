@@ -1478,7 +1478,7 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
-            .field('COUNT(*)', 'list_count')
+            .field('COUNT(room_rsv.room_rsv_id)', 'list_count')
             .group('room_rsv.room_rsv_id')
             .toParam();
           queryString = squel.select()
@@ -1570,6 +1570,7 @@ let self = {
             .toParam();
         }
         let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
+        console.log(countString)
         let list_count = (!countString) ? results.length : (await db_func.sendQueryToDB(connection, countString, isTransaction))[0].list_count;
         resolve({
           results,

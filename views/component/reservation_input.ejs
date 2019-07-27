@@ -2,7 +2,7 @@
   <form class="form-lnline" v-on:submit="onSubmitForm">
 
     <label class="col-sm-2 control-label">상태</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
+    <div v-if="mod!='POST'" class="col-sm-10">
       <p class="form-control-static">
         <label :class="classRsvStatus(reservation.rsv_status)">{{ reservation.rsv_status_name }}</label>
       </p>
@@ -38,13 +38,20 @@
     </div>
     <div class="form-group">
       <label class="col-sm-2 control-label">타임블럭</label>
-      <button
-      class="btn btn-default"
-      v-for="(room_rsv_time, i) in room_rsv_time_results" 
-      v-bind:value="room_rsv_time.room_rsv_time_id" 
-      :key="i"
-      disabled
-      >{{room_rsv_time.start_time}} ~ {{room_rsv_time.end_time}}</button>
+      <div v-for="(room_rsv_time, i) in room_rsv_time_results" >
+        <button
+        class="btn btn-default"
+        v-bind:value="room_rsv_time.room_rsv_time_id" 
+        :key="i"
+        disabled
+        >{{room_rsv_time.start_time}} ~ {{room_rsv_time.end_time}}</button>
+        <button 
+        type="button" 
+        class="btn btn-danger" 
+        @click="deleteRsvTime(i)"
+        v-if="mod!='GET'"
+        >-</button>
+      </div>
     </div>
     <div class="form-group">
       <label class="col-sm-2 control-label">교실목록</label>
@@ -61,7 +68,7 @@
     <div v-if="mod=='GET'" class="col-sm-10">
       <p class="form-control-static">{{ reservation.department_name }}</p>
     </div>
-    <select v-else class="form-control" v-model="reservation.department_id">
+    <select v-else class="form-control" v-model="reservation.department_id" @change="chageDepartment">
       <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
         {{ department.name }}
       </option>
@@ -116,7 +123,7 @@
       <button 
       type="button" 
       class="btn btn-danger" 
-      v-if="is_adminpage || (reservation.is_mine == 1 && reservation.rsv_status == global.REQ_RSV_STATUS)"
+      v-if="mod=='GET' && (is_adminpage || (reservation.is_mine == 1 && reservation.rsv_status == global.REQ_RSV_STATUS))"
       @click="deleteRsv($event, reservation)">
       삭제
       </button>
@@ -128,7 +135,7 @@
       예약 취소
       </button>
 
-      <button type="submit" class="btn btn-primary" v-if="mod=='POST'">제출</button>
+      <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
     </div>
    
 
@@ -142,17 +149,24 @@
       is_adminpage: Boolean,
       mod: String,
       is_admin: Number,
+      building_id: Number,
       reservation: Object,
       rsv_status_results: Array,
       room_rsv_category_results: Array,
       room_rsv_time_results: Array,
       room_to_use_results: Array,
+      department_results: Array,
     },
     data: function () {
       return {
+        study_group_results: [],
       }
     }, 
     methods: {
+      deleteRsvTime: function(index) {
+        alert(index)
+      },
+
       deleteRsv: function(e, reservation) {
         if (e) {
           e.preventDefault();
@@ -168,7 +182,11 @@
           if (__this.is_adminpage) {
             location.href='/admin/reservation/lookup?page=1'
           } else {
-            location.href='/reservation/lookup/' + __this.building_id +'?page=1&is_mine=1'
+            if (__this.building_id) {
+              location.href='/reservation/lookup/' + __this.building_id +'?page=1&is_mine=1'
+            } else {
+              location.href='/'
+            }
           }
         },
         function (message, status, data) {
@@ -214,6 +232,9 @@
         if (e) {
           e.preventDefault();
         }
+        if (mod == 'PUT') {
+          this.getStudyGroupResults()
+        }
         this.mod = mod;
       },
       onSubmitForm: function(e) {
@@ -246,6 +267,25 @@
           'bg-warning': rsv_status == global.CANCEL_REQ_RSV_STATUS,
           'bg-success': rsv_status == global.SUBMIT_RSV_STATUS,
         }
+      },
+      chageDepartment: function() {
+        this.reservation.study_group_id = null;
+        this.getStudyGroupResults();
+      },
+      getStudyGroupResults: function() {
+        var __this = this;
+        global.ajax({
+          url: '/api/study_group' + global.serializeQuery({
+            department_id: this.reservation.department_id,
+          }),
+          type: 'GET',
+        },
+        function (data, status) {
+          __this.study_group_results = data.results;
+        },
+        function (message, status, data) {
+          alert(message);
+        });
       },
     },
   })

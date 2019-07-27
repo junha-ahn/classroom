@@ -28,6 +28,7 @@
     var room_rsv_category_results = <%-JSON.stringify(room_rsv_category_results) %>;
     var room_rsv_time_results = <%-JSON.stringify(room_rsv_time_results) %>;
     var room_to_use_results = <%-JSON.stringify(room_to_use_results) %>;
+    var building_id = '<%-locals.building_id %>';
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -35,7 +36,7 @@
           header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
-          building_id: <%- building_id %>,
+          building_id: building_id,
           reservation: reservation,
           rsv_status_results: rsv_status_results,
           room_rsv_category_results: room_rsv_category_results,

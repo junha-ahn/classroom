@@ -64,6 +64,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 app.use('/auth', authRoute);
 app.use('/api', apiRoute);
 
@@ -93,6 +94,17 @@ app.use((req,res,next) => {
   res.locals.pagename = pagenames.join('_');
   next();
 });
+
+app.use(function (req, res, next) {
+  if (req.query.page <= 0 || req.query.page_length <= 0) {
+    res.status(404).render('error', foo.getResJson(req.user, {
+      error_name: '페이지 처리 오류',
+      message: '페이지를 다시 입력해주세요',
+    }));
+  } else {
+    next();
+  }
+})
 
 app.use('/', pageRoute);
 app.use('/admin', adminPageRoute);

@@ -361,7 +361,8 @@ let self = {
           room_rsv_time_results,
           rsv_status_results: info.rsv_status_results,
           room_rsv_category_results: info.room_rsv_category_results,
-          building_id: is_adminpage ? req.user.building_id : req.params.building_id
+          building_id: is_adminpage ? req.user.building_id : req.params.building_id,
+          department_results: is_adminpage ? info.department_results : null,
         }));
       }
     });
