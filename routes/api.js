@@ -431,6 +431,28 @@ router.put('/room/:room_id', isAdmin, checkReqInfo, checkRequireUpdateRoom, db_f
     message: '성공했습니다'
   })
 }));
+router.delete('/room/:room_id', isAdmin, db_func.inDBStream(async (req, res, next, conn) => {
+  let room_id = req.params.room_id;
+
+  let {
+    results,
+  } = await select_func.room(conn, {
+    room_id,
+    building_id: req.user.building_id,
+  })
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택해주세요'
+    })
+  } else {
+    let delete_result = await delete_func.room(conn, {
+      room_id,
+    })
+    foo.setRes(res, delete_result, {
+      message: '성공했습니다'
+    })
+  }
+}));
 
 router.get('/holiday', async (req, res, next) => {
   let {

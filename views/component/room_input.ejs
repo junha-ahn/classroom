@@ -97,6 +97,9 @@
     <div>
       <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
       <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
+      <button type="button" class="btn btn-danger" v-if="mod=='GET'" @click="deleteRoom(room.room_id)">
+        삭제
+      </button>
     </div>
   </form>
 </script>
@@ -123,6 +126,19 @@
           e.preventDefault();
         }
         this.mod = mod;
+      },
+      deleteRoom: function(room_id) {
+        global.ajax({
+          url: '/api/room/' + room_id,
+          type: 'DELETE',
+        },
+        function (data, status) {
+          alert(data.message);
+            location.href='/admin/room/lookup?page=1';
+        },
+        function (message, status, data) {
+          alert(message);
+        });
       },
       onSubmitForm: function(e) {
         e.preventDefault();

@@ -30,7 +30,7 @@
               <td>카테고리</td>
               <td>호실(층)</td>
               <td>이름</td>
-              <td>상세</td>
+              <td>관리</td>
             </tr>
           </thead>
           <tbody>
@@ -38,9 +38,10 @@
               <td> {{ room.room_category_name }}</td>
               <td> {{ room.room_number }}</td>
               <td> {{ room.name }} </td>
-              <td> <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
-                    상세조회
-                    </button>
+              <td> 
+                <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
+                  상세조회
+                </button>
               </td>
             </tr>
           </tbody>
