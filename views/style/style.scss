@@ -190,10 +190,38 @@ thead {
       }
     }
   }
-
 }
 
-//login 끝
+@each $menu in 
+admin_menu,
+mypage_menu,
+{
+  .#{$menu} {
+    float: left;
+    width:15%;
+    height:100%;
+    padding-top:1%;
+    padding-bottom:500px;
+    border-right: 1px solid #ccc;
+    ul{
+      height:auto;
+  
+      li{
+  
+      }
+    }
+  }
+}
+
+.mypage_right {
+  float: right;
+  width: 85%;
+}
+.admin_right {
+  float: right;
+  width: 85%;
+}
+
 @each $lookup_page in 
 study_group,
 reservation,
@@ -471,25 +499,6 @@ admin_room,
 }
 
 
-.admin_menu {
-  float: left;
-  width:15%;
-  height:100%;
-  padding-top:1%;
-  padding-bottom:500px;
-  ul{
-    height:auto;
-
-    li{
-
-    }
-  }
-}
-
-.admin_right {
-  float: right;
-  width: 85%;
-}
 
 
 //마이페이지
@@ -503,7 +512,6 @@ admin_room,
   }
 }
 .mypage_myaccount{
-
   .sidebar, .mp_dashboard, .mp_myaccount{
     float: left;
   
