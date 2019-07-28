@@ -344,7 +344,6 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
     list_count,
   })
 }));
-
 router.get('/room/floor/:building_id', db_func.inDBStream(async (req, res, next, conn) => {
   let building_id = req.params.building_id;
 
@@ -562,6 +561,41 @@ router.get('/available_time', async (req, res, next) => {
   }
 });
 
+
+router.get('/room_to_use/:room_rsv_id', db_func.inDBStream(async (req, res, next, conn) => {
+  let room_rsv_id = req.params.room_rsv_id;
+
+  let {
+    results,
+    list_count,
+  } = await select_func.vRoomToUse(conn, {
+    room_rsv_id,
+  });
+  foo.cleaningList(results);
+
+  res.status(200).json({
+    results,
+    list_count,
+  })
+}));
+
+router.get('/room_rsv_time/:room_rsv_id', db_func.inDBStream(async (req, res, next, conn) => {
+  let room_rsv_id = req.params.room_rsv_id;
+
+  let {
+    results,
+    list_count,
+  } = await select_func.room_rsv_time(conn, {
+    room_rsv_id,
+  });
+  foo.cleaningList(results);
+
+  res.status(200).json({
+    results,
+    list_count,
+  })
+}));
+
 router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {
   const {
     room_id,
@@ -682,54 +716,6 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
     }
   }
 }));
-
-
-router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
-  const room_rsv_id = req.params.room_rsv_id;
-
-  let {
-    results
-  } = await select_func.room_rsv(conn, {
-    room_rsv_id,
-  });
-  // 관리자일때, 건물 체크!
-  if (!results[0]) {
-    res.status(401).json({
-      message: '다시 선택해주세요'
-    })
-  } else if (req.user.user_type == info.USER_TYPE && results[0].user_id != req.user.user_id) {
-    res.status(401).json({
-      message: '본인의 예약을 선택해주세요'
-    })
-  } else if (req.user.user_type == info.USER_TYPE && results[0].rsv_status != info.REQ_RSV_STATUS) {
-    res.status(401).json({
-      message: '요청상태가 아닌 예약은 삭제 불가능합니다'
-    })
-  } else {
-    let my_building = true;
-    if (req.user.user_type == info.ADMIN_TYPE) {
-      let {
-        results,
-      } = await select_func.vRoomToUse(conn, {
-        room_rsv_id,
-      })
-      my_building = results[0] && results[0].building_id == req.user.building_id 
-        ? true : false;
-    }
-    if (!my_building) {
-      res.status(403).json({
-        message: '본인의 학습관 예약을 선택해주세요'
-      })
-    } else {
-      let delete_result = await delete_func.room_rsv(conn, {
-        room_rsv_id,
-      })
-      foo.setRes(res, delete_result, {
-        message: '예약 요청을 삭제했습니다.'
-      })
-    }
-  }
-}));
 router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
 
@@ -788,7 +774,6 @@ router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async
     }
   }
 }));
-
 router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireUpdateRoomRsvStatus, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
   let {
@@ -857,6 +842,52 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
       }
       foo.setRes(res, update_result, {
         message: '예약 상태 변경을 성공했습니다'
+      })
+    }
+  }
+}));
+router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  const room_rsv_id = req.params.room_rsv_id;
+
+  let {
+    results
+  } = await select_func.room_rsv(conn, {
+    room_rsv_id,
+  });
+  // 관리자일때, 건물 체크!
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택해주세요'
+    })
+  } else if (req.user.user_type == info.USER_TYPE && results[0].user_id != req.user.user_id) {
+    res.status(401).json({
+      message: '본인의 예약을 선택해주세요'
+    })
+  } else if (req.user.user_type == info.USER_TYPE && results[0].rsv_status != info.REQ_RSV_STATUS) {
+    res.status(401).json({
+      message: '요청상태가 아닌 예약은 삭제 불가능합니다'
+    })
+  } else {
+    let my_building = true;
+    if (req.user.user_type == info.ADMIN_TYPE) {
+      let {
+        results,
+      } = await select_func.vRoomToUse(conn, {
+        room_rsv_id,
+      })
+      my_building = results[0] && results[0].building_id == req.user.building_id 
+        ? true : false;
+    }
+    if (!my_building) {
+      res.status(403).json({
+        message: '본인의 학습관 예약을 선택해주세요'
+      })
+    } else {
+      let delete_result = await delete_func.room_rsv(conn, {
+        room_rsv_id,
+      })
+      foo.setRes(res, delete_result, {
+        message: '예약 요청을 삭제했습니다.'
       })
     }
   }

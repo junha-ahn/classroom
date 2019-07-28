@@ -347,21 +347,12 @@ let self = {
           message: "다시 확인해주세요"
         }));
       } else {
-        let room_to_use_results = (await select_func.vRoomToUse(conn, {
-          room_rsv_id,
-        })).results;
-        let room_rsv_time_results = (await select_func.room_rsv_time(conn, {
-          room_rsv_id,
-        })).results;
         foo.cleaningList(results, req.user);
-        foo.cleaningList(room_rsv_time_results);
         res.render((is_adminpage ? 'admin' : 'user') + '/reservation_single'
         , foo.getResJson(req.user, {
           is_adminpage,
           params: req.params,
           reservation: results[0],
-          room_to_use_results,
-          room_rsv_time_results,
           rsv_status_results: info.rsv_status_results,
           room_rsv_category_results: info.room_rsv_category_results,
           building_id: is_adminpage ? req.user.building_id : req.params.building_id,
