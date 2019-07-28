@@ -194,14 +194,16 @@ thead {
 }
 
 //login 끝
-@each $lookup_page in study_group,
+@each $lookup_page in 
+study_group,
 reservation,
-uesr,
-room {
+admin_reservation,
+admin_uesr,
+admin_room,
+{
   .#{$lookup_page}_lookup {
     main {
       margin:0 auto;
-      width:80%;
       .btn {
         font-size: 1.8vmin !important;
       }
@@ -277,7 +279,6 @@ room {
       }
 
       .table {
-
         text-align: center;
 
         thead {
@@ -501,19 +502,9 @@ room {
   }
 }
 
-//관리자_예약
-.admin_reservation_lookup {
-  main{
-    margin:0 auto;
-    width:100%;
-    .admin_reservation_Contents{
-      float:right;
-      margin-left:1%;
-      width:84%;
-    }
-
-  }
-
+.admin_right {
+  float: right;
+  width: 85%;
 }
 
 
