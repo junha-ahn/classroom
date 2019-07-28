@@ -218,7 +218,7 @@ router.get('/mypage/dashboard', isLoggedIn, db_func.inDBStream(async (req, res, 
     list_count,
   }))
 }));
-router.get('/mypage/myaccount', isLoggedIn, getUserSingle(false));
+router.get('/mypage/account', isLoggedIn, getUserSingle(false));
 
 
 router.get('/notification/read/:notification_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {

@@ -1,46 +1,48 @@
 <% include ../sub/header %>
 <% include ../sub/mypage_menu %>
 <div class="mypage_right">
-  <h1>대시보드</h1>
-  
-  <button type="button" class="btn btn-success" 
-    @click="readNotification()">
-    전체읽음
-  </button>
-  <button type="button" class="btn btn-danger" 
-    @click="deleteNotification()">
-    전체삭제
-  </button>
-  <table class="table table-hover">
-    <thead>
-      <th>메세지</th>
-      <th>업데이트</th>
-      <th>관리</th>
-    </thead>
-    <tbody>
-      <tr v-for="(notification, i) in results" :key="i">
-        <td>
-          <a v-if="notification.is_read == 0" v-bind:href="'/notification/read/' + notification.notification_id">
-            <strong>
+  <div class="lookup_body">
+    <div class="lookup_button">
+      <button type="button" class="btn btn-success" 
+        @click="readNotification()">
+        전체읽음
+      </button>
+      <button type="button" class="btn btn-danger" 
+        @click="deleteNotification()">
+        전체삭제
+      </button>
+    </div>
+    <table class="table table-hover">
+      <thead>
+        <th>메세지</th>
+        <th>업데이트</th>
+        <th>관리</th>
+      </thead>
+      <tbody>
+        <tr v-for="(notification, i) in results" :key="i">
+          <td>
+            <a v-if="notification.is_read == 0" v-bind:href="'/notification/read/' + notification.notification_id">
+              <strong>
+                {{makeDisplayMsg(notification)}}
+              </strong>
+            </a>
+    
+            <a v-else v-bind:href="'/notification/read/' + notification.notification_id">
               {{makeDisplayMsg(notification)}}
-            </strong>
-          </a>
-  
-          <a v-else v-bind:href="'/notification/read/' + notification.notification_id">
-            {{makeDisplayMsg(notification)}}
-          </a>
-  
-        </td>
-        <td>{{notification.datetime_last_updated}}</td>
-        <td>
-          <button type="button" class="btn btn-danger" 
-            @click="deleteNotification(notification.notification_id)">
-            삭제
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            </a>
+    
+          </td>
+          <td>{{notification.datetime_last_updated}}</td>
+          <td>
+            <button type="button" class="btn btn-danger" 
+              @click="deleteNotification(notification.notification_id)">
+              삭제
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 </main>

@@ -190,28 +190,33 @@ thead {
 
 .left_menu {
   float: left;
-  width:15%;
+  width:10%;
   height:100%;
-  padding-top:1%;
-  padding-bottom:500px;
   border-right: 1px solid #ccc;
+
   ul{
     height:auto;
+  }
+  
+  .active {
+    background-color: #e7e7e7;
   }
 }
 
 .mypage_right {
   float: right;
-  width: 85%;
+  width: 90%;
 }
 .admin_right {
   float: right;
-  width: 85%;
+  width: 90%;
 }
 
 
 .lookup_body {
   margin:0 auto;
+  width: 80%;
+
   .btn {
     font-size: 1.8vmin !important;
   }
@@ -222,17 +227,25 @@ thead {
 
   nav {
     text-align: center;
-
   }
 
   .lookup_button {
     float: right;
   }
-
   .lookup_select {
     text-align: center;
     margin-bottom: 1%;
 
+    .custom_datepicker {
+      input {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 90%;
+      }
+      .vdp-datepicker__clear-button {
+
+      }
+    }
     .pack_div {
       margin:0 auto;
       width:80%;
@@ -259,14 +272,16 @@ thead {
     label {
       margin-bottom: 0 !important;
       margin: 2% 1% !important;
-      font-size: 3vmin;
+      font-size: 2.5vmin;
     }
 
+    select {
+      height: 100% !important;
+    }
     .form-control {
       display: inline-block !important;
       width: 30% !important;
 
-      option {}
     }
   }
 
@@ -286,7 +301,6 @@ thead {
   }
 
 }
-
 
 .reservation_intro {
   main {

@@ -67,7 +67,7 @@ function makeGlobal() {
   };
   var mypage_name_by_class = {
     'mypage_dashboard' : 'dashboard',
-    'mypage_account' : 'myaccount',
+    'mypage_account' : 'account',
   };
   var getHeaderMenuName = function (page_class_name) {
     return header_name_by_class[page_class_name];
