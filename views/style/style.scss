@@ -491,6 +491,7 @@ room {
   width:15%;
   height:100%;
   padding-top:1%;
+  padding-bottom:1000px;
   ul{
     height:auto;
 
@@ -516,6 +517,16 @@ room {
 /********** 상단nav틀어지는부분 **********/
 
 @media (max-width: 768px) {
+  .admin_menu {
+    float: left;
+    width:15%;
+    height:100%;
+    padding-top:1%;
+    padding-bottom:700px;
+  }
+
+
+
   .navbar-nav {
     float: left !important;
   }
