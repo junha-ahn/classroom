@@ -578,7 +578,6 @@ router.get('/room_to_use/:room_rsv_id', db_func.inDBStream(async (req, res, next
     list_count,
   })
 }));
-
 router.get('/room_rsv_time/:room_rsv_id', db_func.inDBStream(async (req, res, next, conn) => {
   let room_rsv_id = req.params.room_rsv_id;
 

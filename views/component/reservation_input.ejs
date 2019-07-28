@@ -206,13 +206,19 @@
     methods: {
 
       deleteRsvTime: function(index) {
-        alert(index)
+        this.room_rsv_time_results.splice(index, 1)
       },
       deleteRoom: function(index) {
         this.room_to_use_results.splice(index, 1)
       },
       addRoom: function() {
         var room = this.room_results[this.room_index];
+        for (var i = 0; i < this.room_to_use_results.length; i++) {
+          if (this.room_to_use_results[i].room_id == room.room_id) {
+            alert('이미 추가된 강의실입니다');
+            return;
+          }
+        }
         this.room_to_use_results.push(room);
       },
 
