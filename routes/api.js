@@ -1053,6 +1053,36 @@ router.delete('/notification', isLoggedIn, db_func.inDBStream(async (req, res, n
   })
 }));
 
+
+router.get('/notification', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    room_rsv_id,
+    is_read,
+    page,
+    page_length,
+    sort_key,
+    sort_type
+  } = req.query;
+
+  let {
+    results,
+    list_count,
+  } = await select_func.notification(conn, {
+    receiver_id : req.user.user_id,
+    room_rsv_id,
+    is_read,
+    page,
+    page_length,
+    sort_key,
+    sort_type,
+  });
+  foo.cleaningList(results);
+
+  res.status(200).json({
+    results,
+    list_count,
+  })
+}));
 function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {

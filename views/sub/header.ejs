@@ -35,9 +35,16 @@
             </ul>
             <ul v-if="is_user==true" class="nav navbar-nav navbar-right">
               <li v-if="is_admin==true" :class="{active: header_menu_name=='admin'}"><a href="/admin">관리자</a></li>
-              <li :class="{active: header_menu_name=='mypage'}"><a href="/mypage/dashboard">마이페이지</a></li>
+              <li :class="{active: header_menu_name=='mypage'}">
+                <a href="/mypage/dashboard">
+                  마이페이지
+                    <custom-notification
+                      :is_user="is_user"
+                    ></custom-notification>
+                  </template>
+                </a>
+              </li>
               <li><a href="/auth/logout">로그아웃</a></li>
-              
             </ul>
           </div>
         </div>
