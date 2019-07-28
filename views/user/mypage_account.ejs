@@ -1,39 +1,41 @@
 <% include ../sub/header %>
 <% include ../sub/mypage_menu %>
+<div class="mp_myaccount">
   <user-input 
-  mod="GET"
-  :user="user" 
-  :is_admin="is_admin"
-  :department_results="department_results"
-  :campus_results="campus_results"
-  :buildings="buildings"
-  >
-  </user-input>
-  <div class="change_password">
-    <h1>암호 변경</h1>
-    <p v-if="user.datetime_last_password_changed">마지막 암호 변경 ({{user.datetime_last_password_changed}})</p>
-    <form v-on:submit="onSubmitChagePassword">
-      <div class="form-inline">
-        <label>기존 암호</label>
-        <input v-model="chagePasswordForm.old_password" type="password" class="form-control" placeholder="기존 암호 입력해주세요">
-      </div>
-
-      <div :class="classPassDiff()">
-        <label class="control-label">새 암호</label>
-        <input v-model="chagePasswordForm.password" type="password" class="form-control" placeholder="새 암호를 입력하세요">
-      </div>
-      <div :class="classPassDiff()">
-        <label class="control-label">새 암호 확인</label>
-        <input v-model="chagePasswordForm.password_check" type="password" class="form-control" placeholder="새 암호 다시 한번 입력하세요">
-      </div>
-
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-primary">변경</button>
+    mod="GET"
+    :user="user" 
+    :is_admin="is_admin"
+    :department_results="department_results"
+    :campus_results="campus_results"
+    :buildings="buildings"
+    >
+    </user-input>
+    <div class="change_password">
+      <h1>암호 변경</h1>
+      <p v-if="user.datetime_last_password_changed">마지막 암호 변경 ({{user.datetime_last_password_changed}})</p>
+      <form v-on:submit="onSubmitChagePassword">
+        <div class="form-inline">
+          <label>기존 암호</label>
+          <input v-model="chagePasswordForm.old_password" type="password" class="form-control" placeholder="기존 암호 입력해주세요">
         </div>
-      </div>
-    </form>
-  </div>
+  
+        <div :class="classPassDiff()">
+          <label class="control-label">새 암호</label>
+          <input v-model="chagePasswordForm.password" type="password" class="form-control" placeholder="새 암호를 입력하세요">
+        </div>
+        <div :class="classPassDiff()">
+          <label class="control-label">새 암호 확인</label>
+          <input v-model="chagePasswordForm.password_check" type="password" class="form-control" placeholder="새 암호 다시 한번 입력하세요">
+        </div>
+  
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">변경</button>
+          </div>
+        </div>
+      </form>
+    </div>
+</div>  
 </main>
 
 <footer>

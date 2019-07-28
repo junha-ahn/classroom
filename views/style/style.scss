@@ -491,7 +491,7 @@ room {
   width:15%;
   height:100%;
   padding-top:1%;
-  padding-bottom:1000px;
+  padding-bottom:500px;
   ul{
     height:auto;
 
@@ -511,8 +511,34 @@ room {
       margin-left:1%;
       width:84%;
     }
+
+  }
+
+}
+
+
+//마이페이지
+
+.mypage_dashboard{
+  .sidebar{
+    padding:50px 0 500px 0;
+  }
+  .table {
+    width:80% !important;
   }
 }
+.mypage_myaccount{
+
+  .sidebar, .mp_dashboard, .mp_myaccount{
+    float: left;
+  
+  }
+  .sidebar{
+    padding:50px 0 500px 0;
+  
+  }
+}
+
 
 .admin_schedule {
   .custom_datepicker {
@@ -528,7 +554,7 @@ room {
     width:15%;
     height:100%;
     padding-top:1%;
-    padding-bottom:700px;
+    padding-bottom:500px;
   }
 
 
@@ -570,4 +596,12 @@ room {
     float: right !important;
     margin-right: -15px;
   }
+}
+
+
+
+
+.custom_datepicker {
+  float:left;
+  width:85%;
 }

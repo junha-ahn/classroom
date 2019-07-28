@@ -1,7 +1,7 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
 
-      <div class="lookup_select">
+      <div class="lookup_select" style="float:left;width:85%">
         <label>층</label>
         <select v-model="query.floor" class="form-control" @change="refresh">
           <option v-bind:value="0" :selected="query.floor==0">전체</option>
