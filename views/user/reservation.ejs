@@ -82,7 +82,6 @@
             time_array: [],
           },
           formData:{
-            building_id: this.params.building_id,
             room_id:null,
             date:null,
             time_id_array:[],
@@ -417,6 +416,7 @@
             if (_validate) {
               alert(_validate)
             } else {
+              this.formData.building_id = this.params.building_id,
               global.ajax({
                 url: '/api/room_rsv',
                 type: 'POST',

@@ -622,12 +622,15 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
       results
     } = await select_func.room(conn, {
       room_id,
+      building_id,
     });
 
     let now = foo.resetTime(moment());
     let min_date = (() => {
       let _min_date = now;
-      _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
+      if (results[0]) {
+        _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
+      }
       return _min_date;
     })();
     if (!results[0]) {
