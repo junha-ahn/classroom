@@ -184,6 +184,13 @@ router.get('/room/write', isAdmin, async (req, res, next) => {
 });
 router.get('/reservation/lookup', isAdmin, getRerservationLookup(true));
 router.get('/reservation/single/:room_rsv_id', isAdmin, getRerservationSingle(true));
-
+router.get('/reservation/write', isAdmin, async (req, res, next) => {
+  res.render('admin/reservation_write', foo.getResJson(req.user, {
+    building_id: req.user.building_id,
+    rsv_status_results: info.rsv_status_results,
+    room_rsv_category_results: info.room_rsv_category_results,
+    department_results: info.department_results,
+  }))
+});
 
 module.exports = router;

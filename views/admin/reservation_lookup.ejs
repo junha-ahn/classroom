@@ -34,6 +34,9 @@
         }
       },
       methods: {
+        gotoWrite: function() {
+          location.href='/admin/reservation/write'
+        },
         chageRsvStatus: function(e, room_rsv, rsv_status) {
           if (e) {
             e.preventDefault();

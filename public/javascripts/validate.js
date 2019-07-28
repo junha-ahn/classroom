@@ -150,4 +150,8 @@ var config = {
     name: '강의실 예약 카테고리',
     data_type: 'number',
   },
+  'rsv_status' : {
+    name: '예약 상태',
+    data_type: 'number',
+  },
 }

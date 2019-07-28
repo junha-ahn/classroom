@@ -131,9 +131,10 @@
       </li>
     </ul>
   </nav>
-  <div class="lookup_button" v-if="is_user && !is_adminpage">
-    <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
-    <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
+  <div class="lookup_button">
+    <button v-if="is_adminpage" type="button" class="btn btn-primary"  @click="gotoWrite">생성</button>
+    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
+    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
   </div>
 </div>
 <% include ../component/datepicker %>

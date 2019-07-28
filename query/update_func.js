@@ -253,6 +253,7 @@ let self = {
           .set('representative_name', representative_name)
           .set('representative_phone', representative_phone)
           .set('description', description)
+          .set('date_last_updated', squel.str('NOW()'))
           .where('room_rsv_id = ?', room_rsv_id)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));

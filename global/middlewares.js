@@ -199,6 +199,21 @@ let self = {
       next();
     }
   },
+  checkRequireInsertRoomRsvAdmin: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'title',
+      'date',
+      'room_id_list',
+      'time_list',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
   checkRequireUpdateRoomRsv: (req, res, next) => {
     let flag = checkRequire(req.body, [
       'room_rsv_category_id',

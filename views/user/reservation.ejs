@@ -82,6 +82,7 @@
             time_array: [],
           },
           formData:{
+            department_id:null,
             room_id:null,
             date:null,
             time_id_list:[],
@@ -395,16 +396,17 @@
               }
             },
             function(data, status) {
-              __this.setRepresentative(data.result.name, data.result.phone)
+              __this.setRepresentative(data.result)
             },
             function(message, status, data) {
               alert(message);
             })
           }
         },
-        setRepresentative: function(name, phone) {
-          this.formData.representative_name = name;
-          this.formData.representative_phone = phone;
+        setRepresentative: function(person) {
+          this.formData.department_id = person.department_id;
+          this.formData.representative_name = person.name;
+          this.formData.representative_phone = person.phone;
         },
         // LAST
         detailSubmit: function(e) {

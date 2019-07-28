@@ -31,6 +31,7 @@ const {
   checkRequirtUpdateUser,
   checkRequirtUpdateUserType,
   checkRequireUpdateRoomRsv,
+  checkRequireInsertRoomRsvAdmin,
 } = require('../global/middlewares');
 
 
@@ -46,13 +47,13 @@ router.put('/user/:user_id', isLoggedIn, checkReqInfo, checkRequirtUpdateUser, d
     student_number,
   } = req.body;
 
-   if (req.user.user_type == info.USER_TYPE && req.user.user_id != user_id) {
+  if (req.user.user_type == info.USER_TYPE && req.user.user_id != user_id) {
     res.status(403).json({
       message: '권한이 없습니다'
     })
   } else {
     let {
-      results 
+      results
     } = await select_func.vUser(conn, {
       user_id,
       campus_id: req.user.campus_id,
@@ -96,7 +97,7 @@ router.put('/user/user_type/:user_id', isAdmin, checkRequirtUpdateUserType, db_f
   } = req.body;
 
   let {
-    results 
+    results
   } = await select_func.vUser(conn, {
     user_id,
     campus_id: req.user.campus_id,
@@ -721,6 +722,25 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
     }
   }
 }));
+router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvAdmin, db_func.inDBStream(async (req, res, next, conn) => {
+  const {
+    room_id_list,
+    building_id,
+    title,
+    date,
+    time_list,
+    department_id,
+    study_group_id,
+    student_count,
+    non_student_count,
+    representative_name,
+    representative_phone,
+    description,
+  } = req.body;
+
+  
+}));
+
 router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
   let {
@@ -799,7 +819,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
       let update_result = await update_func.room_rsv(conn, {
         isTransaction,
         room_rsv_id,
-  
+
         start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
         end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
 
@@ -813,7 +833,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
         representative_phone,
         description,
       });
-  
+
       await delete_func.room_rsv_time(conn, {
         isTransaction,
         room_rsv_id,
@@ -995,7 +1015,7 @@ router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (re
     res.status(401).json({
       message: '본인의 학습관 예약을 삭제해주세요'
     })
-  }  else {
+  } else {
     let delete_result = await delete_func.room_rsv(conn, {
       room_rsv_id,
     })
@@ -1029,6 +1049,7 @@ router.delete('/notification', isLoggedIn, db_func.inDBStream(async (req, res, n
     message: '성공했습니다'
   })
 }));
+
 function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {
