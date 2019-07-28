@@ -170,6 +170,7 @@ let self = {
       try {
         let {
           isTransaction,
+          building_id,
           rsv_status,
           room_rsv_category_id,
           title,
@@ -186,6 +187,7 @@ let self = {
         } = object;
         let queryString = squel.insert()
           .into('room_rsv')
+          .set('building_id', building_id)
           .set('rsv_status', rsv_status)
           .set('room_rsv_category_id', room_rsv_category_id)
           .set('title', title)

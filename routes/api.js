@@ -30,6 +30,7 @@ const {
   checkRequireUpdateRoomRsvStatus,
   checkRequirtUpdateUser,
   checkRequirtUpdateUserType,
+  checkRequireUpdateRoomRsv,
 } = require('../global/middlewares');
 
 
@@ -598,6 +599,7 @@ router.get('/room_rsv_time/:room_rsv_id', db_func.inDBStream(async (req, res, ne
 router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {
   const {
     room_id,
+    building_id,
     title,
     date,
     time_id_array,
@@ -681,6 +683,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
             await db_func.beginTransaction(conn);
             let insert_result = await insert_func.room_rsv(conn, {
               isTransaction: true,
+              building_id,
               rsv_status: (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS,
               room_rsv_category_id: 1,
               title,
@@ -714,6 +717,33 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
       }
     }
   }
+}));
+router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {
+  const room_rsv_id = req.params.room_rsv_id;
+  let {
+    room_rsv_category_id,
+    department_id,
+    study_group_id,
+    title,
+    student_count,
+    non_student_count,
+    representative_name,
+    representative_phone,
+    description,
+
+    room_rsv_time_list,
+    room_to_use_list,
+  } = req.body;
+
+  let {
+    results,
+  } = await select_func.room_rsv(conn, {
+    room_rsv_id,
+    building_id: req.user.building_id,
+  })
+  res.status(401).json({
+    message: '일시 조치',
+  })
 }));
 router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
@@ -783,6 +813,7 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
     results
   } = await select_func.room_rsv(conn, {
     room_rsv_id,
+    building_id: req.user.building_id,
   });
   if (!results[0]) {
     res.status(401).json({
@@ -853,7 +884,7 @@ router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (re
   } = await select_func.room_rsv(conn, {
     room_rsv_id,
   });
-  // 관리자일때, 건물 체크!
+
   if (!results[0]) {
     res.status(401).json({
       message: '다시 선택해주세요'
@@ -866,29 +897,17 @@ router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (re
     res.status(401).json({
       message: '요청상태가 아닌 예약은 삭제 불가능합니다'
     })
-  } else {
-    let my_building = true;
-    if (req.user.user_type == info.ADMIN_TYPE) {
-      let {
-        results,
-      } = await select_func.vRoomToUse(conn, {
-        room_rsv_id,
-      })
-      my_building = results[0] && results[0].building_id == req.user.building_id 
-        ? true : false;
-    }
-    if (!my_building) {
-      res.status(403).json({
-        message: '본인의 학습관 예약을 선택해주세요'
-      })
-    } else {
-      let delete_result = await delete_func.room_rsv(conn, {
-        room_rsv_id,
-      })
-      foo.setRes(res, delete_result, {
-        message: '예약 요청을 삭제했습니다.'
-      })
-    }
+  } else if (req.user.user_type == info.ADMIN_TYPE && results[0].building_id != req.user.building_id) {
+    res.status(401).json({
+      message: '본인의 학습관 예약을 삭제해주세요'
+    })
+  }  else {
+    let delete_result = await delete_func.room_rsv(conn, {
+      room_rsv_id,
+    })
+    foo.setRes(res, delete_result, {
+      message: '예약 요청을 삭제했습니다.'
+    })
   }
 }));
 

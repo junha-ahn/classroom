@@ -1,8 +1,8 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
       <div class="admin_right">
-        <reservation-input 
-        v-bind:reservation="reservation" 
+        <room_rsv-input 
+        v-bind:room_rsv="room_rsv" 
         :is_admin="is_admin"
         :is_adminpage="true"
         mod="GET"
@@ -11,7 +11,7 @@
         :department_results="department_results"
         :building_id="building_id"
         >
-        </reservation-input>
+        </room_rsv-input>
       </div>
     </main>
 
@@ -23,7 +23,7 @@
   <% include ../component/reservation_input %>
   <script>
     var global = makeGlobal();
-    var reservation = <%-JSON.stringify(reservation) %>;
+    var room_rsv = <%-JSON.stringify(room_rsv) %>;
     var rsv_status_results = <%-JSON.stringify(rsv_status_results) %>;
     var room_rsv_category_results = <%-JSON.stringify(room_rsv_category_results) %>;
     var department_results = <%-JSON.stringify(department_results) %>;
@@ -36,7 +36,7 @@
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           building_id: <%- building_id %>,
-          reservation: reservation,
+          room_rsv: room_rsv,
           rsv_status_results: rsv_status_results,
           room_rsv_category_results: room_rsv_category_results,
           department_results: department_results,

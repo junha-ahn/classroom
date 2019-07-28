@@ -4,36 +4,36 @@
     <label class="col-sm-2 control-label">상태</label>
     <div v-if="mod!='POST'" class="col-sm-10">
       <p class="form-control-static">
-        <label :class="classRsvStatus(reservation.rsv_status)" style="margin-right: 5%;">{{ reservation.rsv_status_name }}</label>
+        <label :class="classRsvStatus(room_rsv.rsv_status)" style="margin-right: 2%;">{{ room_rsv.rsv_status_name }}</label>
         <button 
           type="button" 
           class="btn btn-info"
           v-if="is_adminpage && mod=='GET'"
-          @click="chageRsvStatus($event, reservation, global.REQ_RSV_STATUS)">요청</button> 
+          @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
         <button 
           type="button" 
           class="btn btn-success"
           v-if="is_adminpage && mod=='GET'"
-          @click="chageRsvStatus($event, reservation, global.SUBMIT_RSV_STATUS)">승인</button> 
+          @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
         <button 
           type="button" 
           class="btn btn-danger"
           v-if="is_adminpage && mod=='GET'"
-          @click="chageRsvStatus($event, reservation, global.CANCEL_RSV_STATUS)">취소</button> 
+          @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
       </p>
     </div>
-    <select v-else class="form-control" v-model="reservation.rsv_status">
+    <select v-else class="form-control" v-model="room_rsv.rsv_status">
       <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
-        :selected="reservation.rsv_status == status.rsv_status" :key="i">
+        :selected="room_rsv.rsv_status == status.rsv_status" :key="i">
         {{ status.name }}
       </option>
     </select>
 
     <label class="col-sm-2 control-label">카테고리</label>
     <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ reservation.room_rsv_category_name }}</p>
+      <p class="form-control-static">{{ room_rsv.room_rsv_category_name }}</p>
     </div>
-    <select v-else class="form-control" v-model="reservation.room_rsv_category_id">
+    <select v-else class="form-control" v-model="room_rsv.room_rsv_category_id">
       <option v-for="(room_rsv_category, i) in room_rsv_category_results" v-bind:value="room_rsv_category.room_rsv_category_id" :key="i">
         {{ room_rsv_category.name }}
       </option>
@@ -42,13 +42,13 @@
 
     <label class="col-sm-2 control-label">제목</label>
     <div>
-      <input type="text" class="form-control" v-model="reservation.title" :disabled="mod == 'GET'">
+      <input type="text" class="form-control" v-model="room_rsv.title" :disabled="mod == 'GET'">
     </div>
     
     <div class="form-group" v-if="mod!='POST'">
       <label class="col-sm-2 control-label">날짜</label>
       <div class="col-sm-10">
-        <p class="form-control-static">{{reservation.rsv_date}}</p>
+        <p class="form-control-static">{{room_rsv.rsv_date}}</p>
       </div>
     </div>
     <div class="form-group">
@@ -106,9 +106,9 @@
     
     <label class="col-sm-2 control-label">학과</label>
     <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ reservation.department_name }}</p>
+      <p class="form-control-static">{{ room_rsv.department_name }}</p>
     </div>
-    <select v-else class="form-control" v-model="reservation.department_id" @change="chageDepartment">
+    <select v-else class="form-control" v-model="room_rsv.department_id" @change="chageDepartment">
       <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
         {{ department.name }}
       </option>
@@ -116,9 +116,9 @@
     
     <label class="col-sm-2 control-label">스터디</label>
     <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ reservation.study_group_name }}</p>
+      <p class="form-control-static">{{ room_rsv.study_group_name }}</p>
     </div>
-    <select v-else class="form-control" v-model="reservation.study_group_id">
+    <select v-else class="form-control" v-model="room_rsv.study_group_id">
       <option v-for="(study_group, i) in study_group_results" v-bind:value="study_group.study_group_id" :key="i">
         {{ study_group.name }}
       </option>
@@ -126,32 +126,32 @@
 
     <label class="col-sm-2 control-label">대표명</label>
     <div>
-      <input type="text" class="form-control" v-model="reservation.representative_name" :disabled="mod == 'GET'">
+      <input type="text" class="form-control" v-model="room_rsv.representative_name" :disabled="mod == 'GET'">
     </div>
     <label class="col-sm-2 control-label">대표번호</label>
     <div>
-      <input type="text" class="form-control" v-model="reservation.representative_phone" :disabled="mod == 'GET'">
+      <input type="text" class="form-control" v-model="room_rsv.representative_phone" :disabled="mod == 'GET'">
     </div>
     
     <label class="col-sm-2 control-label">학생수</label>
     <div>
-      <input type="text" class="form-control" v-model="reservation.student_count" :disabled="mod == 'GET'">
+      <input type="text" class="form-control" v-model="room_rsv.student_count" :disabled="mod == 'GET'">
     </div>
     <label class="col-sm-2 control-label">비학생수</label>
     <div>
-      <input type="text" class="form-control" v-model="reservation.non_student_count" :disabled="mod == 'GET'">
+      <input type="text" class="form-control" v-model="room_rsv.non_student_count" :disabled="mod == 'GET'">
     </div>
 
     <div class="form-group" v-if="mod!='POST'">
       <label class="col-sm-2 control-label">최근 수정일</label>
       <div>
-        <p class="form-control-static">{{reservation.datetime_last_updated}}</p>
+        <p class="form-control-static">{{room_rsv.datetime_last_updated}}</p>
       </div>
     </div>
     <div class="form-group" v-if="mod!='POST'">
       <label class="col-sm-2 control-label">생성일</label>
       <div>
-        <p class="form-control-static">{{reservation.datetime_created}}</p>
+        <p class="form-control-static">{{room_rsv.datetime_created}}</p>
       </div>
     </div>
     <div class="btn-group" role="group">
@@ -162,15 +162,15 @@
       <button 
       type="button" 
       class="btn btn-danger" 
-      v-if="mod=='GET' && (is_adminpage || (reservation.is_mine == 1 && reservation.rsv_status == global.REQ_RSV_STATUS))"
-      @click="deleteRsv($event, reservation)">
+      v-if="mod=='GET' && (is_adminpage || (room_rsv.is_mine == 1 && room_rsv.rsv_status == global.REQ_RSV_STATUS))"
+      @click="deleteRsv($event, room_rsv)">
       삭제
       </button>
       <button 
       type="button" 
       class="btn btn-warning" 
-      v-if="!is_adminpage && reservation.is_mine == 1 && reservation.rsv_status == global.SUBMIT_RSV_STATUS"
-      @click="cancelRsv($event, reservation)">
+      v-if="!is_adminpage && room_rsv.is_mine == 1 && room_rsv.rsv_status == global.SUBMIT_RSV_STATUS"
+      @click="cancelRsv($event, room_rsv)">
       예약 취소
       </button>
 
@@ -180,15 +180,16 @@
 </script>
 
 <% include ../component/timepicker %>
+<script type="text/javascript" src="/javascripts/validate.js"></script>
 <script>
-  Vue.component('reservation-input', {
+  Vue.component('room_rsv-input', {
     template: '#input-template',
     props: {
       is_adminpage: Boolean,
       mod: String,
       is_admin: Number,
       building_id: Number,
-      reservation: Object,
+      room_rsv: Object,
       rsv_status_results: Array,
       room_rsv_category_results: Array,
       department_results: Array,
@@ -213,7 +214,6 @@
           var _start = new Date('1970/1/1 ' + room_rsv_time_list[i].start_time);
           var _end = new Date('1970/1/1 ' + room_rsv_time_list[i].end_time);
           if (_start < end && _end > start) {
-            console.log(_start < end, _end > start)
             flag = true;
           }
         }
@@ -222,10 +222,11 @@
           alert('겹치는 시간을 확인해주세요');
         } else {
           this.room_rsv_time_list.push({
-            room_rsv_id: reservation.room_rsv_id,
+            room_rsv_id: room_rsv.room_rsv_id,
             start_time: start_time,
             end_time: end_time,
-          })
+          });
+          global.sortByKey(this.room_rsv_time_list, 'start_time');
         }
       },
 
@@ -244,13 +245,14 @@
           }
         }
         this.room_to_use_list.push(room);
+        global.sortByKey(this.room_to_use_list, 'room_number');
       },
 
-      deleteRsv: function(e, reservation) {
+      deleteRsv: function(e, room_rsv) {
         if (e) {
           e.preventDefault();
         }
-        var url = '/api/room_rsv/' + reservation.room_rsv_id;
+        var url = '/api/room_rsv/' + room_rsv.room_rsv_id;
         var __this;
         global.ajax({
           url: url,
@@ -259,10 +261,10 @@
         function (data, status) {
           alert(data.message);
           if (__this.is_adminpage) {
-            location.href='/admin/reservation/lookup?page=1'
+            location.href='/admin/room_rsv/lookup?page=1'
           } else {
             if (__this.building_id) {
-              location.href='/reservation/lookup/' + __this.building_id +'?page=1&is_mine=1'
+              location.href='/room_rsv/lookup/' + __this.building_id +'?page=1&is_mine=1'
             } else {
               location.href='/'
             }
@@ -272,11 +274,11 @@
           alert(message);
         });
       },
-      cancelRsv: function(e, reservation) {
+      cancelRsv: function(e, room_rsv) {
         if (e) {
           e.preventDefault();
         }
-        var url = '/api/room_rsv/cancel/' + reservation.room_rsv_id;
+        var url = '/api/room_rsv/cancel/' + room_rsv.room_rsv_id;
         global.ajax({
           url: url,
           type: 'PUT',
@@ -288,11 +290,11 @@
           alert(message);
         });
       },
-      chageRsvStatus: function(e, reservation, rsv_status) {
+      chageRsvStatus: function(e, room_rsv, rsv_status) {
         if (e) {
           e.preventDefault();
         }
-        var url = '/api/room_rsv/status/' + reservation.room_rsv_id;
+        var url = '/api/room_rsv/status/' + room_rsv.room_rsv_id;
         global.ajax({
           url: url,
           type: 'PUT',
@@ -319,26 +321,63 @@
       },
       onSubmitForm: function(e) {
         e.preventDefault();
-        var __this = this;
+        
         var mod = this.mod;
-        let need_location_href = mod == 'POST' ? true : false;
-        var url = '/api/study_group' + (mod == 'PUT' ? '/'+ this.reservation.study_group_id : '');
-        global.ajax({
-          url: url,
-          type: mod,
-          data: this.group,
-        },
-        function (data, status) {
-          alert(data.message);
-          if (need_location_href) {
-            location.href='/study_group/lookup?page=1'
-          } else {
-            __this.setMod('GET');
-          }
-        },
-        function (message, status, data) {
-          alert(message);
+        
+        var _validate = validate(this.user, {
+          'room_rsv_category_id': {
+            is_require: true,
+          },
+          'title': {
+            is_require: true,
+          },
         });
+        if (_validate) {
+          alert(_validate);
+        } else {
+          let need_location_href = mod == 'POST' ? true : false;
+          var url = '/api/room_rsv' + (mod == 'PUT' ? '/'+ this.room_rsv.room_rsv_id : '');
+          
+          var body  =  {
+            room_rsv_category_id: this.room_rsv.room_rsv_category_id,
+            department_id: this.room_rsv.department_id,
+            study_group_id: this.room_rsv.study_group_id,
+            title: this.room_rsv.title,
+            student_count: this.room_rsv.student_count,
+            non_student_count: this.room_rsv.non_student_count,
+            representative_name: this.room_rsv.representative_name,
+            representative_phone: this.room_rsv.representative_phone,
+            description: this.room_rsv.description,
+          };
+  
+          var room_rsv_time_list = [];
+          var room_to_use_list = [];
+          for (var i = 0; i < this.room_to_use_list.length; i++) {
+            room_to_use_list.push({
+              room_id: this.room_to_use_list[i].room_id,
+            })
+          }
+          body.room_rsv_time_list = this.room_rsv_time_list;
+          body.room_to_use_list = room_to_use_list;
+  
+          var __this = this;
+          global.ajax({
+            url: url,
+            type: mod,
+            data: body,
+          },
+          function (data, status) {
+            alert(data.message);
+            if (need_location_href) {
+              location.href= (is_adminpage ? '/admin' : '') + '/room_rsv/lookup?page=1'
+            } else {
+              __this.setMod('GET');
+            }
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        }
       },
       classRsvStatus: function(rsv_status) {
         return {
@@ -349,14 +388,14 @@
         }
       },
       chageDepartment: function() {
-        this.reservation.study_group_id = null;
+        this.room_rsv.study_group_id = null;
         this.getStudyGroupResults();
       },
       getStudyGroupResults: function() {
         var __this = this;
         global.ajax({
           url: '/api/study_group' + global.serializeQuery({
-            department_id: this.reservation.department_id,
+            department_id: this.room_rsv.department_id,
           }),
           type: 'GET',
         },
@@ -385,7 +424,7 @@
       getRoomRsvTime: function() {
         var __this = this;
         global.ajax({
-          url: '/api/room_rsv_time/' + reservation.room_rsv_id,
+          url: '/api/room_rsv_time/' + room_rsv.room_rsv_id,
           type: 'GET',
         },
         function (data, status) {
@@ -398,7 +437,7 @@
       getRoomToUse: function() {
         var __this = this;
         global.ajax({
-          url: '/api/room_to_use/' + reservation.room_rsv_id,
+          url: '/api/room_to_use/' + room_rsv.room_rsv_id,
           type: 'GET',
         },
         function (data, status) {

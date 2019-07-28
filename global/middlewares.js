@@ -183,12 +183,26 @@ let self = {
   },
   checkRequireInsertRoomRsv: (req, res, next) => {
     let flag = checkRequire(req.body, [
+      'title',
       'room_id',
       'date',
       'time_id_array',
       'department_id',
       'representative_name',
       'representative_phone',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
+  checkRequireUpdateRoomRsv: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'room_rsv_category_id',
+      'title',
     ]);
     if (flag) {
       res.status(401).json({
@@ -294,6 +308,7 @@ let self = {
             list_count,
           } = await select_func.vRoomRsvList(connection, {
             room_id,
+            building_id,
             department_id,
             study_group_id,
             rsv_status,
@@ -339,6 +354,7 @@ let self = {
       } = await select_func.vRoomRsvSingle(conn, {
         room_rsv_id,
         user_id: req.user ? req.user.user_id : null,
+        building_id: is_adminpage ? req.user.building_id : null,
       });
     
       if (!results[0]) {
@@ -352,7 +368,7 @@ let self = {
         , foo.getResJson(req.user, {
           is_adminpage,
           params: req.params,
-          reservation: results[0],
+          room_rsv: results[0],
           rsv_status_results: info.rsv_status_results,
           room_rsv_category_results: info.room_rsv_category_results,
           building_id: is_adminpage ? req.user.building_id : req.params.building_id,

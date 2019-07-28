@@ -1,9 +1,7 @@
 function makeGlobal() {
   var USER_TYPE = 10;
   var ADMIN_TYPE = 30;
-  var message = {
-    NEED_LOGIN : '로그인이 필요합니다'
-  }
+
   var resetTime = function(date) {
     date.setHours(0);
     date.setMinutes(0);
@@ -137,6 +135,9 @@ function makeGlobal() {
       }
     });
   };
+  function sortByKey(array, key) {
+    array.sort((a,b) => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0)); 
+  }
   return {
     USER_TYPE: USER_TYPE,
     ADMIN_TYPE: ADMIN_TYPE,
@@ -154,7 +155,7 @@ function makeGlobal() {
     getHeaderMenuName: getHeaderMenuName,
     getAdminMenuName: getAdminMenuName,
     getMypageMenuName: getMypageMenuName,
-    message : message,
+    sortByKey : sortByKey,
   }
 }
 

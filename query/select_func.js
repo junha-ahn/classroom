@@ -1205,6 +1205,7 @@ let self = {
         let {
           isTransaction,
           room_rsv_id,
+          building_id,
           page,
           page_length,
           sort_key,
@@ -1220,6 +1221,10 @@ let self = {
               .when('? IS NULL', room_rsv_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -1228,6 +1233,10 @@ let self = {
               .when('? IS NULL', room_rsv_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .order(`room_rsv.${sort_key}`, sort_type)
             .limit(page_length)
             .offset((parseInt(page) - 1) * page_length)
@@ -1239,6 +1248,10 @@ let self = {
               .when('? IS NULL', room_rsv_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .order(`room_rsv.${sort_key}`, sort_type)
             .toParam();
         }
@@ -1298,6 +1311,7 @@ let self = {
         let {
           isTransaction,
           room_id,
+          building_id,
           room_id_list,
           rsv_status,
           start_datetime,
@@ -1318,6 +1332,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', is_search_array)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
@@ -1340,6 +1358,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', is_search_array)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
@@ -1365,6 +1387,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', is_search_array)
               .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
@@ -1401,6 +1427,7 @@ let self = {
         let {
           isTransaction,
           room_rsv_id,
+          building_id,
           user_id,
           page,
           page_length,
@@ -1417,6 +1444,10 @@ let self = {
               .when('? IS NULL', room_rsv_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .field('COUNT(*)', 'list_count')
             .toParam();
           queryString = squel.select()
@@ -1426,6 +1457,10 @@ let self = {
               .when('? IS NULL', room_rsv_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()
@@ -1445,6 +1480,10 @@ let self = {
               .when('? IS NULL', room_rsv_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.room_rsv_id = ?', room_rsv_id)))
+              .where(squel.case()
+                .when('? IS NULL', building_id)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()
@@ -1473,6 +1512,7 @@ let self = {
         let countString
         let {
           isTransaction,
+          building_id,
           room_id,
           department_id,
           study_group_id,
@@ -1493,6 +1533,10 @@ let self = {
           countString = squel.select()
             .from('room_rsv')
             .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1524,6 +1568,10 @@ let self = {
             .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
             .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
             .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
+            .where(squel.case()
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
@@ -1568,6 +1616,10 @@ let self = {
             .from('room_rsv')
             .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
             .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
+            .where(squel.case()
+              .when('? IS NULL', building_id)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.building_id = ?', building_id)))
             .where(squel.case()
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1618,6 +1670,7 @@ let self = {
       }
     });
   },
+
   vRoomToUse: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
