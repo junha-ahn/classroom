@@ -38,6 +38,18 @@ function makeGlobal() {
       + ' ' + ((hours<10)? ("0"+hours): hours) + ':' + ((minutes<10)? ("0"+minutes): minutes);
     return string;
   }
+  var parseTime = function(date_string, is_seoul_tz) {
+    var date = new Date(date_string);
+    if (is_seoul_tz) {
+      date.setHours(date.getHours() - 9);
+    }
+
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+
+    var string = ((hours<10)? ("0"+hours): hours) + ':' + ((minutes<10)? ("0"+minutes): minutes);
+    return string;
+  }
   var header_name_by_class = {
     'main' : 'main',
     'study_group_lookup' : 'study_group',
@@ -136,6 +148,7 @@ function makeGlobal() {
     resetTime : resetTime,
     parseDate : parseDate,
     parseDateTime : parseDateTime,
+    parseTime : parseTime,
     serializeQuery: serializeQuery,
     ajax: ajax,
     getHeaderMenuName: getHeaderMenuName,
