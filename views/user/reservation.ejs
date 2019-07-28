@@ -84,7 +84,7 @@
           formData:{
             room_id:null,
             date:null,
-            time_id_array:[],
+            time_id_list:[],
             representative_name: '',
             representative_phone: '',
           },
@@ -145,7 +145,7 @@
         nextMenuStep: function() {
           var now_menu_step = this.menu_step;
           if (now_menu_step == 'time') {
-            if (this.formData.time_id_array == null || !this.formData.time_id_array[0]) {
+            if (this.formData.time_id_list == null || !this.formData.time_id_list[0]) {
               alert('시간을 선택해주세요');
               return;
             }
@@ -281,7 +281,7 @@
           }
           this.info.start_time = null;
           this.info.end_time = null;
-          this.formData.time_id_array = [];
+          this.formData.time_id_list = [];
         },
         clickTimeBlock: function(_time) {
           var time_array = this.info.time_array;
@@ -296,7 +296,7 @@
                 time_array[i].is_seleted = 1;
                 this.info.tiem_block_type = 'fisrt';
                 this.info.start_time = time_array[i];
-                this.formData.time_id_array.push(time_array[i].available_time_id);
+                this.formData.time_id_list.push(time_array[i].available_time_id);
                 break;
               }
             } else  {
@@ -312,7 +312,7 @@
                   break;
                 }
                 if (time_array[i].is_seleted != 1) {
-                  this.formData.time_id_array.push(time_array[i].available_time_id);
+                  this.formData.time_id_list.push(time_array[i].available_time_id);
                 }
                 time_array[i].is_seleted = 1;
                 if (is_find) {
@@ -484,7 +484,7 @@
           this.info.start_time = null;
           this.info.end_time = null;
 
-          this.formData.time_id_array = [];
+          this.formData.time_id_list = [];
         },
         resetDetail: function() {
           this.formData.department_id = null;

@@ -1110,7 +1110,7 @@ let self = {
           isTransaction,
           building_id,
           room_id,
-          time_id_array,
+          time_id_list,
           day_of_the_week,
           page,
           page_length,
@@ -1120,7 +1120,7 @@ let self = {
 
         sort_key = (sort_key) ? sort_key : 'available_time_id';
         sort_type = (sort_type == false) ? false : true;
-        let is_search_array = time_id_array && time_id_array[0] ? true : null;
+        let is_search_array = time_id_list && time_id_list[0] ? true : null;
         if (page && page_length) {
           countString = squel.select()
             .from('available_time')
@@ -1135,7 +1135,7 @@ let self = {
             .where(squel.case()
               .when('? IS NULL', is_search_array)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
-              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_array : [0])))
+              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_list : [0])))
             .where(squel.case()
               .when('? IS NULL', day_of_the_week)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
@@ -1155,7 +1155,7 @@ let self = {
             .where(squel.case()
               .when('? IS NULL', is_search_array)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
-              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_array : [0])))
+              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_list : [0])))
             .where(squel.case()
               .when('? IS NULL', day_of_the_week)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
@@ -1178,7 +1178,7 @@ let self = {
             .where(squel.case()
               .when('? IS NULL', is_search_array)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))
-              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_array : [0])))
+              .else(squel.expr().and('available_time.available_time_id IN ?', (is_search_array) ? time_id_list : [0])))
             .where(squel.case()
               .when('? IS NULL', day_of_the_week)
               .then(squel.expr().and('available_time.available_time_id IS NOT NULL'))

@@ -2,6 +2,10 @@ let info = require('./info');
 let constant = require('./constant');
 
 let self = {
+  sortByKey(array, key) {
+    array.sort((a,b) => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0)); 
+    return array;
+  },
   makeRandomPassword: () => {
     //Math.floor(Math.random() * (max - min + 1)) + min;
     let email_password = '';

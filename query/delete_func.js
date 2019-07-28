@@ -95,6 +95,42 @@ let self = {
       }
     });
   },
+  room_rsv_time: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          room_rsv_id,
+        } = object;
+
+        let queryString = squel.delete()
+          .from('room_rsv_time')
+          .where('room_rsv_id = ?', room_rsv_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  room_to_use: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          room_rsv_id,
+        } = object;
+
+        let queryString = squel.delete()
+          .from('room_to_use')
+          .where('room_rsv_id = ?', room_rsv_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }
 
 module.exports = self;

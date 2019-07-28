@@ -214,16 +214,18 @@ let self = {
         let {
           isTransaction,
           room_rsv_id,
-          time_array,
+          time_list,
         } = object;
         let fieldsRows = [];
-        for (let i in time_array) {
+        for (let i in time_list) {
           fieldsRows.push({
             room_rsv_id,
-            start_time : time_array[i].start_time,
-            end_time : time_array[i].end_time,
+            start_time : time_list[i].start_time,
+            end_time : time_list[i].end_time,
           })
         }
+        console.log(time_list)
+        console.log(fieldsRows)
         let queryString = squel.insert()
           .into('room_rsv_time')
           .setFieldsRows(fieldsRows)
@@ -240,13 +242,13 @@ let self = {
         let {
           isTransaction,
           room_rsv_id,
-          room_id_array,
+          room_id_list,
         } = object;
         let fieldsRows = [];
-        for (let i in room_id_array) {
+        for (let i in room_id_list) {
           fieldsRows.push({
             room_rsv_id,
-            room_id : room_id_array[i],
+            room_id : room_id_list[i],
           })
         }
         let queryString = squel.insert()

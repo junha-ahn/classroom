@@ -221,6 +221,46 @@ let self = {
       }
     });
   },
+  room_rsv: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          room_rsv_id,
+          start_datetime,
+          end_datetime,
+          room_rsv_category_id,
+          department_id,
+          study_group_id,
+          title,
+          student_count,
+          non_student_count,
+          representative_name,
+          representative_phone,
+          description,
+        } = object;
+
+        let queryString = squel.update()
+          .table('room_rsv')
+          .set('start_datetime', start_datetime)
+          .set('end_datetime', end_datetime)
+          .set('room_rsv_category_id', room_rsv_category_id)
+          .set('department_id', department_id)
+          .set('study_group_id', study_group_id)
+          .set('title', title)
+          .set('student_count', student_count)
+          .set('non_student_count', non_student_count)
+          .set('representative_name', representative_name)
+          .set('representative_phone', representative_phone)
+          .set('description', description)
+          .where('room_rsv_id = ?', room_rsv_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }
 
 module.exports = self;

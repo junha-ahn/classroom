@@ -186,7 +186,7 @@ let self = {
       'title',
       'room_id',
       'date',
-      'time_id_array',
+      'time_id_list',
       'department_id',
       'representative_name',
       'representative_phone',
@@ -203,6 +203,8 @@ let self = {
     let flag = checkRequire(req.body, [
       'room_rsv_category_id',
       'title',
+      'time_list',
+      'room_id_list',
     ]);
     if (flag) {
       res.status(401).json({

@@ -324,12 +324,33 @@
         
         var mod = this.mod;
         
-        var _validate = validate(this.user, {
+        var _validate = validate(this.room_rsv, {
           'room_rsv_category_id': {
             is_require: true,
           },
+          'department_id': {
+            is_require: mod == 'POST' ? true : false,
+          },
+          'study_group_id': {
+            is_require: false,
+          },
           'title': {
             is_require: true,
+          },
+          'student_count': {
+            is_require: false,
+          },
+          'non_student_count': {
+            is_require: false,
+          },
+          'representative_name': {
+            is_require: false,
+          },
+          'representative_phone': {
+            is_require: false,
+          },
+          'description': {
+            is_require: false,
           },
         });
         if (_validate) {
@@ -350,15 +371,13 @@
             description: this.room_rsv.description,
           };
   
-          var room_rsv_time_list = [];
-          var room_to_use_list = [];
+          var time_list = [];
+          var room_id_list = [];
           for (var i = 0; i < this.room_to_use_list.length; i++) {
-            room_to_use_list.push({
-              room_id: this.room_to_use_list[i].room_id,
-            })
+            room_id_list.push(this.room_to_use_list[i].room_id)
           }
-          body.room_rsv_time_list = this.room_rsv_time_list;
-          body.room_to_use_list = room_to_use_list;
+          body.time_list = this.room_rsv_time_list;
+          body.room_id_list = room_id_list;
   
           var __this = this;
           global.ajax({

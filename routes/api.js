@@ -292,14 +292,14 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
     building_id,
     sort_key: 'room_number',
   });
-  let room_id_array = [];
+  let room_id_list = [];
 
   for (let i in results) {
     results[i].is_active = 1;
-    room_id_array.push(results[i].room_id)
+    room_id_list.push(results[i].room_id)
   }
 
-  if (date && start_time && end_time && room_id_array[0]) {
+  if (date && start_time && end_time && room_id_list[0]) {
     date = foo.parseDate(date);
 
     let start_datetime = moment(`${date} ${foo.parseTimeString(start_time)}`);
@@ -307,7 +307,7 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
     let rsvQeuryString = squel.select()
       .from('room_to_use')
       .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
-      .where('room_to_use.room_id IN ?', room_id_array)
+      .where('room_to_use.room_id IN ?', room_id_list)
       .where('room_rsv.rsv_status = ?', info.SUBMIT_RSV_STATUS)
       .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime.format('YYYY-MM-DD HH:mm'), start_datetime.format('YYYY-MM-DD HH:mm'))
       .field('room_to_use.room_id')
@@ -315,7 +315,7 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
       .toParam();
     let holidayQueryString = squel.select()
       .from('holiday')
-      .where('room_id IN ?', room_id_array)
+      .where('room_id IN ?', room_id_list)
       .where('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)
       .toParam();
     let holiday_results = await db_func.sendQueryToDB(conn, holidayQueryString);
@@ -602,7 +602,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
     building_id,
     title,
     date,
-    time_id_array,
+    time_id_list,
     department_id,
     study_group_id,
     student_count,
@@ -660,12 +660,12 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
         let available_time_results = (await select_func.vRoomAvailableTime(conn, {
           building_id: results[0].building_id,
           room_id: results[0].room_id,
-          time_id_array,
+          time_id_list,
           day_of_the_week: _date.day(),
           sort_key: 'start_time',
           sort_type: true,
         })).results;
-        if (!available_time_results[0] || time_id_array.length != available_time_results.length) {
+        if (!available_time_results[0] || time_id_list.length != available_time_results.length) {
           res.status(401).json({
             message: '시간을 다시 선택해주세요'
           })
@@ -704,12 +704,12 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
             await insert_func.room_to_use(conn, {
               isTransaction: true,
               room_rsv_id: insert_result.insertId,
-              room_id_array: [room_id],
+              room_id_list: [room_id],
             })
             await insert_func.room_rsv_time(conn, {
               isTransaction: true,
               room_rsv_id: insert_result.insertId,
-              time_array: available_time_results,
+              time_list: available_time_results,
             })
             await db_func.commit(conn);
             foo.setRes(res, insert_result, {
@@ -734,8 +734,8 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
     representative_phone,
     description,
 
-    room_rsv_time_list,
-    room_to_use_list,
+    time_list,
+    room_id_list,
   } = req.body;
 
   let {
@@ -743,10 +743,101 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
   } = await select_func.room_rsv(conn, {
     room_rsv_id,
     building_id: req.user.building_id,
-  })
-  res.status(401).json({
-    message: '일시 조치',
-  })
+  });
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택하세요',
+    })
+  } else {
+    let date = foo.parseDate(results[0].start_datetime, true);
+
+    let start_datetime, end_datetime;
+
+    let _room_id_list = [];
+    let _time_list = [];
+
+    for (let i in time_list) {
+      let _start_datetime = moment(`${date} ${time_list[i].start_time}`);
+      let _end_datetime = moment(`${date} ${time_list[i].end_time}`);
+      if (_start_datetime.isValid() && _end_datetime.isValid()) {
+        if (start_datetime == null || start_datetime > _start_datetime) {
+          start_datetime = _start_datetime;
+        }
+        if (end_datetime == null || end_datetime < _end_datetime) {
+          end_datetime = _end_datetime;
+        }
+        _time_list.push({
+          start_time: time_list[i].start_time,
+          end_time: time_list[i].end_time,
+        });
+      }
+    }
+
+    for (let i in room_id_list) {
+      let room_id = parseInt(room_id_list[i]);
+      if (!isNaN(room_id)) {
+        _room_id_list.push(room_id);
+      }
+    }
+    if (!_time_list[0] || !_room_id_list[0]) {
+      res.status(401).json({
+        message: '예약 시간과 강의실을 하나 이상 입력하세요'
+      })
+    } else if (_time_list.length != time_list.length) {
+      res.status(401).json({
+        message: '예약 시간을 다시 입력하세요'
+      })
+    } else if (_room_id_list.length != room_id_list.length) {
+      res.status(401).json({
+        message: '강의실을 다시 입력하세요'
+      })
+    } else {
+
+      await db_func.beginTransaction(conn);
+      let isTransaction = true;
+
+      let update_result = await update_func.room_rsv(conn, {
+        isTransaction,
+        room_rsv_id,
+  
+        start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+        end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+
+        room_rsv_category_id,
+        department_id,
+        study_group_id,
+        title,
+        student_count,
+        non_student_count,
+        representative_name,
+        representative_phone,
+        description,
+      });
+  
+      await delete_func.room_rsv_time(conn, {
+        isTransaction,
+        room_rsv_id,
+      })
+      await delete_func.room_to_use(conn, {
+        isTransaction,
+        room_rsv_id,
+      })
+      await insert_func.room_rsv_time(conn, {
+        isTransaction,
+        room_rsv_id,
+        time_list: _time_list,
+      })
+      await insert_func.room_to_use(conn, {
+        isTransaction,
+        room_rsv_id,
+        room_id_list: _room_id_list,
+      })
+      await db_func.commit(conn);
+      foo.setRes(res, update_result, {
+        message: '성공했습니다'
+      })
+    }
+  }
 }));
 router.put('/room_rsv/cancel/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   const room_rsv_id = req.params.room_rsv_id;
@@ -914,8 +1005,6 @@ router.delete('/room_rsv/:room_rsv_id', isLoggedIn, db_func.inDBStream(async (re
   }
 }));
 
-
-
 router.put('/notification/read', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   let {
     notification_id
@@ -940,7 +1029,6 @@ router.delete('/notification', isLoggedIn, db_func.inDBStream(async (req, res, n
     message: '성공했습니다'
   })
 }));
-
 function roomSortByFloor(room_results) {
   let rooms = {};
   for (let i in room_results) {

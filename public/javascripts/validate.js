@@ -146,4 +146,8 @@ var config = {
     name: '예약 취소 권한',
     data_type: 'number',
   },
+  'room_rsv_category_id' : {
+    name: '강의실 예약 카테고리',
+    data_type: 'number',
+  },
 }
