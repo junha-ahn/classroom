@@ -50,8 +50,6 @@ thead {
 
 .main {
   main {
-
-
     h1 {
       font-size: 4vmin;
       text-align: center;
@@ -157,8 +155,6 @@ thead {
   //main끝
 }
 
-//reservation_intro끝
-
 .login {
   main {
     .mom_div {
@@ -192,24 +188,15 @@ thead {
   }
 }
 
-@each $menu in 
-admin_menu,
-mypage_menu,
-{
-  .#{$menu} {
-    float: left;
-    width:15%;
-    height:100%;
-    padding-top:1%;
-    padding-bottom:500px;
-    border-right: 1px solid #ccc;
-    ul{
-      height:auto;
-  
-      li{
-  
-      }
-    }
+.left_menu {
+  float: left;
+  width:15%;
+  height:100%;
+  padding-top:1%;
+  padding-bottom:500px;
+  border-right: 1px solid #ccc;
+  ul{
+    height:auto;
   }
 }
 
@@ -222,90 +209,82 @@ mypage_menu,
   width: 85%;
 }
 
-@each $lookup_page in 
-study_group,
-reservation,
-admin_reservation,
-admin_user,
-admin_room,
-{
-  .#{$lookup_page}_lookup {
-    main {
+
+.lookup_body {
+  margin:0 auto;
+  .btn {
+    font-size: 1.8vmin !important;
+  }
+
+  select {
+    font-size: 1.8vmin !important;
+  }
+
+  nav {
+    text-align: center;
+
+  }
+
+  .lookup_button {
+    float: right;
+  }
+
+  .lookup_select {
+    text-align: center;
+    margin-bottom: 1%;
+
+    .pack_div {
       margin:0 auto;
-      .btn {
-        font-size: 1.8vmin !important;
-      }
+      width:80%;
+      padding:2% 0;
+      margin-left:7%;
 
-      select {
-        font-size: 1.8vmin !important;
-      }
-
-      nav {
-        text-align: center;
-
-      }
-
-      .lookup_button {
-        float: right;
-      }
-
-      .lookup_select {
-        text-align: center;
-        margin-bottom: 1%;
-
-        .pack_div {
-          margin:0 auto;
-          width:80%;
-          padding:2% 0;
-          margin-left:7%;
-
-          .select_div {
-            float: left;
-            width:50%;
-            .div_l{
-              float:left;
-              width:40%;
-            }
-            .div_r{
-              float:right;
-              width:60%;
-              .form-control{
-                width:100% !important;
-              }
-            }
-          }
+      .select_div {
+        float: left;
+        width:50%;
+        .div_l{
+          float:left;
+          width:40%;
         }
-
-        label {
-          margin-bottom: 0 !important;
-          margin: 2% 1% !important;
-          font-size: 3vmin;
-        }
-
-        .form-control {
-          display: inline-block !important;
-          width: 30% !important;
-
-          option {}
-        }
-      }
-
-      .table {
-        text-align: center;
-
-        thead {
-          tr {
-            background: #337ab7;
-
-            th {
-              text-align: center;
-              color: #fff;
-            }
+        .div_r{
+          float:right;
+          width:60%;
+          .form-control{
+            width:100% !important;
           }
         }
       }
     }
+
+    label {
+      margin-bottom: 0 !important;
+      margin: 2% 1% !important;
+      font-size: 3vmin;
+    }
+
+    .form-control {
+      display: inline-block !important;
+      width: 30% !important;
+
+      option {}
+    }
   }
+
+  .table {
+    text-align: center;
+
+    thead {
+      tr {
+        background: #337ab7;
+
+        th {
+          text-align: center;
+          color: #fff;
+        }
+      }
+    }
+  }
+
 }
 
 
@@ -456,7 +435,7 @@ admin_room,
           border-bottom: 1px solid #ccc;
           margin-bottom: 2%;
 
-          .select_div {
+          .div_left {
             float: left;
             width: 30%;
             display: inline-block;
@@ -468,7 +447,7 @@ admin_room,
             }
           }
 
-          .select_div {
+          .div_right {
             display: inline-block;
             float: right;
             width: 70%;
@@ -495,37 +474,6 @@ admin_room,
         }
       }
     }
-  }
-}
-
-
-
-
-//마이페이지
-
-.mypage_dashboard{
-  .sidebar{
-    padding:50px 0 500px 0;
-  }
-  .table {
-    width:80% !important;
-  }
-}
-.mypage_myaccount{
-  .sidebar, .mp_dashboard, .mp_myaccount{
-    float: left;
-  
-  }
-  .sidebar{
-    padding:50px 0 500px 0;
-  
-  }
-}
-
-
-.admin_schedule {
-  .custom_datepicker {
-    float: left;
   }
 }
 
@@ -579,12 +527,4 @@ admin_room,
     float: right !important;
     margin-right: -15px;
   }
-}
-
-
-
-
-.custom_datepicker {
-  float:left;
-  width:85%;
 }

@@ -1,4 +1,5 @@
 <% include ../sub/header %>
+    <div class="lookup_body">
       <div class="lookup_select"> 
         <div class="pack_div clearfix">
         
@@ -70,6 +71,7 @@
           </li>
         </ul>
       </nav>
+
       <div class="lookup_button" v-if="is_user">
         <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 그룹</button>
         <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 그룹</button>
@@ -78,6 +80,7 @@
         <button type="button" class="btn btn-default" v-else @click="clickIsJoin(1)">가입한 그룹</button>
         <button type="button" class="btn btn-primary" @click="gotoWrite">생성</button>
       </div>
+    </div>
       
     </main>
     
