@@ -198,7 +198,7 @@ thead {
 study_group,
 reservation,
 admin_reservation,
-admin_uesr,
+admin_user,
 admin_room,
 {
   .#{$lookup_page}_lookup {
@@ -231,24 +231,8 @@ admin_room,
           padding:2% 0;
           margin-left:7%;
 
-          .div_left {
+          .select_div {
             float: left;
-            width:50%;
-            .div_l{
-              float:left;
-              width:40%;
-            }
-            .div_r{
-              float:right;
-              width:60%;
-              .form-control{
-                width:100% !important;
-              }
-            }
-          }
-
-          .div_right {
-            float:right;
             width:50%;
             .div_l{
               float:left;
@@ -429,7 +413,7 @@ admin_room,
 
       .step_detail {
         .form-inline {
-          .div_right {
+          .select_div {
             width: 100%;
 
             input {
@@ -444,7 +428,7 @@ admin_room,
           border-bottom: 1px solid #ccc;
           margin-bottom: 2%;
 
-          .div_left {
+          .select_div {
             float: left;
             width: 30%;
             display: inline-block;
@@ -456,7 +440,7 @@ admin_room,
             }
           }
 
-          .div_right {
+          .select_div {
             display: inline-block;
             float: right;
             width: 70%;

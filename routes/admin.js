@@ -58,6 +58,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
       query: {
         ...req.query,
         department_id: department_id || 0,
+        is_admin: is_admin || 0,
       },
       params: req.params,
       department_results: info.department_results

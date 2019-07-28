@@ -1,42 +1,82 @@
 <div class="admin_reservation_Contents">
   <div class="lookup_select">
-    <label>날짜</label>
-    <custom-datepicker :inline="false" :selected_date="query.date" :default_date="new Date()"
-      :building_id="params.building_id" :on-selected="onSelected" maximum-view="day"></custom-datepicker>
-  
-    <label>예약 상태</label>
-    <select class="form-control" v-model="query.rsv_status" @change="onChange()">
-      <option v-bind:value="0" :selected="query.rsv_status==0">전체</option>
-      <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
-        :selected="query.rsv_status == status.rsv_status" :key="i">
-        {{ status.name }}
-      </option>
-    </select>
-    
-    <label>강의실</label>
-    <select class="form-control" v-model="query.room_id" @change="onChange()">
-      <option v-bind:value="0" :selected="query.room_id===0">전체</option>
-      <option v-for="(room, j) in room_results" v-bind:value="room.room_id" :key="j">
-        {{ room.name }}
-      </option>
-    </select>
 
-    <label>학과</label>
-    <select class="form-control" v-model="query.department_id" @change="onChange()">
-      <option v-bind:value="0" :selected="query.department_id===0">전체</option>
-      <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
-        :selected="query.department_id == department.department_id" :key="i">
-        {{ department.name }}
-      </option>
-    </select>
-  
-    <label>스터디</label>
-    <select class="form-control" v-model="query.study_group_id" @change="onChange()" :disabled="query.department_id===0">
-      <option v-bind:value="0" :selected="query.study_group_id===0">전체</option>
-      <option v-for="(study_group, j) in study_group_results" v-bind:value="study_group.study_group_id" :key="j">
-        {{ study_group.name }}
-      </option>
-    </select>
+    <div class="pack_div clearfix">
+      <div class="select_div">
+        <div class="div_l">
+          <label>날짜</label>
+        </div>
+        <div class="div_r">
+          <custom-datepicker 
+            :inline="false" 
+            :selected_date="query.date" 
+            :default_date="new Date()"
+            :building_id="params.building_id" 
+            :on-selected="onSelected" 
+            maximum-view="day">
+          </custom-datepicker>
+        </div>
+      </div>
+
+      <div class="select_div">
+        <div class="div_l">
+          <label>예약상태</label>
+        </div>
+        <div class="div_r">
+          <select class="form-control" v-model="query.rsv_status" @change="onChange()">
+            <option v-bind:value="0" :selected="query.rsv_status==0">전체</option>
+            <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
+              :selected="query.rsv_status == status.rsv_status" :key="i">
+              {{ status.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select_div">
+        <div class="div_l">
+          <label>강의실</label>
+        </div>
+        <div class="div_r">
+          <select class="form-control" v-model="query.room_id" @change="onChange()">
+            <option v-bind:value="0" :selected="query.room_id===0">전체</option>
+            <option v-for="(room, j) in room_results" v-bind:value="room.room_id" :key="j">
+              {{ room.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select_div">
+        <div class="div_l">
+          <label>학과</label>
+        </div>
+        <div class="div_r">
+          <select class="form-control" v-model="query.department_id" @change="onChange()">
+            <option v-bind:value="0" :selected="query.department_id===0">전체</option>
+            <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
+              :selected="query.department_id == department.department_id" :key="i">
+              {{ department.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select_div">
+        <div class="div_l">
+          <label>스터디</label>
+        </div>
+        <div class="div_r">
+          <select class="form-control" v-model="query.study_group_id" @change="onChange()" :disabled="query.department_id===0">
+            <option v-bind:value="0" :selected="query.study_group_id===0">전체</option>
+            <option v-for="(study_group, j) in study_group_results" v-bind:value="study_group.study_group_id" :key="j">
+              {{ study_group.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+    </div>
   </div>
   
   <table class="table table-hover">
