@@ -3,11 +3,22 @@
 
 <script type="text/x-template" id="timepicker-template">
   <div>
-    <select class="form-control">
-      <option v-for="(time, i) in time_list" v-bind:value="time" :key="i">
+    <select v-model="start_index" @change="changeStartTime" class="form-control" style="width:100px; display:initial;">
+      <option v-if="i != time_list.length - 1" v-for="(time, i) in time_list" v-bind:value="i" :key="i">
         {{ time }}
       </option>
     </select>
+    ~
+    <select v-model="end_index" :disabled="start_index==null" class="form-control" style="width:100px; display:initial;">
+      <option v-for="(time, i) in end_time_list" v-bind:value="i" :key="i">
+        {{ time }}
+      </option>
+    </select>
+    <button 
+      type="button" 
+      class="btn btn-primary"
+      @click="clickAddTime" 
+    >+</button>
   </div>
 </script>
 
@@ -15,21 +26,55 @@
   Vue.component('custom-timepicker', {
     template: '#timepicker-template',
     props: {
+      addTime: Function,
     },
-    data: function(){ 
+    data: function() { 
       return {
         duration:30,
+        time_list: [],
+        end_time_list: [],
+        start_index:null,
+        end_index:null,
       }
     },
     methods: {
+      clickAddTime: function() {
+        if (this.start_index != null && this.end_index != null) {
+          var start_time = this.time_list[this.start_index];
+          var end_time = this.end_time_list[this.end_index];
+          this.addTime(start_time, end_time);
+        } else {
+          alert('시작/종료 시간을 선택해주세요')
+        }
+      },
+      changeStartTime: function() {
+        var start_index = this.start_index;
+        var time_list = this.time_list;
+        var end_time_list = [];
 
-    },
-    computed: {
-      time_list: function() {
-        var time_list = ['0:00'];
+        for (var i = parseInt(start_index) + 1; i < time_list.length; i++) {
+          end_time_list.push(time_list[i]);
+        }
+        
+        this.end_time_list = end_time_list;
+      },
+      makeTimeList: function(_hour, _minute) {
+        var time_list = [];
         var duration = this.duration;
+
         var hour = 0;
         var minute = 0;
+        if (_hour && _minute) {
+          hour = parseInt(_hour);
+          minute = parseInt(_minute);
+          minute += duration;
+          if (minute >= 60) {
+            hour ++;
+            minute %= 60;
+          }
+        }
+        var timeString = (hour < 10 ? '0' + hour : hour) + ':' + (minute < 10 ? '0' + minute : minute);
+        time_list.push(timeString);
         
         while (hour < 24) {
           minute += duration;
@@ -37,10 +82,15 @@
             hour ++;
             minute %= 60;
           }
-          time.push(hour + ':' + minute);
+          var timeString = (hour < 10 ? '0' + hour : hour) + ':' + (minute < 10 ? '0' + minute : minute);
+          time_list.push(timeString);
         }
         return time_list;
-      }
+      },
+    },
+    created: function() {
+      var time_list = this.makeTimeList()
+      this.time_list = time_list;
     }
   })
 </script> 

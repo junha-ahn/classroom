@@ -1,11 +1,13 @@
 <% include ../sub/header %>
-      <template>
+      <% include ../sub/admin_menu %>
+
+      <div class="adimn_left">
         <room-input 
         v-bind:room="formData" 
         :room_category_results="room_category_results" 
         :permission_results="permission_results" 
         mod="POST"></room-input>
-      </template>
+      </div>
     <footer>
       <% include ../sub/footer %>
     </footer>

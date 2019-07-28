@@ -38,7 +38,7 @@
     </div>
     <div class="form-group">
       <label class="col-sm-2 control-label">타임블럭</label>
-      <div v-for="(room_rsv_time, i) in room_rsv_time_results" >
+      <div v-for="(room_rsv_time, i) in room_rsv_time_list" >
         <button
         class="btn btn-default"
         v-bind:value="room_rsv_time.room_rsv_time_id" 
@@ -51,15 +51,16 @@
         @click="deleteRsvTime(i)"
         v-if="mod!='GET'"
         >-</button>
-        <template v-if="mod!='GET'">
-        <div class="container">
-    
-        </template>
       </div>
+      <template v-if="mod!='GET'">
+        <custom-timepicker
+          :add-time="addTime"
+        ></custom-timepicker>
+      </template>
     </div>
     <div class="form-group">
       <label class="col-sm-2 control-label">교실목록</label>
-      <div v-for="(room, i) in room_to_use_results" >
+      <div v-for="(room, i) in room_to_use_list" >
         <button
         class="btn btn-default"
         v-bind:value="room.room_id" 
@@ -182,6 +183,7 @@
   </form>
 </script>
 
+<% include ../component/timepicker %>
 <script>
   Vue.component('reservation-input', {
     template: '#input-template',
@@ -197,8 +199,8 @@
     },
     data: function () {
       return {
-        room_rsv_time_results: [],
-        room_to_use_results: [],
+        room_rsv_time_list: [],
+        room_to_use_list: [],
 
         study_group_results: [],
         room_results: [],
@@ -206,22 +208,39 @@
       }
     }, 
     methods: {
+      addTime: function(start_time, end_time) {
+        var room_rsv_time_list = this.room_rsv_time_list;
+        var flag = false;
+        for (var i = 0; i < room_rsv_time_list.length; i++) {
+          
+        }
+        // 정렬..
+        if (flag) {
+          alert('겹치는 시간을 확인해주세요');
+        } else {
+          this.room_rsv_time_list.push({
+            room_rsv_id: reservation.room_rsv_id,
+            start_time: start_time,
+            end_time: end_time,
+          })
+        }
+      },
 
       deleteRsvTime: function(index) {
-        this.room_rsv_time_results.splice(index, 1)
+        this.room_rsv_time_list.splice(index, 1)
       },
       deleteRoom: function(index) {
-        this.room_to_use_results.splice(index, 1)
+        this.room_to_use_list.splice(index, 1)
       },
       addRoom: function() {
         var room = this.room_results[this.room_index];
-        for (var i = 0; i < this.room_to_use_results.length; i++) {
-          if (this.room_to_use_results[i].room_id == room.room_id) {
+        for (var i = 0; i < this.room_to_use_list.length; i++) {
+          if (this.room_to_use_list[i].room_id == room.room_id) {
             alert('이미 추가된 강의실입니다');
             return;
           }
         }
-        this.room_to_use_results.push(room);
+        this.room_to_use_list.push(room);
       },
 
       deleteRsv: function(e, reservation) {
@@ -367,7 +386,7 @@
           type: 'GET',
         },
         function (data, status) {
-          __this.room_rsv_time_results = data.results;
+          __this.room_rsv_time_list = data.results;
         },
         function (message, status, data) {
           alert(message);
@@ -380,7 +399,7 @@
           type: 'GET',
         },
         function (data, status) {
-          __this.room_to_use_results = data.results;
+          __this.room_to_use_list = data.results;
         },
         function (message, status, data) {
           alert(message);

@@ -1,16 +1,18 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
       
-      <custom-datepicker
-        :inline="true"
-        :default_date="new Date()"
-        :building_id="building.building_id"
-        :on-selected="onSelected"
-      ></custom-datepicker>
+      <div class="adimn_left">
+        <custom-datepicker
+          :inline="true"
+          :default_date="new Date()"
+          :building_id="building.building_id"
+          :on-selected="onSelected"
+        ></custom-datepicker>
 
-      <button class="btn btn-default" type="button">{{building.name}}(학습관 전체)</button>
-      <br/>
-      <button v-for="(room, i) in results" :key="i" class="btn btn-default" type="button">{{room.name}}</button>
+        <button class="btn btn-default" type="button">{{building.name}}(학습관 전체)</button>
+        <br/>
+        <button v-for="(room, i) in results" :key="i" class="btn btn-default" type="button">{{room.name}}</button>
+      </div>
     </main>
 
     <footer>

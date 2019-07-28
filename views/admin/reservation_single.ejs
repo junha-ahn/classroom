@@ -1,5 +1,6 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
+      <div class="adimn_left">
         <reservation-input 
         v-bind:reservation="reservation" 
         :is_admin="is_admin"
@@ -11,6 +12,7 @@
         :building_id="building_id"
         >
         </reservation-input>
+      </div>
     </main>
 
     <footer>

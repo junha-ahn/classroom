@@ -1,15 +1,19 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
-      <user-input 
-      mod="GET"
-      :user="user" 
-      :is_admin="is_admin"
-      :is_adminpage="true"
-      :department_results="department_results"
-      :campus_results="campus_results"
-      :buildings="buildings"
-      >
-      </user-input>
+      
+      <div class="adimn_left">
+        <user-input 
+        mod="GET"
+        :user="user" 
+        :is_admin="is_admin"
+        :is_adminpage="true"
+        :department_results="department_results"
+        :campus_results="campus_results"
+        :buildings="buildings"
+        >
+        </user-input>
+      
+      </div>
     </main>
 
     <footer>

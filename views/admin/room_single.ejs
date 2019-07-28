@@ -1,15 +1,17 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
   
-      <room-input 
-      mod="GET"
-      :room="room" 
-      :is_admin="is_admin"
-      :is_adminpage="true"
-      :room_category_results="room_category_results"
-      :permission_results="permission_results"
-      >
-      </room-input>
+      <div class="adimn_left">
+        <room-input 
+        mod="GET"
+        :room="room" 
+        :is_admin="is_admin"
+        :is_adminpage="true"
+        :room_category_results="room_category_results"
+        :permission_results="permission_results"
+        >
+        </room-input>
+      </div>
     </main>
 
     <footer>
