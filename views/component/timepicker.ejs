@@ -4,11 +4,9 @@
 <script type="text/x-template" id="timepicker-template">
   <div>
     <select class="form-control">
-      <option>0시0분</option>
-      <option>0시30분</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
+      <option v-for="(time, i) in time_list" v-bind:value="time" :key="i">
+        {{ time }}
+      </option>
     </select>
   </div>
 </script>
@@ -28,8 +26,19 @@
     },
     computed: {
       time_list: function() {
-        var time_list = [];
+        var time_list = ['0:00'];
         var duration = this.duration;
+        var hour = 0;
+        var minute = 0;
+        
+        while (hour < 24) {
+          minute += duration;
+          if (minute >= 60) {
+            hour ++;
+            minute %= 60;
+          }
+          time.push(hour + ':' + minute);
+        }
         return time_list;
       }
     }
