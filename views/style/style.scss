@@ -514,6 +514,12 @@ room {
   }
 }
 
+.admin_schedule {
+  .custom_datepicker {
+    float: left;
+  }
+}
+
 /********** 상단nav틀어지는부분 **********/
 
 @media (max-width: 768px) {
