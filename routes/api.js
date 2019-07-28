@@ -738,7 +738,10 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
     description,
   } = req.body;
 
-  
+  console.log(req.body);
+  res.status(401).json({
+    message: '테스트중'
+  })
 }));
 
 router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {

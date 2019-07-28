@@ -201,6 +201,7 @@ let self = {
   },
   checkRequireInsertRoomRsvAdmin: (req, res, next) => {
     let flag = checkRequire(req.body, [
+      'rsv_status',
       'title',
       'date',
       'room_id_list',

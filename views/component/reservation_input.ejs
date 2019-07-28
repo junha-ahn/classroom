@@ -49,6 +49,15 @@
       <label class="col-sm-2 control-label">날짜</label>
       <div class="col-sm-10">
         <p class="form-control-static" v-if="mod!='POST'">{{room_rsv.rsv_date}}</p>
+        <template v-if="mod=='POST'">
+          <custom-datepicker
+            :inline="false"
+            :selected_date="room_rsv.date" 
+            :default_date="new Date()"
+            :building_id="building_id"
+            :on-selected="onSelected"
+          ></custom-datepicker>
+        </template>
       </div>
     </div>
     <div class="form-group">
@@ -179,6 +188,7 @@
   </form>
 </script>
 
+<% include ../component/datepicker %>
 <% include ../component/timepicker %>
 <script type="text/javascript" src="/javascripts/validate.js"></script>
 <script>
@@ -205,6 +215,12 @@
       }
     }, 
     methods: {
+      onSelected: function(selected_date) {
+        if (selected_date != null) {
+          selected_date = global.parseDate(selected_date)
+        }
+        this.room_rsv.date = selected_date;
+      },
       addTime: function(start_time, end_time) {
         var room_rsv_time_list = this.room_rsv_time_list;
         var flag = false;
@@ -327,6 +343,9 @@
           'rsv_status': {
             is_require: this.mod == 'POST' ? true : fals,
           },
+          'date': {
+            is_require: this.mod == 'POST' ? true : fals,
+          },
           'room_rsv_category_id': {
             is_require: true,
           },
@@ -359,7 +378,7 @@
           alert(_validate);
         } else {
           let need_location_href = mod == 'POST' ? true : false;
-          var url = '/api' + (mod=='POST' ? '/admin/' : '') + '/room_rsv' 
+          var url = '/api' + (mod=='POST' ? '/admin' : '') + '/room_rsv' 
             + (mod == 'PUT' ? '/'+ this.room_rsv.room_rsv_id : '');
           var body  =  {
             room_rsv_category_id: this.room_rsv.room_rsv_category_id,
@@ -371,6 +390,8 @@
             representative_name: this.room_rsv.representative_name,
             representative_phone: this.room_rsv.representative_phone,
             description: this.room_rsv.description,
+            rsv_status: this.room_rsv.rsv_status,
+            date: this.room_rsv.date,
           };
   
           var time_list = [];
@@ -481,6 +502,19 @@
         this.getRoomRsvTime()
         this.getRoomToUse()
       } else {
+        this.room_rsv =  {
+          rsv_status: null,
+          room_rsv_category_id: null,
+          department_id: null,
+          study_group_id: null,
+          title: null,
+          student_count: null,
+          non_student_count: null,
+          representative_name: null,
+          representative_phone: null,
+          description: null,
+          date: null,
+        };
         this.getRoomResults();
       }
     }

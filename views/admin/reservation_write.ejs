@@ -3,7 +3,6 @@
 
       <div class="admin_right">
         <room_rsv-input 
-        :room_rsv="formData" 
         :is_admin="is_admin"
         :is_adminpage="true"
         :rsv_status_results="rsv_status_results"
@@ -34,19 +33,6 @@
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           building_id: <%- building_id %>,
-          formData : {
-            rsv_status: null,
-            room_rsv_category_id: null,
-            department_id: null,
-            study_group_id: null,
-            title: null,
-            student_count: null,
-            non_student_count: null,
-            representative_name: null,
-            representative_phone: null,
-            description: null,
-            date: null,
-          },
           rsv_status_results: rsv_status_results,
           room_rsv_category_results: room_rsv_category_results,
           department_results: department_results,
