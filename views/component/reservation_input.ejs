@@ -1,6 +1,5 @@
 <script type="text/x-template" id="input-template">
   <form class="form-lnline" v-on:submit="onSubmitForm">
-
     <label class="col-sm-2 control-label">상태</label>
     <div v-if="mod!='POST'" class="col-sm-10">
       <p class="form-control-static">
@@ -413,7 +412,11 @@
             if (need_location_href) {
               location.href= (is_adminpage ? '/admin' : '') + '/room_rsv/lookup?page=1'
             } else {
-              __this.setMod('GET');
+              if (mod=='POST') {
+                location.href = (is_adminpage ? '/admin' : '') + '/room_rsv/single/' + data.insertId;
+              } else {
+                __this.setMod('GET');
+              }
             }
           },
           function (message, status, data) {

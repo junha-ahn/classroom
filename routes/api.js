@@ -724,8 +724,9 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
 }));
 router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvAdmin, db_func.inDBStream(async (req, res, next, conn) => {
   const {
+    rsv_status,
+    room_rsv_category_id,
     room_id_list,
-    building_id,
     title,
     date,
     time_list,
@@ -738,10 +739,82 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
     description,
   } = req.body;
 
-  console.log(req.body);
-  res.status(401).json({
-    message: '테스트중'
-  })
+  let _date = foo.resetTime(moment(date));
+  if (date != undefined && !_date.isValid()) {
+    res.status(401).json({
+      message: '날짜를 다시 입력해주세요'
+    })
+  } else {
+    let {
+      results
+    } = await select_func.room(conn, {
+      room_id_list,
+      building_id: req.user.building_id,
+    });
+
+    if (results.length != room_id_list.length) {
+      res.status(401).json({
+        message: '강의실을 다시 선택해주세요'
+      })
+    } else {
+      let already_reserved = false;
+
+      let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'start_time'))[0].start_time)}`);
+      let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'end_time'))[time_list.length - 1].end_time)}`);
+
+      if (rsv_status == info.SUBMIT_RSV_STATUS) {
+        let rsv_results = (await select_func.vRoomRsv(conn, {
+          room_id_list,
+          building_id: req.user.building_id,
+          rsv_status: info.SUBMIT_RSV_STATUS,
+          start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+          end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+        })).results;
+        if (rsv_results[0]) {
+          already_reserved = true;
+        }
+      }
+
+      if (already_reserved) {
+        res.status(401).json({
+          message: '이미 해당 시간에 예약이 있습니다.'
+        })
+      } else {
+        await db_func.beginTransaction(conn);
+        let insert_result = await insert_func.room_rsv(conn, {
+          isTransaction: true,
+          building_id: req.user.building_id,
+          rsv_status,
+          room_rsv_category_id,
+          title,
+          department_id,
+          study_group_id,
+          user_id: req.user ? req.user.user_id : null,
+          start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+          end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+          student_count,
+          non_student_count,
+          representative_name,
+          representative_phone,
+          description,
+        });
+        await insert_func.room_to_use(conn, {
+          isTransaction: true,
+          room_rsv_id: insert_result.insertId,
+          room_id_list,
+        })
+        await insert_func.room_rsv_time(conn, {
+          isTransaction: true,
+          room_rsv_id: insert_result.insertId,
+          time_list,
+        })
+        await db_func.commit(conn);
+        foo.setRes(res, insert_result, {
+          message: '성공했습니다'
+        })
+      }
+    }
+  }
 }));
 
 router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func.inDBStream(async (req, res, next, conn) => {
@@ -1052,7 +1125,6 @@ router.delete('/notification', isLoggedIn, db_func.inDBStream(async (req, res, n
     message: '성공했습니다'
   })
 }));
-
 
 router.get('/notification', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   let {
