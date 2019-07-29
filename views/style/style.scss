@@ -12,7 +12,7 @@
 }
 
 div {
-  //border: 1px solid red;
+  //  border: 1px solid red;
 }
 
 body {
@@ -193,14 +193,14 @@ thead {
 
 .left_menu {
   float: left;
-  width:10%;
-  height:100%;
+  width: 10%;
+  height: 100%;
   border-right: 1px solid #ccc;
 
-  ul{
-    height:auto;
+  ul {
+    height: auto;
   }
-  
+
   .active {
     background-color: #e7e7e7;
   }
@@ -210,6 +210,7 @@ thead {
   float: right;
   width: 90%;
 }
+
 .admin_right {
   float: right;
   width: 90%;
@@ -217,7 +218,7 @@ thead {
 
 
 .lookup_body {
-  margin:0 auto;
+  margin: 0 auto;
   width: 80%;
 
   .btn {
@@ -235,6 +236,7 @@ thead {
   .lookup_button {
     float: right;
   }
+
   .lookup_select {
     text-align: center;
     margin-bottom: 1%;
@@ -245,28 +247,31 @@ thead {
         border-radius: 4px;
         width: 90%;
       }
-      .vdp-datepicker__clear-button {
 
-      }
+      .vdp-datepicker__clear-button {}
     }
+
     .pack_div {
-      margin:0 auto;
-      width:80%;
-      padding:2% 0;
-      margin-left:7%;
+      margin: 0 auto;
+      width: 80%;
+      padding: 2% 0;
+      margin-left: 7%;
 
       .select_div {
         float: left;
-        width:50%;
-        .div_l{
-          float:left;
-          width:40%;
+        width: 50%;
+
+        .div_l {
+          float: left;
+          width: 40%;
         }
-        .div_r{
-          float:right;
-          width:60%;
-          .form-control{
-            width:100% !important;
+
+        .div_r {
+          float: right;
+          width: 60%;
+
+          .form-control {
+            width: 100% !important;
           }
         }
       }
@@ -281,6 +286,7 @@ thead {
     select {
       height: 100% !important;
     }
+
     .form-control {
       display: inline-block !important;
       width: 30% !important;
@@ -411,14 +417,16 @@ thead {
 
         }
       }
-      
+
       .step_date {
         .vdp-datepicker {
           width: 80%;
+
           .vdp-datepicker__calendar {
             width: 100%;
           }
         }
+
         text-align: center;
       }
 
@@ -499,10 +507,10 @@ thead {
 @media (max-width: 768px) {
   .admin_menu {
     float: left;
-    width:15%;
-    height:100%;
-    padding-top:1%;
-    padding-bottom:500px;
+    width: 15%;
+    height: 100%;
+    padding-top: 1%;
+    padding-bottom: 500px;
   }
 
 
@@ -524,6 +532,104 @@ thead {
     float: right !important;
     margin-right: -15px;
   }
+}
+
+
+
+.reservation_single {
+  main {
+    margin: 0 auto;
+    width: 80%;
+
+    .form-lnline {
+      h1 {
+        margin: 0 auto;
+        padding: 2%;
+        text-align: center;
+        font-weight: bold;
+        font-size: 4vmin;
+      }
+
+    }
+
+    .form-control-static {
+      padding: 0 0 0 0;
+    }
+
+    .float_none {
+      float: none;
+    }
+
+    .margin-left {
+      margin-left: 16.666%;
+      button{
+        width:48% !important;
+      }
+    }
+
+    .x1_style {
+      width: 100% !important;
+      padding: 1.2% 0 !important;
+      background: #f9f9f9 !important;
+
+      .col-sm-10 {
+        float: none;
+      }
+
+      .form-control {
+        width: 40%;
+      }
+
+      button {
+        width: 40%;
+        font-size: 1em;
+      }
+
+      .form-group {
+        margin-bottom: 0;
+      }
+
+      label {
+        margin-bottom: 0;
+      }
+    }
+
+    .x2_style {
+      width: 100% !important;
+      padding: 1.2% 0 !important;
+      background: #fff !important;
+      border: 1px solid #eee;
+
+      .col-sm-10 {
+        float: none;
+      }
+
+      .form-control {
+        width: 40%;
+      }
+
+      button {
+        width: 40%;
+        font-size: 1em;
+      }
+
+      .form-group {
+        margin-bottom: 0;
+      }
+
+      label {
+        margin-bottom: 0;
+      }
+    }
+
+    .btn-bottom {
+      float: right;
+      margin-top: 2%;
+    }
+
+  }
+
+  //main
 }
 
 @media (min-width:300px) {

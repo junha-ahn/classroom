@@ -1,5 +1,7 @@
 <script type="text/x-template" id="input-template">
+  
   <form class="form-lnline" v-on:submit="onSubmitForm">
+<<<<<<< HEAD
     <label class="col-sm-2 control-label">상태</label>
     <div v-if="mod!='POST'" class="col-sm-10">
       <p class="form-control-static">
@@ -20,7 +22,35 @@
           v-if="is_adminpage && mod=='GET'"
           @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
       </p>
+=======
+
+    <h1>예약조회 자세히보기</h1>
+
+    <div class="x1_style">
+        <label class="col-sm-2 control-label">상태</label>
+      <div v-if="mod!='POST'" class="col-sm-10">
+        <p class="form-control-static">
+          <label :class="classRsvStatus(room_rsv.rsv_status)" style="margin-right: 2%;">{{ room_rsv.rsv_status_name }}</label>
+          <button 
+            type="button" 
+            class="btn btn-info"
+            v-if="is_adminpage && mod=='GET'"
+            @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
+          <button 
+            type="button" 
+            class="btn btn-success"
+            v-if="is_adminpage && mod=='GET'"
+            @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
+          <button 
+            type="button" 
+            class="btn btn-danger"
+            v-if="is_adminpage && mod=='GET'"
+            @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
+        </p>
+      </div>
+>>>>>>> 예약조회 일부수정
     </div>
+
     <select v-else class="form-control" v-model="room_rsv.rsv_status">
       <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
         :selected="room_rsv.rsv_status == status.rsv_status" :key="i">
@@ -28,141 +58,173 @@
       </option>
     </select>
 
-    <label class="col-sm-2 control-label">카테고리</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room_rsv.room_rsv_category_name }}</p>
+    <div class="x2_style">
+      <label class="col-sm-2 control-label">카테고리</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room_rsv.room_rsv_category_name }}</p>
+      </div>
     </div>
+    
     <select v-else class="form-control" v-model="room_rsv.room_rsv_category_id">
       <option v-for="(room_rsv_category, i) in room_rsv_category_results" v-bind:value="room_rsv_category.room_rsv_category_id" :key="i">
         {{ room_rsv_category.name }}
       </option>
     </select>
     
-
-    <label class="col-sm-2 control-label">제목</label>
-    <div>
-      <input type="text" class="form-control" v-model="room_rsv.title" :disabled="mod == 'GET'">
+    <div class="x1_style">
+      <label class="col-sm-2 control-label">제목</label>
+      <div>
+        <input type="text" class="form-control" v-model="room_rsv.title" :disabled="mod == 'GET'">
+      </div>
     </div>
     
-    <div class="form-group">
-      <label class="col-sm-2 control-label">날짜</label>
-      <div class="col-sm-10">
-        <p class="form-control-static" v-if="mod!='POST'">{{room_rsv.rsv_date}}</p>
-        <template v-if="mod=='POST'">
-          <custom-datepicker
-            :inline="false"
-            :selected_date="room_rsv.date" 
-            :default_date="new Date()"
-            :building_id="building_id"
-            :on-selected="onSelected"
-          ></custom-datepicker>
+    <div class="x2_style">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">날짜</label>
+        <div class="col-sm-10">
+          <p class="form-control-static" v-if="mod!='POST'">{{room_rsv.rsv_date}}</p>
+          <template v-if="mod=='POST'">
+            <custom-datepicker
+              :inline="false"
+              :selected_date="room_rsv.date" 
+              :default_date="new Date()"
+              :building_id="building_id"
+              :on-selected="onSelected"
+            ></custom-datepicker>
+          </template>
+        </div>
+      </div>
+    </div>
+    
+    <div class="x1_style">
+      <div class="form-group">
+        <label class="col-sm-2 control-label float_none">타임블럭</label>
+        <div class="margin-left" v-for="(room_rsv_time, i) in room_rsv_time_list" >
+          <button
+          class="btn btn-default"
+          v-bind:value="room_rsv_time.room_rsv_time_id" 
+          :key="i"
+          disabled
+          >{{room_rsv_time.start_time}} ~ {{room_rsv_time.end_time}}</button>
+          <button 
+          type="button" 
+          class="btn btn-danger" 
+          @click="deleteRsvTime(i)"
+          v-if="mod!='GET'"
+          >-</button>
+        </div>
+        <template v-if="mod!='GET'">
+          <custom-timepicker
+            :add-time="addTime"
+          ></custom-timepicker>
         </template>
       </div>
     </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">타임블럭</label>
-      <div v-for="(room_rsv_time, i) in room_rsv_time_list" >
-        <button
-        class="btn btn-default"
-        v-bind:value="room_rsv_time.room_rsv_time_id" 
-        :key="i"
-        disabled
-        >{{room_rsv_time.start_time}} ~ {{room_rsv_time.end_time}}</button>
-        <button 
-        type="button" 
-        class="btn btn-danger" 
-        @click="deleteRsvTime(i)"
-        v-if="mod!='GET'"
-        >-</button>
-      </div>
-      <template v-if="mod!='GET'">
-        <custom-timepicker
-          :add-time="addTime"
-        ></custom-timepicker>
-      </template>
-    </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">강의실 목록</label>
-      <div v-for="(room, i) in room_to_use_list" >
-        <button
-        class="btn btn-default"
-        v-bind:value="room.room_id" 
-        :key="i"
-        disabled
-        >{{room.room_number}}({{room.name}})</button>
-        <button 
-        type="button" 
-        class="btn btn-danger" 
-        @click="deleteRoom(i)"
-        v-if="mod!='GET'"
-        >-</button>
-      </div>
-      <div v-if="mod!='GET'">
-        <select class="form-control" v-model="room_index">
-          <option v-for="(room, i) in room_results" v-bind:value="i" :key="i">
-            {{ room.name }}
-          </option>
-        </select>
-        <button 
+
+    <div class="x2_style">
+      <div class="form-group">
+        <label class="col-sm-2 control-label float_none">강의실 목록</label>
+        <div class="margin-left" v-for="(room, i) in room_to_use_list" >
+          <button
+          class="btn btn-default"
+          v-bind:value="room.room_id" 
+          :key="i"
+          disabled
+          >{{room.room_number}}({{room.name}})</button>
+          <button 
           type="button" 
-          class="btn btn-primary" 
-          @click="addRoom($event)"
+          class="btn btn-danger" 
+          @click="deleteRoom(i)"
           v-if="mod!='GET'"
-        >+</button>
+          >-</button>
+        </div>
+        <div v-if="mod!='GET'">
+          <select class="form-control" v-model="room_index">
+            <option v-for="(room, i) in room_results" v-bind:value="i" :key="i">
+              {{ room.name }}
+            </option>
+          </select>
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            @click="addRoom($event)"
+            v-if="mod!='GET'"
+          >+</button>
+        </div>
       </div>
     </div>
     
-    <label class="col-sm-2 control-label">학과</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room_rsv.department_name }}</p>
+    <div class="x1_style">
+      <label class="col-sm-2 control-label">학과</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room_rsv.department_name }}</p>
+      </div>
     </div>
+
     <select v-else class="form-control" v-model="room_rsv.department_id" @change="chageDepartment">
       <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
         {{ department.name }}
       </option>
     </select>
     
-    <label class="col-sm-2 control-label">스터디</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room_rsv.study_group_name }}</p>
+    <div class="x2_style">
+      <label class="col-sm-2 control-label">스터디</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room_rsv.study_group_name }}</p>
+      </div>
     </div>
+
     <select v-else class="form-control" v-model="room_rsv.study_group_id" :disabled="!room_rsv.department_id">
       <option v-for="(study_group, i) in study_group_results" v-bind:value="study_group.study_group_id" :key="i">
         {{ study_group.name }}
       </option>
     </select>
 
-    <label class="col-sm-2 control-label">대표명</label>
-    <div>
-      <input type="text" class="form-control" v-model="room_rsv.representative_name" :disabled="mod == 'GET'">
-    </div>
-    <label class="col-sm-2 control-label">대표번호</label>
-    <div>
-      <input type="text" class="form-control" v-model="room_rsv.representative_phone" :disabled="mod == 'GET'">
-    </div>
-    
-    <label class="col-sm-2 control-label">학생수</label>
-    <div>
-      <input type="text" class="form-control" v-model="room_rsv.student_count" :disabled="mod == 'GET'">
-    </div>
-    <label class="col-sm-2 control-label">비학생수</label>
-    <div>
-      <input type="text" class="form-control" v-model="room_rsv.non_student_count" :disabled="mod == 'GET'">
+    <div class="x1_style">
+      <label class="col-sm-2 control-label">대표명</label>
+      <div>
+        <input type="text" class="form-control" v-model="room_rsv.representative_name" :disabled="mod == 'GET'">
+      </div>
     </div>
 
-    <div class="form-group" v-if="mod!='POST'">
-      <label class="col-sm-2 control-label">최근 수정일</label>
+    <div class="x2_style">
+      <label class="col-sm-2 control-label">대표번호</label>
       <div>
-        <p class="form-control-static">{{room_rsv.datetime_last_updated}}</p>
+        <input type="text" class="form-control" v-model="room_rsv.representative_phone" :disabled="mod == 'GET'">
       </div>
     </div>
-    <div class="form-group" v-if="mod!='POST'">
-      <label class="col-sm-2 control-label">생성일</label>
+    
+    <div class="x1_style">
+      <label class="col-sm-2 control-label">학생수</label>
       <div>
-        <p class="form-control-static">{{room_rsv.datetime_created}}</p>
+        <input type="text" class="form-control" v-model="room_rsv.student_count" :disabled="mod == 'GET'">
       </div>
     </div>
-    <div class="btn-group" role="group">
+
+    <div class="x2_style">
+      <label class="col-sm-2 control-label">비학생수</label>
+      <div>
+        <input type="text" class="form-control" v-model="room_rsv.non_student_count" :disabled="mod == 'GET'">
+      </div>
+    </div>
+
+    <div class="x1_style">
+      <div class="form-group" v-if="mod!='POST'">
+        <label class="col-sm-2 control-label">최근 수정일</label>
+        <div>
+          <p class="form-control-static">{{room_rsv.datetime_last_updated}}</p>
+        </div>
+      </div>
+
+      <div class="form-group" v-if="mod!='POST'">
+        <label class="col-sm-2 control-label">생성일</label>
+        <div>
+          <p class="form-control-static">{{room_rsv.datetime_created}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group btn-bottom" role="group">
       <div v-if="is_adminpage && is_admin==1">
         <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
       </div>
@@ -184,6 +246,7 @@
 
       <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
     </div>
+
   </form>
 </script>
 
