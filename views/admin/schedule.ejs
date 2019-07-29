@@ -20,7 +20,8 @@
     </footer>
   </div>
 
-<% include ../component/datepicker %>
+  <% include ../component/notification %>
+  <% include ../component/datepicker %>
   <script>
     var global = makeGlobal();
     var results = <%-JSON.stringify(results) %>;
