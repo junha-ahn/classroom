@@ -1,107 +1,109 @@
 <script type="text/x-template" id="input-template">
-  <form class="form-lnline" v-on:submit="onSubmitForm">
-    <label class="col-sm-2 control-label">카테고리</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room.room_category_name }}</p>
-    </div>
-    <select v-else class="form-control" v-model="room.room_category_id">
-      <option v-for="(room_category, i) in room_category_results" v-bind:value="room_category.room_category_id" :key="i">
-        {{ room_category.name }}
-      </option>
-    </select>
-
-    <label class="col-sm-2 control-label">호수</label>
-    <div>
-      <input type="text" class="form-control" v-model="room.room_number" :disabled="mod == 'GET'">
-    </div>
-
-    <label class="col-sm-2 control-label">층</label>
-    <div>
-      <input type="number" class="form-control" v-model="room.floor" :disabled="mod == 'GET'">
-    </div>
-    
-    <label class="col-sm-2 control-label">이름</label>
-    <div>
-      <input type="text" class="form-control" v-model="room.name" :disabled="mod == 'GET'">
-    </div>
-    
-    <label class="col-sm-2 control-label">좌석수</label>
-    <div>
-      <input type="number" class="form-control" v-model="room.seat_count" :disabled="mod == 'GET'">
-    </div>
-
-    <label class="col-sm-2 control-label">예약 신청 권한</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room.auth_rsv_create_name }}</p>
-    </div>
-    <select v-else class="form-control" v-model="room.auth_rsv_create">
-      <option v-for="(permission, i) in permission_results" v-bind:value="permission.permission_id" :key="i">
-        {{ permission.name }}
-      </option>
-    </select>
-
-
-    <label class="col-sm-2 control-label">예약 신청</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room.is_require_rsv_accept == 1 ? '자동승인' : '관리자 수동 승인' }}</p>
-    </div>
-    <select v-else class="form-control" v-model="room.is_require_rsv_accept">
-      <option v-bind:value="1" >
-      자동승인
-      </option>
-      <option v-bind:value="0" >
-      관리자 수동 승인
-      </option>
-    </select>
-
-    <label class="col-sm-2 control-label">예약 신청 불가능 일수</label>
-    <div>
-      <input type="number" class="form-control" v-model="room.rsv_apply_min_day" :disabled="mod == 'GET'">
-    </div>
-    
-    
-    <label class="col-sm-2 control-label">예약 취소 권한</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room.auth_rsv_cancel_name }}</p>
-    </div>
-    <select v-else class="form-control" v-model="room.auth_rsv_cancel">
-      <option v-for="(permission, i) in permission_results" v-bind:value="permission.permission_id" :key="i">
-        {{ permission.name }}
-      </option>
-    </select>
-    <label class="col-sm-2 control-label">예약 취소</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ room.is_require_cancel_accept == 1 ? '자동승인' : '관리자 수동 승인' }}</p>
-    </div>
-    <select v-else class="form-control" v-model="room.is_require_cancel_accept">
-      <option v-bind:value="1" >
-      자동승인
-      </option>
-      <option v-bind:value="0" >
-      관리자 수동 승인
-      </option>
-    </select>
-
-    <label class="col-sm-2 control-label">예약 취소 불가능 일수</label>
-    <div>
-      <input type="number" class="form-control" v-model="room.rsv_cancel_min_day" :disabled="mod == 'GET'">
-    </div>
-    
-    <div class="form-group">
-      <label class="col-sm-2 control-label">설명</label>
-      <div class="col-sm-10">
-        <textarea class="form-control" rows="3" v-model="room.description" :disabled="mod == 'GET'"></textarea>
+  <div class="reservation_single_form">
+    <form class="form-lnline" v-on:submit="onSubmitForm">
+      <label class="col-sm-2 control-label">카테고리</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room.room_category_name }}</p>
       </div>
-    </div>
+      <select v-else class="form-control" v-model="room.room_category_id">
+        <option v-for="(room_category, i) in room_category_results" v-bind:value="room_category.room_category_id" :key="i">
+          {{ room_category.name }}
+        </option>
+      </select>
 
-    <div>
-      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
-      <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
-      <button type="button" class="btn btn-danger" v-if="mod=='GET'" @click="deleteRoom(room.room_id)">
-        삭제
-      </button>
-    </div>
-  </form>
+      <label class="col-sm-2 control-label">호수</label>
+      <div>
+        <input type="text" class="form-control" v-model="room.room_number" :disabled="mod == 'GET'">
+      </div>
+
+      <label class="col-sm-2 control-label">층</label>
+      <div>
+        <input type="number" class="form-control" v-model="room.floor" :disabled="mod == 'GET'">
+      </div>
+      
+      <label class="col-sm-2 control-label">이름</label>
+      <div>
+        <input type="text" class="form-control" v-model="room.name" :disabled="mod == 'GET'">
+      </div>
+      
+      <label class="col-sm-2 control-label">좌석수</label>
+      <div>
+        <input type="number" class="form-control" v-model="room.seat_count" :disabled="mod == 'GET'">
+      </div>
+
+      <label class="col-sm-2 control-label">예약 신청 권한</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room.auth_rsv_create_name }}</p>
+      </div>
+      <select v-else class="form-control" v-model="room.auth_rsv_create">
+        <option v-for="(permission, i) in permission_results" v-bind:value="permission.permission_id" :key="i">
+          {{ permission.name }}
+        </option>
+      </select>
+
+
+      <label class="col-sm-2 control-label">예약 신청</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room.is_require_rsv_accept == 1 ? '자동승인' : '관리자 수동 승인' }}</p>
+      </div>
+      <select v-else class="form-control" v-model="room.is_require_rsv_accept">
+        <option v-bind:value="1" >
+        자동승인
+        </option>
+        <option v-bind:value="0" >
+        관리자 수동 승인
+        </option>
+      </select>
+
+      <label class="col-sm-2 control-label">예약 신청 불가능 일수</label>
+      <div>
+        <input type="number" class="form-control" v-model="room.rsv_apply_min_day" :disabled="mod == 'GET'">
+      </div>
+      
+      
+      <label class="col-sm-2 control-label">예약 취소 권한</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room.auth_rsv_cancel_name }}</p>
+      </div>
+      <select v-else class="form-control" v-model="room.auth_rsv_cancel">
+        <option v-for="(permission, i) in permission_results" v-bind:value="permission.permission_id" :key="i">
+          {{ permission.name }}
+        </option>
+      </select>
+      <label class="col-sm-2 control-label">예약 취소</label>
+      <div v-if="mod=='GET'" class="col-sm-10">
+        <p class="form-control-static">{{ room.is_require_cancel_accept == 1 ? '자동승인' : '관리자 수동 승인' }}</p>
+      </div>
+      <select v-else class="form-control" v-model="room.is_require_cancel_accept">
+        <option v-bind:value="1" >
+        자동승인
+        </option>
+        <option v-bind:value="0" >
+        관리자 수동 승인
+        </option>
+      </select>
+
+      <label class="col-sm-2 control-label">예약 취소 불가능 일수</label>
+      <div>
+        <input type="number" class="form-control" v-model="room.rsv_cancel_min_day" :disabled="mod == 'GET'">
+      </div>
+      
+      <div class="form-group">
+        <label class="col-sm-2 control-label">설명</label>
+        <div class="col-sm-10">
+          <textarea class="form-control" rows="3" v-model="room.description" :disabled="mod == 'GET'"></textarea>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
+        <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
+        <button type="button" class="btn btn-danger" v-if="mod=='GET'" @click="deleteRoom(room.room_id)">
+          삭제
+        </button>
+      </div>
+    </form>
+  </div>
 </script>
 
 <script type="text/javascript" src="/javascripts/validate.js"></script>

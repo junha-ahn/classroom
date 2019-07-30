@@ -1,31 +1,6 @@
 <script type="text/x-template" id="input-template">
   
   <form class="form-lnline" v-on:submit="onSubmitForm">
-<<<<<<< HEAD
-    <label class="col-sm-2 control-label">상태</label>
-    <div v-if="mod!='POST'" class="col-sm-10">
-      <p class="form-control-static">
-        <label :class="classRsvStatus(room_rsv.rsv_status)" style="margin-right: 2%;">{{ room_rsv.rsv_status_name }}</label>
-        <button 
-          type="button" 
-          class="btn btn-info"
-          v-if="is_adminpage && mod=='GET'"
-          @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
-        <button 
-          type="button" 
-          class="btn btn-success"
-          v-if="is_adminpage && mod=='GET'"
-          @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
-        <button 
-          type="button" 
-          class="btn btn-danger"
-          v-if="is_adminpage && mod=='GET'"
-          @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
-      </p>
-=======
-
-    <h1>예약조회 자세히보기</h1>
-
     <div class="x1_style">
         <label class="col-sm-2 control-label">상태</label>
       <div v-if="mod!='POST'" class="col-sm-10">
@@ -48,28 +23,29 @@
             @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
         </p>
       </div>
->>>>>>> 예약조회 일부수정
+      <select v-else class="form-control" v-model="room_rsv.rsv_status">
+        <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
+          :selected="room_rsv.rsv_status == status.rsv_status" :key="i">
+          {{ status.name }}
+        </option>
+      </select>
     </div>
 
-    <select v-else class="form-control" v-model="room_rsv.rsv_status">
-      <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
-        :selected="room_rsv.rsv_status == status.rsv_status" :key="i">
-        {{ status.name }}
-      </option>
-    </select>
+    
 
     <div class="x2_style">
       <label class="col-sm-2 control-label">카테고리</label>
       <div v-if="mod=='GET'" class="col-sm-10">
         <p class="form-control-static">{{ room_rsv.room_rsv_category_name }}</p>
       </div>
+      <select v-else class="form-control" v-model="room_rsv.room_rsv_category_id">
+        <option v-for="(room_rsv_category, i) in room_rsv_category_results" v-bind:value="room_rsv_category.room_rsv_category_id" :key="i">
+          {{ room_rsv_category.name }}
+        </option>
+      </select>
     </div>
     
-    <select v-else class="form-control" v-model="room_rsv.room_rsv_category_id">
-      <option v-for="(room_rsv_category, i) in room_rsv_category_results" v-bind:value="room_rsv_category.room_rsv_category_id" :key="i">
-        {{ room_rsv_category.name }}
-      </option>
-    </select>
+    
     
     <div class="x1_style">
       <label class="col-sm-2 control-label">제목</label>
@@ -159,26 +135,26 @@
       <div v-if="mod=='GET'" class="col-sm-10">
         <p class="form-control-static">{{ room_rsv.department_name }}</p>
       </div>
+      <select v-else class="form-control" v-model="room_rsv.department_id" @change="chageDepartment">
+        <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
+          {{ department.name }}
+        </option>
+      </select>
     </div>
 
-    <select v-else class="form-control" v-model="room_rsv.department_id" @change="chageDepartment">
-      <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
-        {{ department.name }}
-      </option>
-    </select>
     
     <div class="x2_style">
       <label class="col-sm-2 control-label">스터디</label>
       <div v-if="mod=='GET'" class="col-sm-10">
         <p class="form-control-static">{{ room_rsv.study_group_name }}</p>
       </div>
+      <select v-else class="form-control" v-model="room_rsv.study_group_id" :disabled="!room_rsv.department_id">
+        <option v-for="(study_group, i) in study_group_results" v-bind:value="study_group.study_group_id" :key="i">
+          {{ study_group.name }}
+        </option>
+      </select>
     </div>
 
-    <select v-else class="form-control" v-model="room_rsv.study_group_id" :disabled="!room_rsv.department_id">
-      <option v-for="(study_group, i) in study_group_results" v-bind:value="study_group.study_group_id" :key="i">
-        {{ study_group.name }}
-      </option>
-    </select>
 
     <div class="x1_style">
       <label class="col-sm-2 control-label">대표명</label>
@@ -403,10 +379,10 @@
         
         var _validate = validate(this.room_rsv, {
           'rsv_status': {
-            is_require: this.mod == 'POST' ? true : fals,
+            is_require: this.mod == 'POST' ? true : false,
           },
           'date': {
-            is_require: this.mod == 'POST' ? true : fals,
+            is_require: this.mod == 'POST' ? true : false,
           },
           'room_rsv_category_id': {
             is_require: true,

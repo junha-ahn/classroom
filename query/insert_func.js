@@ -224,8 +224,6 @@ let self = {
             end_time : time_list[i].end_time,
           })
         }
-        console.log(time_list)
-        console.log(fieldsRows)
         let queryString = squel.insert()
           .into('room_rsv_time')
           .setFieldsRows(fieldsRows)
