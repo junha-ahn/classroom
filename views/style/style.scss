@@ -349,6 +349,64 @@ thead {
   }
 }
 
+.single_input_body {
+  margin: 0 auto;
+  width: 50%;
+
+  .form-inline {
+    .select_div {
+      width: 100%;
+
+      input {
+        width: 100%;
+      }
+    }
+  }
+
+  .pack_div {
+    width: 100%;
+    padding-bottom: 1%;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 2%;
+
+    .div_left {
+      float: left;
+      width: 30%;
+      display: inline-block;
+      vertical-align: center;
+
+      label {
+        font-size: 2vmin;
+        font-weight: bold;
+      }
+    }
+
+    .div_right {
+      display: inline-block;
+      float: right;
+      width: 70%;
+
+      textarea {
+        width: 100% !important;
+        ;
+      }
+
+      .text-left {
+        width: 100%;
+        span {
+          display: inline-block;
+          color: #333333;
+          width: 20%;
+        }
+
+        input {
+          width: 78%;
+        }
+      }
+    }
+  }
+}
+
 .reservation {
   button {
     font-size: 2vmin !important;
@@ -394,7 +452,7 @@ thead {
 
     .right_info {
       float: right;
-      width: 50%;
+      width: 50% !important;
 
       .step_room {
         dl {
@@ -442,62 +500,6 @@ thead {
           }
         }
       }
-
-      .step_detail {
-        .form-inline {
-          .select_div {
-            width: 100%;
-
-            input {
-              width: 100%;
-            }
-          }
-        }
-
-        .pack_div {
-          width: 100%;
-          padding-bottom: 1%;
-          border-bottom: 1px solid #ccc;
-          margin-bottom: 2%;
-
-          .div_left {
-            float: left;
-            width: 30%;
-            display: inline-block;
-            vertical-align: center;
-
-            label {
-              font-size: 2vmin;
-              font-weight: bold;
-            }
-          }
-
-          .div_right {
-            display: inline-block;
-            float: right;
-            width: 70%;
-
-            textarea {
-              width: 100% !important;
-              ;
-            }
-
-            .text-left {
-              width: 100%;
-
-              span {
-                display: inline-block;
-                color: #333333;
-                width: 20%;
-              }
-
-              input {
-                width: 78%;
-              }
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -536,101 +538,6 @@ thead {
 
 
 
-.reservation_single {
-  main {
-    margin: 0 auto;
-    width: 80%;
-
-    .form-lnline {
-      h1 {
-        margin: 0 auto;
-        padding: 2%;
-        text-align: center;
-        font-weight: bold;
-        font-size: 4vmin;
-      }
-
-    }
-
-    .form-control-static {
-      padding: 0 0 0 0;
-    }
-
-    .float_none {
-      float: none;
-    }
-
-    .margin-left {
-      margin-left: 16.666%;
-      button{
-        width:48% !important;
-      }
-    }
-
-    .x1_style {
-      width: 100% !important;
-      padding: 1.2% 0 !important;
-      background: #f9f9f9 !important;
-
-      .col-sm-10 {
-        float: none;
-      }
-
-      .form-control {
-        width: 40%;
-      }
-
-      button {
-        width: 40%;
-        font-size: 1em;
-      }
-
-      .form-group {
-        margin-bottom: 0;
-      }
-
-      label {
-        margin-bottom: 0;
-      }
-    }
-
-    .x2_style {
-      width: 100% !important;
-      padding: 1.2% 0 !important;
-      background: #fff !important;
-      border: 1px solid #eee;
-
-      .col-sm-10 {
-        float: none;
-      }
-
-      .form-control {
-        width: 40%;
-      }
-
-      button {
-        width: 40%;
-        font-size: 1em;
-      }
-
-      .form-group {
-        margin-bottom: 0;
-      }
-
-      label {
-        margin-bottom: 0;
-      }
-    }
-
-    .btn-bottom {
-      float: right;
-      margin-top: 2%;
-    }
-
-  }
-
-  //main
-}
 
 @media (min-width:300px) {
   .navbar-nav {

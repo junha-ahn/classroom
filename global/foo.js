@@ -167,7 +167,7 @@ let self = {
       if (array[i].auth_rsv_create) {
         array[i].auth_rsv_create_name = ((auth_rsv_create) => {
           for (let i in info.permission_results) {
-            if (info.permission_results[i].auth_rsv_create == auth_rsv_create) 
+            if (info.permission_results[i].permission_id == auth_rsv_create) 
               return info.permission_results[i].name;
           }
         })(array[i].auth_rsv_create);
@@ -175,8 +175,9 @@ let self = {
       if (array[i].auth_rsv_cancel) {
         array[i].auth_rsv_cancel_name = ((auth_rsv_cancel) => {
           for (let i in info.permission_results) {
-            if (info.permission_results[i].auth_rsv_cancel == auth_rsv_cancel) 
+            if (info.permission_results[i].permission_id == auth_rsv_cancel) {
               return info.permission_results[i].name;
+            }
           }
         })(array[i].auth_rsv_cancel);
       }
