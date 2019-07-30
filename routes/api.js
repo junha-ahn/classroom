@@ -925,6 +925,13 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
         room_rsv_id,
         room_id_list: _room_id_list,
       })
+      await addNotification(conn, {
+        isTransaction,
+        notification_type: 2,
+        sender_id: req.user.user_id,
+        receiver_id: results[0].user_id,
+        room_rsv_id,
+      })
       await db_func.commit(conn);
       foo.setRes(res, update_result, {
         message: '성공했습니다'
@@ -1191,7 +1198,7 @@ function addNotification(conn, object) {
         receiver_id,
         room_rsv_id,
       } = object;
-      if (sender_id == receiver_id) {
+      if (sender_id != receiver_id) {
         let {
           results,
         } = await select_func.notification(conn, {
