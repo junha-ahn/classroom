@@ -1,57 +1,124 @@
 <% include ../sub/header %>
       <form v-on:submit="join">
-        <label>학생</label>
-        <input type="checkbox" v-model="joinForm.is_student" true-value="1" false-value="0">
-        <br/>
-        <label>학과</label>
-        <select class="form-control" v-model="joinForm.department_id">
-          <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
-            {{ department.name }}
-          </option>
-        </select>
-        <label>캠퍼스</label>
-        <select class="form-control" v-model="joinForm.campus_id" @change="replaceBuildings()">
-          <option v-for="(campus, i) in campus_results" v-bind:value="campus.campus_id" :key="i">
-            {{ campus.name }}
-          </option>
-        </select>
-        <label>학습관</label>
-        <select class="form-control" v-model="joinForm.building_id"  :disabled="joinForm.campus_id == null">
-          <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
-            {{ building.name }}
-          </option>
-        </select>
-        <div>
-          <label>이메일 주소</label>
-          <input v-model="joinForm.email" type="email" class="form-control" placeholder="이메일을 입력하세요">
-          <button type="button" class="btn btn-default" @click="checkEmail()">확인</button>
+        <div class="single_input_body">
+        
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>학생</label>
+            </div>
+            <div class="div_right">
+              <input type="checkbox" v-model="joinForm.is_student" true-value="1" false-value="0">
+            </div>
+          </div>
+          
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>학과</label>
+            </div>
+            <div class="div_right">
+              <select class="form-control" v-model="joinForm.department_id">
+                <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
+                  {{ department.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>캠퍼스</label>
+            </div>
+            <div class="div_right">
+              <select class="form-control" v-model="joinForm.campus_id" @change="replaceBuildings()">
+                <option v-for="(campus, i) in campus_results" v-bind:value="campus.campus_id" :key="i">
+                  {{ campus.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>학습관</label>
+            </div>
+            <div class="div_right">
+              <select class="form-control" v-model="joinForm.building_id"  :disabled="joinForm.campus_id == null">
+                <option v-for="(building, j) in building_results" v-bind:value="building.building_id" :key="j">
+                  {{ building.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>이메일</label>
+            </div>
+            <div class="div_right">
+              <input style="width:85%; display:inline;" type="email" class="form-control" v-model="joinForm.email" placeholder="이메일을 입력해주세요">
+              <button type="button" class="btn btn-default" @click="checkEmail()">확인</button>
+            </div>
+          </div>
+          
+          <div class="pack_div clearfix" v-if="check_email == true">
+            <div class="div_left">
+              <label>이메일 인증 암호</label>
+            </div>
+            <div class="div_right">
+              <input style="width:85%" type="password" class="form-control" v-model="joinForm.email_password" placeholder="이메일 인증 암호를 입력해주세요">
+              <p>스팸 메일함을 확인해주세요</p>
+            </div>
+          </div>
+
+          <div class="pack_div clearfix" :class="classPassDiff()">
+            <div class="div_left">
+              <label>암호</label>
+            </div>
+            <div class="div_right">
+              <input type="password" class="form-control" v-model="joinForm.password" placeholder="암호를 입력해주세요">
+            </div>
+          </div>
+
+          <div class="pack_div clearfix" :class="classPassDiff()">
+            <div class="div_left">
+              <label>암호 확인</label>
+            </div>
+            <div class="div_right">
+              <input type="password" class="form-control" v-model="joinForm.password_check" placeholder="암호를 다시 한번 입력해주세요">
+            </div>
+          </div>
+
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>이름</label>
+            </div>
+            <div class="div_right">
+              <input type="text" class="form-control" v-model="joinForm.name" placeholder="이름을 입력해주세요">
+            </div>
+          </div>
+
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>전화번호</label>
+            </div>
+            <div class="div_right">
+              <input type="text" class="form-control" v-model="joinForm.phone" placeholder="전화번호를 입력해주세요">
+            </div>
+          </div>
+
+          <div class="pack_div clearfix" v-if="joinForm.is_student == 1">
+            <div class="div_left">
+              <label>학번</label>
+            </div>
+            <div class="div_right">
+              <input type="text" class="form-control" v-model="joinForm.student_number" placeholder="학번을 입력해주세요">
+            </div>
+          </div>
+
+          <div class="single_button">
+            <button type="submit" class="btn btn-primary">가입</button>
+          </div>
         </div>
-        <div v-if="check_email == true">
-          <label>이메일 인증 암호</label>
-          <input v-model="joinForm.email_password" type="text" class="form-control" placeholder="이메일을 인증 암호를 입력하세요">
-          <p class="form-control-static">스팸 메일함을 확인해주세요</p>
-        </div>
-        <div :class="classPassDiff()">
-          <label class="control-label">암호</label>
-          <input v-model="joinForm.password" type="password" class="form-control" placeholder="암호를 입력하세요">
-        </div>
-        <div :class="classPassDiff()">
-          <label class="control-label">암호 확인</label>
-          <input v-model="joinForm.password_check" type="password" class="form-control" placeholder="암호 다시 한번 입력하세요">
-        </div>
-        <div class="form-inline">
-          <label>이름</label>
-          <input v-model="joinForm.name" type="text" class="form-control" placeholder="이름을 입력하세요">
-        </div>
-        <div class="form-inline">
-          <label>전화번호</label>
-          <input v-model="joinForm.phone" type="text" class="form-control" placeholder="전화번호를 입력하세요">
-        </div>
-        <div class="form-inline" v-if="joinForm.is_student == 1">
-          <label>학번</label>
-          <input v-model="joinForm.student_number" type="text" class="form-control" placeholder="학번을 입력하세요">
-        </div>
-        <button type="submit" class="btn btn-primary">가입</button>
       </form>
     </main>
     
