@@ -352,6 +352,10 @@ thead {
 .single_input_body {
   margin: 0 auto;
   width: 50%;
+  
+  .title {
+    text-align: center;
+  }
 
   .form-inline {
     .select_div {
@@ -386,24 +390,41 @@ thead {
       float: right;
       width: 70%;
 
-      textarea {
-        width: 100% !important;
-        ;
+      .add_block {
+        
+      }
+      .block {
+
+      }
+
+      input, textarea {
+        width : 100%;
       }
 
       .text-left {
         width: 100%;
         span {
+          font-weight: bold;
           display: inline-block;
           color: #333333;
           width: 20%;
         }
 
-        input {
-          width: 78%;
+        input, select {
+          width: 78% !important;
+        }
+        .form-control {
+          display: inline;
         }
       }
     }
+  }
+  
+  .single_button {
+    display: inline;
+    // 중앙정렬??..
+    margin-left:50%;
+    margin-right:50%;
   }
 }
 

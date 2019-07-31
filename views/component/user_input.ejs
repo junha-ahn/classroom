@@ -2,13 +2,16 @@
   <form class="form-lnline" v-on:submit="onSubmitForm">
     <div class="single_input_body">
     
-      <div class="pack_div clearfix" v-if="is_adminpage && mod=='GET'">
+      <div class="pack_div clearfix" v-if="is_adminpage">
         <div class="div_left">
           <label>권한</label>
         </div>
         <div class="div_right">
-          <button type="button" @click="changeToUser(user)" :class="classIsPrimary(user.user_type == global.USER_TYPE)">유저</button>
-          <button type="button" @click="changeToAdmin(user)" :class="classIsPrimary(user.user_type ==  global.ADMIN_TYPE)">관리자</button>
+          <p v-if="mod != 'GET'">{{ user.user_type ==  global.ADMIN_TYPE ? '관리자' : '유저' }}</p>
+          <template  v-else>
+            <button type="button" @click="changeToUser(user)" :class="classIsPrimary(user.user_type == global.USER_TYPE)">유저</button>
+            <button type="button" @click="changeToAdmin(user)" :class="classIsPrimary(user.user_type ==  global.ADMIN_TYPE)">관리자</button>
+          </template>
         </div>
       </div>
 
@@ -62,6 +65,27 @@
 
       <div class="pack_div clearfix">
         <div class="div_left">
+          <label>학생/교직원</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.is_student == 1 ? '학생' : '교직원' }}</p>
+          </template>
+          <template v-else>
+              <div class="text-left">
+                <span>학생</span>
+                <input type="radio" :value="1" v-model="user.is_student" :checked="user.is_student == 1">
+              </div>
+              <div class="text-left">
+                <span>교직원</span>
+                <input type="radio" :value="0" v-model="user.is_student" :checked="user.is_student == 0">
+              </div>
+          </template>
+        </div>
+      </div>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
           <label>이메일</label>
         </div>
         <div class="div_right">
@@ -93,19 +117,7 @@
         </div>
       </div>
 
-      <div class="pack_div clearfix">
-        <div class="div_left">
-          <label>학생/교직원</label>
-        </div>
-        <div class="div_right">
-          <template v-if="mod=='GET'">
-            <p>{{ user.is_student == 1 ? '학생' : '교직원' }}</p>
-          </template>
-          <input v-else type="checkbox" v-model="user.is_student" true-value="1" false-value="0">
-        </div>
-      </div>
-
-      <div class="pack_div clearfix">
+      <div class="pack_div clearfix" v-if="user.is_student==1">
         <div class="div_left">
           <label>학번</label>
         </div>

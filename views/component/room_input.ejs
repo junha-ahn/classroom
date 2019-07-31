@@ -74,7 +74,7 @@
           <div class="text-left">
             <span>예약 요청</span>
             <template v-if="mod=='GET'">
-              <p>{{ room.is_require_rsv_accept == 1 ? '자동승인' : '관리자 수동 승인' }}</p>
+              {{ room.is_require_rsv_accept == 1 ? '자동승인' : '관리자 수동 승인' }}
             </template>
             <select v-else class="form-control" v-model="room.is_require_rsv_accept">
               <option v-bind:value="1" >
@@ -88,7 +88,7 @@
           <div class="text-left">
             <span>예약 취소</span>
             <template v-if="mod=='GET'">
-              <p>{{ room.is_require_cancel_accept == 1 ? '자동승인' : '관리자 수동 승인' }}</p>
+              {{ room.is_require_cancel_accept == 1 ? '자동승인' : '관리자 수동 승인' }}
             </template>
             <select v-else class="form-control" v-model="room.is_require_cancel_accept">
               <option v-bind:value="1" >
@@ -110,7 +110,7 @@
           <div class="text-left">
             <span>예약 요청</span>
             <template v-if="mod=='GET'">
-              <p>{{ room.rsv_apply_min_day }}</p>
+              {{ room.rsv_apply_min_day }}
             </template>
             <input v-else type="number" class="form-control" v-model="room.rsv_apply_min_day" placeholder="예약 요청 불가능 일수를 입력하세요">
 
@@ -118,7 +118,7 @@
           <div class="text-left">
             <span>예약 취소</span>
             <template v-if="mod=='GET'">
-              <p>{{ room.rsv_cancel_min_day }}</p>
+              {{ room.rsv_cancel_min_day }}
             </template>
             <input v-else type="number" class="form-control" v-model="room.rsv_cancel_min_day" placeholder="예약 취소 불가능 일수를 입력하세요">
           </div>
@@ -134,7 +134,7 @@
           <div class="text-left">
             <span>요청</span>
             <template v-if="mod=='GET'">
-              <p>{{ room.auth_rsv_create_name }}</p>
+              {{ room.auth_rsv_create_name }}
             </template>
             <select v-else class="form-control" v-model="room.auth_rsv_create">
               <option v-for="(permission, i) in permission_results" v-bind:value="permission.permission_id" :key="i">
@@ -145,7 +145,7 @@
           <div class="text-left">
             <span>취소</span>
             <template v-if="mod=='GET'">
-              <p>{{ room.auth_rsv_cancel_name }}</p>
+              {{ room.auth_rsv_cancel_name }}
             </template>
             <select v-else class="form-control" v-model="room.auth_rsv_cancel">
               <option v-for="(permission, i) in permission_results" v-bind:value="permission.permission_id" :key="i">
@@ -170,10 +170,8 @@
 
       <div class="single_button">
         <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
+        <button type="button" class="btn btn-danger" v-if="mod=='GET'" @click="deleteRoom(room.room_id)">삭제</button>
         <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
-        <button type="button" class="btn btn-danger" v-if="mod=='GET'" @click="deleteRoom(room.room_id)">
-          삭제
-        </button>
       </div>
     </div>
   </form>

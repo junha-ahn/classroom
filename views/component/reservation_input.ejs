@@ -101,7 +101,6 @@
               >-</button>
             </div>
             <div v-if="mod!='GET'">
-                <span>추가</span>
                 <custom-timepicker
                   :add-time="addTime"
                 ></custom-timepicker>
@@ -128,19 +127,18 @@
               v-if="mod!='GET'"
               >-</button>
             </div>
-            <div v-if="mod!='GET'">
-                <span>추가</span>
-                <select class="form-control" v-model="room_index">
-                  <option v-for="(room, i) in room_results" v-bind:value="i" :key="i">
-                    {{ room.name }}
-                  </option>
-                </select>
-                <button 
-                  type="button" 
-                  class="btn btn-primary" 
-                  @click="addRoom($event)"
-                  v-if="mod!='GET'"
-                >+</button>
+            <div v-if="mod!='GET'" class="add_block">
+              <select class="form-control" v-model="room_index">
+                <option v-for="(room, i) in room_results" v-bind:value="i" :key="i">
+                  {{ room.name }}
+                </option>
+              </select>
+              <button 
+                type="button" 
+                class="btn btn-primary" 
+                @click="addRoom($event)"
+                v-if="mod!='GET'"
+              >+</button>
             </div>
           </div>
         </div>
@@ -185,14 +183,14 @@
             <div class="text-left">
               <span>학생</span>
               <template v-if="mod=='GET'">
-                <p>{{ room_rsv.student_count }}</p>
+                {{ room_rsv.student_count }}
               </template>
               <input v-else type="number" class="form-control" v-model="room_rsv.student_count"  placeholder="예상 참여 인원을 입력해주세요" :disabled="mod == 'GET'">
             </div>
             <div class="text-left">
               <span>비학생</span>
               <template v-if="mod=='GET'">
-                <p>{{ room_rsv.non_student_count }}</p>
+                {{ room_rsv.non_student_count }}
               </template>
               <input v-else type="number" class="form-control" v-model="room_rsv.non_student_count"  placeholder="예상 참여 인원을 입력해주세요" :disabled="mod == 'GET'">
             </div>
@@ -207,14 +205,14 @@
             <div class="text-left">
               <span>성명</span>
               <template v-if="mod=='GET'">
-                <p>{{ room_rsv.representative_name }}</p>
+                {{ room_rsv.representative_name }}
               </template>
               <input v-else type="text" class="form-control" v-model="room_rsv.representative_name"  placeholder="성명을 입력해주세요" :disabled="mod == 'GET'">
             </div>
             <div class="text-left">
               <span>전화번호</span>
               <template v-if="mod=='GET'">
-                <p>{{ room_rsv.representative_phone }}</p>
+                {{ room_rsv.representative_phone }}
               </template>
               <input v-else type="text" class="form-control" v-model="room_rsv.representative_phone"  placeholder="전화번호를 입력해주세요" :disabled="mod == 'GET'">
             </div>

@@ -13,8 +13,10 @@
     
     <form v-on:submit="onSubmitChagePassword">
       <div class="single_input_body">
-        <h1>암호 변경</h1>
-        <p v-if="user.datetime_last_password_changed">마지막 암호 변경 ({{user.datetime_last_password_changed}})</p>
+        <div class="title">
+          <h1>암호 변경</h1>
+          <p v-if="user.datetime_last_password_changed">마지막 암호 변경 ({{user.datetime_last_password_changed}})</p>
+        </div>
         
         <div class="pack_div clearfix">
           <div class="div_left">

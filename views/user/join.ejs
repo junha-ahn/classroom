@@ -7,7 +7,14 @@
               <label>학생</label>
             </div>
             <div class="div_right">
-              <input type="checkbox" v-model="joinForm.is_student" true-value="1" false-value="0">
+              <div class="text-left">
+                <span>학생</span>
+                <input type="radio" :value="1" v-model="joinForm.is_student" :checked="joinForm.is_student == 1">
+              </div>
+              <div class="text-left">
+                <span>교직원</span>
+                <input type="radio" :value="0" v-model="joinForm.is_student" :checked="joinForm.is_student == 0">
+              </div>
             </div>
           </div>
           
