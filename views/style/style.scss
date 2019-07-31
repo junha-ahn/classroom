@@ -1,6 +1,10 @@
 // SASS 스타일적용페이지
 
-// ★전체스타일적용!★
+div {
+  //  border: 1px solid red;
+}
+
+// 전체스타일적용!
 .clearfix:after {
   display: block;
   content: '';
@@ -9,10 +13,6 @@
 
 .text-left {
   text-align: left;
-}
-
-div {
-  //  border: 1px solid red;
 }
 
 body {

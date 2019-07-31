@@ -4,7 +4,6 @@ const moment = require('moment');
 const squel = require('squel');
 
 const db_func = require('../global/db_func');
-const constant = require('../global/constant');
 const info = require('../global/info');
 
 const {
@@ -18,7 +17,6 @@ const foo = require('../global/foo');
 
 const {
   isLoggedIn,
-  isNotLoggedIn,
   isAdmin,
   checkReqInfo,
   checkRequireInsertStudyGroup,
@@ -805,7 +803,6 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
     description,
   } = req.body;
 
-  let _date = foo.resetTime(moment(date));
   let {
     results
   } = await select_func.room(conn, {

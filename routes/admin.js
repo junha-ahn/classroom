@@ -12,8 +12,6 @@ const info = require('../global/info');
 const foo = require('../global/foo');
 
 const {
-  isLoggedIn,
-  isNotLoggedIn,
   isAdmin,
   getRerservationLookup,
   getRerservationSingle,
@@ -74,7 +72,6 @@ router.get('/user/single/:user_id', isAdmin, getUserSingle(true));
 router.get('/holiday', isAdmin, db_func.inDBStream(async (req, res, next, conn) => {
   let {
     results,
-    list_count
   } = await select_func.room(conn, {
     building_id: req.user.building_id,
   });
@@ -87,29 +84,9 @@ router.get('/holiday', isAdmin, db_func.inDBStream(async (req, res, next, conn) 
   }))
 }));
 router.get('/schedule', isAdmin, async (req, res, next) => {
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-
-    let {
-      results,
-      list_count
-    } = await select_func.room(connection, {
-      building_id: req.user.building_id,
-    });
-    foo.cleaningList(results);
-    res.render('admin/schedule', foo.getResJson(req.user, {
-      results,
-      query: req.query,
-      params: req.params,
-      building: info.building_object[req.user.building_id],
-    }))
-
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
-  }
+  res.render('admin/schedule', foo.getResJson(req.user, {
+    building: info.building_object[req.user.building_id],
+  }))
 });
 
 router.get('/room/lookup', isAdmin, async (req, res, next) => {
