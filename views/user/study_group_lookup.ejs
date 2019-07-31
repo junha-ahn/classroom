@@ -73,11 +73,11 @@
       </nav>
 
       <div class="lookup_button" v-if="is_user">
-        <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 그룹</button>
-        <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 그룹</button>
+        <button type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 스터디</button>
+        <button type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 스터디</button>
 
-        <button type="button" class="btn btn-primary" v-if="query.is_join==1" @click="clickIsJoin(0)">가입한 그룹</button>
-        <button type="button" class="btn btn-default" v-else @click="clickIsJoin(1)">가입한 그룹</button>
+        <button type="button" class="btn btn-primary" v-if="query.is_join==1" @click="clickIsJoin(0)">가입한 스터디</button>
+        <button type="button" class="btn btn-default" v-else @click="clickIsJoin(1)">가입한 스터디</button>
         <button type="button" class="btn btn-primary" @click="gotoWrite">생성</button>
       </div>
     </div>

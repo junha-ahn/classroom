@@ -47,6 +47,7 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
       campus_id: req.user.campus_id,
       building_id: req.user.building_id,
       department_id,
+      sort_type: false,
     });
     foo.cleaningList(results);
 
@@ -113,6 +114,8 @@ router.get('/room/lookup', isAdmin, async (req, res, next) => {
       room_category_id,
       page,
       page_length,
+      sort_key: 'room_number',
+      sort_type: true,
     });
     foo.cleaningList(results);
     res.render('admin/room_lookup', foo.getResJson(req.user, {

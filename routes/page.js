@@ -132,6 +132,7 @@ router.get('/study_group/lookup', async (req, res, next) => {
       is_mine,
       is_join,
       user_id: (req.user) ? req.user.user_id : null,
+      sort_type: false,
     });
     foo.cleaningList(results);
     let building_results = req.user ? info.buildings[req.user.campus_id] : info.building_results;
