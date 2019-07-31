@@ -2,89 +2,96 @@
       <% include ../sub/admin_menu %>
       
       <div class="admin_right">
-        <div style="float: left; width:50%;"> 
-          <div class="single_input_body" style="width:70%;">
-              <div class="pack_div clearfix">
-                <div class="div_left">
-                  <label>강의실</label>
-                </div>
-                <div class="div_right">
-                  <select class="form-control" v-model="formData.room_id">
-                    <option :value="0">{{building.name}}</option>
-                    <option v-for="(room, i) in results" v-bind:value="room.room_id" :key="i">
-                      {{ room.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="pack_div clearfix">
-                <div class="div_left">
-                  <label>시작일</label>
-                </div>
-                <div class="div_right">
-                  <custom-datepicker
-                    :inline="false"
-                    :selected_date="formData.start_date"
-                    :default_date="formData.start_date || new Date()"
-                    :on-selected="onSelected"
-                  ></custom-datepicker>
-                </div>
-              </div>
-
-              <div class="pack_div clearfix">
-                <div class="div_left">
-                  <label>종료일</label>
-                </div>
-                <div class="div_right">
-                  <custom-datepicker
-                    :inline="false"
-                    :selected_date="formData.end_date"
-                    :default_date="formData.end_date  || new Date()"
-                    :on-selected="onSelected"
-                  ></custom-datepicker>
-                </div>
-              </div>
-
-              
-              <div class="pack_div clearfix">
-                <div class="div_left">
-                  <label>이름</label>
-                </div>
-                <div class="div_right">
-                  <input type="text" class="form-control" v-model="formData.name" placeholder="이름을 입력해주세요">
-                </div>
-              </div>
-
-              <div class="pack_div clearfix">
-                <div class="div_left">
-                  <label>공휴일</label>
-                </div>
-                <div class="div_right">
-                  <div class="text-left">
-                    <span>공휴일</span>
-                    <input type="radio" :value="1" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 1">
+        <div class="holiday_left"> 
+          <form v-on:submit="onSubmitForm">
+            <div class="single_input_body">
+                <div class="pack_div clearfix">
+                  <div class="div_left">
+                    <label>강의실</label>
                   </div>
-                  <div class="text-left">
-                    <span>기타 휴일</span>
-                    <input type="radio" :value="0" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 0">
+                  <div class="div_right">
+                    <select class="form-control" v-model="formData.room_id" @change="onChangeRoom()">
+                      <option :value="0">{{building.name}}</option>
+                      <option v-for="(room, i) in results" v-bind:value="room.room_id" :key="i">
+                        {{ room.name }}
+                      </option>
+                    </select>
                   </div>
                 </div>
-              </div>
 
-            <div class="single_button">
-              <button type="submit" class="btn btn-primary">{{formData.holiday_id == null ? '추가' : '수정'}}</button>
+                <div class="pack_div clearfix">
+                  <div class="div_left">
+                    <label>시작일</label>
+                  </div>
+                  <div class="div_right">
+                    <custom-datepicker
+                      :inline="false"
+                      :selected_date="formData.start_date"
+                      :default_date="formData.start_date || new Date()"
+                      :on-selected="onSelectedStartDate"
+                      :clear_button="true"
+                      :not_holiday="true"
+                    ></custom-datepicker>
+                  </div>
+                </div>
+
+                <div class="pack_div clearfix">
+                  <div class="div_left">
+                    <label>종료일</label>
+                  </div>
+                  <div class="div_right">
+                    <custom-datepicker
+                      :inline="false"
+                      :default_date="formData.end_date  || new Date()"
+                      :on-selected="onSelectedEndDate"
+                      :clear_button="true"
+                      :not_holiday="true"
+                    ></custom-datepicker>
+                  </div>
+                </div>
+
+                
+                <div class="pack_div clearfix">
+                  <div class="div_left">
+                    <label>이름</label>
+                  </div>
+                  <div class="div_right">
+                    <input type="text" class="form-control" v-model="formData.name" placeholder="이름을 입력해주세요">
+                  </div>
+                </div>
+
+                <div class="pack_div clearfix">
+                  <div class="div_left">
+                    <label>공휴일</label>
+                  </div>
+                  <div class="div_right">
+                    <div class="text-left">
+                      <span>공휴일</span>
+                      <input class="radio" type="radio" :value="1" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 1">
+                    </div>
+                    <div class="text-left">
+                      <span>기타</span>
+                      <input class="radio" type="radio" :value="0" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 0">
+                    </div>
+                  </div>
+                </div>
+
+              <div class="single_button">
+                <button type="submit" class="btn btn-primary">{{formData.holiday_id == null ? '추가' : '수정'}}</button>
+                <button type="button" class="btn btn-danger" @click="deleteHoliday" v-if="formData.holiday_id != null">삭제</button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
 
-        <div style="float: right; width:50%;">
+        <div class="holiday_right">
           <custom-datepicker
             :inline="true"
             :is_holidaypage="true"
             :default_date="new Date()"
             :building_id="building.building_id"
             :room_id="formData.room_id"
+            :on-selected="onSelected"
             :on-disable-selected="onDisableSelected"
           ></custom-datepicker>
         </div>
@@ -98,6 +105,7 @@
   </div>
 
   
+  <script type="text/javascript" src="/javascripts/validate.js"></script>
   <% include ../component/datepicker %>
   <script>
     var global = makeGlobal();
@@ -114,6 +122,7 @@
           results: results,
           building: building,
           formData: {
+            building_id: building.building_id,
             holiday_id: null,
             room_id:0,
             start_date: null,
@@ -124,20 +133,86 @@
         }
       },
       methods: {
+        reload: function() {
+          location.reload();
+        },
+        deleteHoliday: function() {
+          var conf = confirm("정말 삭제하시겠습니까?");
+          if (conf && this.formData.holiday_id) {
+            var __this = this;
+            global.ajax({
+              url: '/api/holiday/'+ this.formData.holiday_id,
+              type: 'DELETE',
+            },
+            function (data, status) {
+              alert(data.message);
+              __this.reload();
+            },
+            function (message, status, data) {
+              alert(message);
+            });
+          }
+        },
+        onSubmitForm: function(e) {
+          e.preventDefault();
+          // 시작 , 종료일 체크~
+          // reload...
+          var _validate = validate(this.formData, {
+            'start_date': {
+              is_require: true,
+            },
+            'end_date': {
+              is_require: true,
+            },
+            'name': {
+              is_require: true,
+            },
+            'is_public_holiday': {
+              is_require: true,
+            },
+          });
+          if (_validate) {
+            alert(_validate)
+          } else {
+            var __this = this;
+            var mod = this.formData.holiday_id != null ? 'PUT' : 'POST'
+            var url = '/api/holiday' + (mod == 'PUT' ? '/'+ this.formData.holiday_id : '');
+            global.ajax({
+              url: url,
+              type: mod,
+              data: this.formData,
+            },
+            function (data, status) {
+              alert(data.message);
+              __this.reload();
+            },
+            function (message, status, data) {
+              alert(message);
+            });
+          }
+        },
+        onChangeRoom: function() {
+          this.resetFormData();
+        },
         resetFormData: function() {
           this.formData.holiday_id = null;
-          this.formData.room_id = 0;
           this.formData.start_date = null;
           this.formData.end_date = null;
           this.formData.name = '';
           this.formData.is_public_holiday = 1;
         },
         onSelected: function(date) {
-          console.log(date);
+          this.resetFormData();
+        },
+        onSelectedStartDate: function(date) {
+          this.formData.start_date = date;
+        },
+        onSelectedEndDate: function(date) {
+          this.formData.end_date = date;
         },
         onDisableSelected: function(params) {
-          console.log(params)
           if (this.formData.holiday_id == params.holiday_id) {
+            this.resetFormData();
           } else {
             this.formData.holiday_id = params.holiday_id;
             this.formData.room_id = params.room_id || 0;
@@ -145,7 +220,6 @@
             this.formData.end_date = params.end_date;
             this.formData.name = params.name;
             this.formData.is_public_holiday = params.is_public_holiday;
-            console.log(this.formData)
           }
         }
       }

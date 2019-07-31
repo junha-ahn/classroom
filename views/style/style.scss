@@ -399,6 +399,10 @@ thead {
 
       input, textarea {
         width : 100%;
+        display: inline;
+        .radio {
+          width : 5% !important;
+        }
       }
 
       .text-left {
@@ -421,7 +425,7 @@ thead {
   }
   
   .single_button {
-    display: inline;
+    display: inline-flex;
     // 중앙정렬??..
     margin-left:50%;
     margin-right:50%;
@@ -527,6 +531,25 @@ thead {
   }
 }
 
+.admin_holiday {
+  .holiday_left {
+    float: left;
+    width:50%;
+    .single_input_body {
+      width:70%;
+      .custom_datepicker input {
+        width: 90%;
+      }
+    }
+  }
+  .holiday_right {
+    float: right;
+    width:50%;
+    .cell.selected {
+      background: none !important;
+    }
+  }
+}
 /********** 상단nav틀어지는부분 **********/
 
 @media (max-width: 768px) {

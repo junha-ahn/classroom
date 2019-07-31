@@ -259,6 +259,33 @@ let self = {
       }
     });
   },
+  holiday: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          building_id,
+          room_id,
+          start_date,
+          end_date,
+          name,
+          is_public_holiday,
+        } = object;
+
+        let queryString = squel.insert()
+          .into('holiday')
+          .set('building_id', building_id)
+          .set('room_id', room_id)
+          .set('start_date', start_date)
+          .set('end_date', end_date)
+          .set('name', name)
+          .set('is_public_holiday', is_public_holiday)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   notification: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {

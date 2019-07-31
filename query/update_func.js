@@ -118,6 +118,7 @@ let self = {
         let {
           isTransaction,
           room_id,
+          building_id,
           room_category_id,
           auth_rsv_create,
           auth_rsv_cancel,
@@ -145,6 +146,7 @@ let self = {
           .set('is_require_cancel_accept', is_require_cancel_accept)
           .set('rsv_apply_min_day', rsv_apply_min_day)
           .set('rsv_cancel_min_day', rsv_cancel_min_day)
+          .where('building_id = ?', building_id)
           .where('room_id = ?', room_id)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
@@ -168,6 +170,33 @@ let self = {
           .where('room_rsv_id = ?', room_rsv_id)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  holiday: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          holiday_id,
+          building_id,
+          start_date,
+          end_date,
+          name,
+          is_public_holiday,
+        } = object;
+
+        let queryString = squel.update()
+          .table('holiday')
+          .set('start_date', start_date)
+          .set('end_date', end_date)
+          .set('name', name)
+          .set('is_public_holiday', is_public_holiday)
+          .where('building_id = ?',building_id)
+          .where('holiday_id = ?',holiday_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString));
       } catch (error) {
         reject(error);
       }

@@ -17,7 +17,7 @@
       :maximum-view="maximumView"
       v-model="selected_date"
       :placeholder="selected_date"
-      :clear-button="true"
+      :clear-button="clear_button"
     ></vuejs-datepicker>
   </div>
 </script>
@@ -28,6 +28,8 @@
     props: {
       inline: Boolean,
       is_holidaypage: Boolean,
+      clear_button: Boolean,
+      not_holiday: Boolean,
       maximumView: String,
       default_date: Date,
       min_date: Date,
@@ -45,7 +47,6 @@
         month: this.default_date.getMonth() + 1,
         state: {
           default_date: this.default_date,
-          //selete_min_day
           disabledDates: {
             to: this.min_date || null,
             ranges: [],
@@ -61,7 +62,7 @@
     },
     methods: {
       selected: function(seleted_date) {
-        if (seleted_date != null) {
+        if (seleted_date != null && !this.is_holidaypage) {
           seleted_date = global.resetTime(seleted_date);
         }
         this.onSelected(seleted_date);
@@ -76,17 +77,22 @@
             var end_date =global.resetTime(new Date(holiday_results[i].end_date));
             if (end_date >= selected_date) {
               message = '[ '+ holiday_results[i].name+ ' ] \n'+ '다른 날짜를 선택해주세요'
-              this.onDisableSelected({
-                holiday_id: holiday_results[i].holiday_id,
-                start_date:start_date,
-                end_date:end_date,
-                name: holiday_results[i].name,
-                is_public_holiday: holiday_results[i].is_public_holiday,
-              })
+              if (this.onDisableSelected != null) {
+                this.onDisableSelected({
+                  holiday_id: holiday_results[i].holiday_id,
+                  room_id:holiday_results[i].room_id,
+                  start_date:start_date,
+                  end_date:end_date,
+                  name: holiday_results[i].name,
+                  is_public_holiday: holiday_results[i].is_public_holiday,
+                })
+              }
             }
           }
         }
-        alert(message ? message : '예약은 ' + global.parseDate(this.min_date) + ' 이후로 가능합니다');
+        if (this.is_holidaypage != true) {
+          alert(message ? message : '예약은 ' + global.parseDate(this.min_date) + ' 이후로 가능합니다');
+        }
       },
       changedMonth: function(object) {
         var date = null;
@@ -117,50 +123,51 @@
         this.state.highlighted.dates = dates;
       },
       getHoliday: function() {
-        var __this = this;
-        var room_id = this.room_id || null;
-        var building_id = this.building_id || null;
-        var is_only= 0;
-        if (this.is_holidaypage) {
-          is_only = 1;
-        }
-        global.ajax({
-          url: '/api/holiday',
-          type: 'GET',
-          data: null,
-          query: {
-            building_id : building_id,
-            room_id: room_id,
-            year: this.year,
-            month: this.month,
-            need_dates: true,
-            is_only: is_only,
+        if (this.not_holiday != true) {
+          var __this = this;
+          var room_id = this.room_id || null;
+          var building_id = this.building_id || null;
+          var is_only= 0;
+          if (this.is_holidaypage) {
+            is_only = 1;
+          }
+          global.ajax({
+            url: '/api/holiday',
+            type: 'GET',
+            data: null,
+            query: {
+              building_id : building_id,
+              room_id: room_id,
+              year: this.year,
+              month: this.month,
+              need_dates: true,
+              is_only: is_only,
+            },
           },
-        },
-        function(data, status) {
-          var holiday_results = data.results;
-          var __dates = data.dates;
-          __this.setHolidayResults(holiday_results)
-          var ranges = [];
-          var dates = [];
-          for (var i = 0; i < holiday_results.length; i++) {
-            var from = global.resetTime(new Date(holiday_results[i].start_date))
-            var to = global.resetTime(new Date(holiday_results[i].end_date))
-            ranges.push({
-              from: from,
-              to:to.setDate(to.getDate() + 1),
-            });
-          }
-          for (var i = 0; i < __dates.length; i++) {
-            dates.push(new Date(__dates[i]));
-          }
-          
-          __this.setDisbeldDates(ranges);
-          __this.setHighlighted(dates);
-        },
-        function(message, status, data) {
-          alert(message);
-        })
+          function(data, status) {
+            var holiday_results = data.results;
+            var __dates = data.dates;
+            __this.setHolidayResults(holiday_results)
+            var ranges = [];
+            var dates = [];
+            for (var i = 0; i < holiday_results.length; i++) {
+              var from = global.resetTime(new Date(holiday_results[i].start_date))
+              var to = global.resetTime(new Date(holiday_results[i].end_date))
+              ranges.push({
+                from: from,
+                to:to.setDate(to.getDate() + 1),
+              });
+            }
+            for (var i = 0; i < __dates.length; i++) {
+              dates.push(new Date(__dates[i]));
+            }
+            __this.setDisbeldDates(ranges);
+            __this.setHighlighted(dates);
+          },
+          function(message, status, data) {
+            alert(message);
+          })
+        }
       },
     },
     components: {

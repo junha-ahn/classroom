@@ -22,16 +22,17 @@ const {
   isAdmin,
   checkReqInfo,
   checkRequireInsertStudyGroup,
-  checkRequirtUpdateStudyGroup,
+  checkRequireUpdateStudyGroup,
   checkRequirePerson,
   checkRequireInsertRoom,
   checkRequireUpdateRoom,
   checkRequireInsertRoomRsv,
   checkRequireUpdateRoomRsvStatus,
   checkRequirtUpdateUser,
-  checkRequirtUpdateUserType,
+  checkRequireUpdateUserType,
   checkRequireUpdateRoomRsv,
   checkRequireInsertRoomRsvAdmin,
+  checkRequireHoliday,
 } = require('../global/middlewares');
 
 
@@ -90,7 +91,7 @@ router.put('/user/:user_id', isLoggedIn, checkReqInfo, checkRequirtUpdateUser, d
 }));
 
 
-router.put('/user/user_type/:user_id', isAdmin, checkRequirtUpdateUserType, db_func.inDBStream(async (req, res, next, conn) => {
+router.put('/user/user_type/:user_id', isAdmin, checkRequireUpdateUserType, db_func.inDBStream(async (req, res, next, conn) => {
   let user_id = req.params.user_id;
   let {
     user_type,
@@ -181,7 +182,7 @@ router.post('/study_group', isLoggedIn, checkReqInfo, checkRequireInsertStudyGro
     message: '성공했습니다'
   })
 }));
-router.put('/study_group/:study_group_id', isLoggedIn, checkRequirtUpdateStudyGroup, db_func.inDBStream(async (req, res, next, conn) => {
+router.put('/study_group/:study_group_id', isLoggedIn, checkRequireUpdateStudyGroup, db_func.inDBStream(async (req, res, next, conn) => {
   let study_group_id = req.params.study_group_id;
   let {
     name,
@@ -415,6 +416,7 @@ router.put('/room/:room_id', isAdmin, checkReqInfo, checkRequireUpdateRoom, db_f
 
   let update_result = await update_func.room(conn, {
     room_id,
+    building_id: req.user.building_id,
     room_category_id,
     auth_rsv_create,
     auth_rsv_cancel,
@@ -447,6 +449,7 @@ router.delete('/room/:room_id', isAdmin, db_func.inDBStream(async (req, res, nex
     })
   } else {
     let delete_result = await delete_func.room(conn, {
+      building_id: req.user.building_id,
       room_id,
     })
     foo.setRes(res, delete_result, {
@@ -497,6 +500,76 @@ router.get('/holiday', async (req, res, next) => {
     }
   }
 });
+
+router.post('/holiday', isAdmin, checkReqInfo, checkRequireHoliday, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    room_id,
+    start_date,
+    end_date,
+    name,
+    is_public_holiday,
+  } = req.body;
+
+  room_id = room_id || null;
+
+  let insert_result = await insert_func.holiday(conn, {
+    building_id: req.user.building_id,
+    room_id,
+    start_date: foo.parseDate(start_date),
+    end_date: foo.parseDate(end_date),
+    name,
+    is_public_holiday,
+  })
+  foo.setRes(res, insert_result, {
+    message: '성공했습니다'
+  })
+}));
+router.put('/holiday/:holiday_id', isAdmin, checkReqInfo, checkRequireHoliday, db_func.inDBStream(async (req, res, next, conn) => {
+  let holiday_id = req.params.holiday_id;
+
+  const {
+    start_date,
+    end_date,
+    name,
+    is_public_holiday,
+  } = req.body;
+
+  let update_result = await update_func.holiday(conn, {
+    building_id: req.user.building_id,
+    holiday_id,
+    start_date: foo.parseDate(start_date),
+    end_date: foo.parseDate(end_date),
+    name,
+    is_public_holiday,
+  })
+  foo.setRes(res, update_result, {
+    message: '성공했습니다'
+  })
+}));
+router.delete('/holiday/:holiday_id', isAdmin, db_func.inDBStream(async (req, res, next, conn) => {
+  let holiday_id = req.params.holiday_id;
+
+  let {
+    results,
+  } = await select_func.holiday(conn, {
+    holiday_id,
+    building_id: req.user.building_id,
+  })
+  if (!results[0]) {
+    res.status(401).json({
+      message: '다시 선택해주세요'
+    })
+  } else {
+    let delete_result = await delete_func.holiday(conn, {
+      building_id: req.user.building_id,
+      holiday_id,
+    })
+    foo.setRes(res, delete_result, {
+      message: '성공했습니다'
+    })
+  }
+}));
+
 router.get('/available_time', async (req, res, next) => {
   let {
     building_id,

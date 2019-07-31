@@ -80,7 +80,11 @@ let self = {
       res.status(401).json({
         message: '상태를 다시 선택해주세요'
       })
-    }  else {
+    } else if (req.body.is_public_holiday != null && req.body.is_public_holiday != 1 && req.body.is_public_holiday != 0) {
+      res.status(401).json({
+        message: '공휴일 여부를 다시 선택해주세요'
+      })
+    } else {
       next();
     }
   },
@@ -116,7 +120,7 @@ let self = {
       next();
     }
   },
-  checkRequirtUpdateStudyGroup: (req, res, next) => {
+  checkRequireUpdateStudyGroup: (req, res, next) => {
     let flag = checkRequire(req.body, [
       'name',
     ]);
@@ -282,9 +286,24 @@ let self = {
       next();
     }
   },
-  checkRequirtUpdateUserType: (req, res, next) => {
+  checkRequireUpdateUserType: (req, res, next) => {
     let flag = checkRequire(req.body, [
       'user_type',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
+  checkRequireHoliday: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'start_date',
+      'end_date',
+      'name',
+      'is_public_holiday',
     ]);
     if (flag) {
       res.status(401).json({

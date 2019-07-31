@@ -154,4 +154,16 @@ var config = {
     name: '예약 상태',
     data_type: 'number',
   },
+  'is_public_holiday' : {
+    name: '공휴일 여부',
+    data_type: 'number',
+  },
+  'start_date' : {
+    name: '시작일',
+    data_type: 'object',
+  },
+  'end_date' : {
+    name: '종료일',
+    data_type: 'object',
+  },
 }

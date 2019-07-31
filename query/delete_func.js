@@ -65,10 +65,12 @@ let self = {
         let {
           isTransaction,
           room_id,
+          building_id,
         } = object;
 
         let queryString = squel.delete()
           .from('room')
+          .where('building_id = ?', building_id)
           .where('room_id = ?', room_id)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
@@ -126,6 +128,25 @@ let self = {
           .where('room_rsv_id = ?', room_rsv_id)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  holiday: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          holiday_id,
+          building_id,
+        } = object;
+
+        let queryString = squel.delete()
+          .from('holiday')
+          .where('building_id = ?',building_id)
+          .where('holiday_id = ?',holiday_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString));
       } catch (error) {
         reject(error);
       }
