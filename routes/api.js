@@ -621,7 +621,7 @@ router.get('/available_time', async (req, res, next) => {
           is_active = true;
         }
       }
-
+      foo.cleaningList(results)
       res.status(200).json({
         results,
         list_count,

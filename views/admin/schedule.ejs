@@ -1,5 +1,55 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
+
+      <div class="single_input_body">
+      
+        <div class="pack_div clearfix">
+          <div class="div_left">
+            <label>학습관</label>
+          </div>
+          <div class="div_right">
+            <p>{{ building.name }}</p>
+          </div>
+        </div>
+
+        <div class="pack_div clearfix">
+          <div class="div_left">
+            <label>요일</label>
+          </div>
+          <div class="div_right">
+            <select  class="form-control" v-model="formData.day_of_the_week"  @change="chageDayOfTheWeek">
+              <option v-for="(item, i) in day_of_the_week_results" v-bind:value="item.day_of_the_week"
+                :selected="formData.day_of_the_week == item.day_of_the_week" :key="i">
+                {{ item.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+  
+        <div class="form-inline pack_div clearfix" v-if="formData.day_of_the_week != null">
+          <div class="div_left">
+            <label>타임블럭</label>
+          </div>
+          <div class="div_right">
+            <div class="block" v-for="(available_time, i) in available_time_list">
+              <button
+              class="btn btn-default"
+              v-bind:value="available_time.available_time_id" 
+              :key="i"
+              disabled
+              >{{available_time.start_time}} ~ {{available_time.end_time}}</button>
+              <button 
+              type="button" 
+              class="btn btn-danger" 
+              @click="deleteAvailableTime()"
+              >-</button>
+            </div>
+            <custom-timepicker
+              :add-time="addTime"
+            ></custom-timepicker>
+          </div>
+        </div>
+      </div>
       
     </main>
 
@@ -9,7 +59,7 @@
   </div>
 
   
-  <% include ../component/datepicker %>
+  <% include ../component/timepicker %>
   <script>
     var global = makeGlobal();
     var building = <%-JSON.stringify(building) %>;
@@ -22,10 +72,66 @@
           is_user: <%- is_user %>,
           is_admin: <%- is_admin %>,
           building: building,
+          day_of_the_week_results: [
+            {
+              day_of_the_week: 0,
+              name: '일',
+            },
+            {
+              day_of_the_week: 1,
+              name: '월',
+            },
+            {
+              day_of_the_week: 2,
+              name: '화',
+            },
+            {
+              day_of_the_week: 3,
+              name: '수',
+            },
+            {
+              day_of_the_week: 4,
+              name: '목',
+            },
+            {
+              day_of_the_week: 5,
+              name: '금',
+            },
+            {
+              day_of_the_week: 6,
+              name: '토',
+            },
+          ],
+          available_time_list: [],
+          formData: {
+            day_of_the_week: null,
+          },
         }
       },
       methods: {
+        chageDayOfTheWeek: function() {
+          this.getAvailableTime();
+        },
+        addTime: function() {
 
+        },
+        getAvailableTime: function() {
+          var __this = this;
+          global.ajax({
+            url: '/api/available_time' + global.serializeQuery({
+              building_id: this.building.building_id,
+              day_of_the_week: this.formData.day_of_the_week,
+            }),
+            type: 'GET',
+          },
+          function (data, status) {
+            console.log(data.results)
+            __this.available_time_list = data.results;
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+        },
       }
     })
   </script>

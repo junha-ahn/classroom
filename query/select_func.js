@@ -1052,7 +1052,6 @@ let self = {
 
         sort_key = (sort_key) ? sort_key : 'available_time_id';
         sort_type = (sort_type == false) ? false : true;
-
         if (page && page_length) {
           countString = squel.select()
             .from('available_time')
