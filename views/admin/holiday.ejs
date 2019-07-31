@@ -1,0 +1,157 @@
+<% include ../sub/header %>
+      <% include ../sub/admin_menu %>
+      
+      <div class="admin_right">
+        <div style="float: left; width:50%;"> 
+          <div class="single_input_body" style="width:70%;">
+              <div class="pack_div clearfix">
+                <div class="div_left">
+                  <label>강의실</label>
+                </div>
+                <div class="div_right">
+                  <select class="form-control" v-model="formData.room_id">
+                    <option :value="0">{{building.name}}</option>
+                    <option v-for="(room, i) in results" v-bind:value="room.room_id" :key="i">
+                      {{ room.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pack_div clearfix">
+                <div class="div_left">
+                  <label>시작일</label>
+                </div>
+                <div class="div_right">
+                  <custom-datepicker
+                    :inline="false"
+                    :selected_date="formData.start_date"
+                    :default_date="formData.start_date || new Date()"
+                    :on-selected="onSelected"
+                  ></custom-datepicker>
+                </div>
+              </div>
+
+              <div class="pack_div clearfix">
+                <div class="div_left">
+                  <label>종료일</label>
+                </div>
+                <div class="div_right">
+                  <custom-datepicker
+                    :inline="false"
+                    :selected_date="formData.end_date"
+                    :default_date="formData.end_date  || new Date()"
+                    :on-selected="onSelected"
+                  ></custom-datepicker>
+                </div>
+              </div>
+
+              
+              <div class="pack_div clearfix">
+                <div class="div_left">
+                  <label>이름</label>
+                </div>
+                <div class="div_right">
+                  <input type="text" class="form-control" v-model="formData.name" placeholder="이름을 입력해주세요">
+                </div>
+              </div>
+
+              <div class="pack_div clearfix">
+                <div class="div_left">
+                  <label>공휴일</label>
+                </div>
+                <div class="div_right">
+                  <div class="text-left">
+                    <span>공휴일</span>
+                    <input type="radio" :value="1" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 1">
+                  </div>
+                  <div class="text-left">
+                    <span>기타 휴일</span>
+                    <input type="radio" :value="0" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 0">
+                  </div>
+                </div>
+              </div>
+
+            <div class="single_button">
+              <button type="submit" class="btn btn-primary">{{formData.holiday_id == null ? '추가' : '수정'}}</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="float: right; width:50%;">
+          <custom-datepicker
+            :inline="true"
+            :is_holidaypage="true"
+            :default_date="new Date()"
+            :building_id="building.building_id"
+            :room_id="formData.room_id"
+            :on-disable-selected="onDisableSelected"
+          ></custom-datepicker>
+        </div>
+
+      </div>
+    </main>
+
+    <footer>
+      <% include ../sub/footer %>
+    </footer>
+  </div>
+
+  
+  <% include ../component/datepicker %>
+  <script>
+    var global = makeGlobal();
+    var results = <%-JSON.stringify(results) %>;
+    var building = <%-JSON.stringify(building) %>;
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+          results: results,
+          building: building,
+          formData: {
+            holiday_id: null,
+            room_id:0,
+            start_date: null,
+            end_date: null,
+            name: '',
+            is_public_holiday: 1,
+          }
+        }
+      },
+      methods: {
+        resetFormData: function() {
+          this.formData.holiday_id = null;
+          this.formData.room_id = 0;
+          this.formData.start_date = null;
+          this.formData.end_date = null;
+          this.formData.name = '';
+          this.formData.is_public_holiday = 1;
+        },
+        onSelected: function(date) {
+          console.log(date);
+        },
+        onDisableSelected: function(params) {
+          console.log(params)
+          if (this.formData.holiday_id == params.holiday_id) {
+          } else {
+            this.formData.holiday_id = params.holiday_id;
+            this.formData.room_id = params.room_id || 0;
+            this.formData.start_date = params.start_date;
+            this.formData.end_date = params.end_date;
+            this.formData.name = params.name;
+            this.formData.is_public_holiday = params.is_public_holiday;
+            console.log(this.formData)
+          }
+        }
+      }
+    })
+  </script>
+
+</body>
+
+</html>

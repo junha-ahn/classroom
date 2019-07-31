@@ -71,6 +71,21 @@ router.get('/user/lookup', isAdmin, async (req, res, next) => {
 });
 router.get('/user/single/:user_id', isAdmin, getUserSingle(true));
 
+router.get('/holiday', isAdmin, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    results,
+    list_count
+  } = await select_func.room(conn, {
+    building_id: req.user.building_id,
+  });
+  foo.cleaningList(results);
+  res.render('admin/holiday', foo.getResJson(req.user, {
+    results,
+    query: req.query,
+    params: req.params,
+    building: info.building_object[req.user.building_id],
+  }))
+}));
 router.get('/schedule', isAdmin, async (req, res, next) => {
   let connection;
   try {

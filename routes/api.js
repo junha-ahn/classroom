@@ -462,6 +462,7 @@ router.get('/holiday', async (req, res, next) => {
     year,
     month,
     need_dates,
+    is_only,
   } = req.query;
 
   if (month && !year) {
@@ -480,6 +481,7 @@ router.get('/holiday', async (req, res, next) => {
         building_id,
         year,
         month,
+        is_only,
         sort_key: 'start_date',
       });
       let dates = need_dates ? getDates(results) : []

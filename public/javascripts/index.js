@@ -69,11 +69,15 @@ function makeGlobal() {
     'admin_reservation_lookup' : 'admin',
     'admin_reservation_single' : 'admin',
     'admin_reservation_write' : 'admin',
+    'admin_holiday' : 'admin',
+    'admin_schedule' : 'admin',
   };
   var admin_name_by_class = {
     'admin_user_lookup' : 'user',
     'admin_room_lookup' : 'room',
     'admin_reservation_lookup' : 'reservation',
+    'admin_holiday' : 'holiday',
+    'admin_schedule' : 'schedule',
   };
   var mypage_name_by_class = {
     'mypage_dashboard' : 'dashboard',

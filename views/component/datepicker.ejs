@@ -27,6 +27,7 @@
     template: '#datepicker-template',
     props: {
       inline: Boolean,
+      is_holidaypage: Boolean,
       maximumView: String,
       default_date: Date,
       min_date: Date,
@@ -34,6 +35,7 @@
       building_id: Number,
       room_id: Number,
       onSelected: Function,
+      onDisableSelected: Function,
     },
     data: function(){ 
       return {
@@ -74,6 +76,13 @@
             var end_date =global.resetTime(new Date(holiday_results[i].end_date));
             if (end_date >= selected_date) {
               message = '[ '+ holiday_results[i].name+ ' ] \n'+ '다른 날짜를 선택해주세요'
+              this.onDisableSelected({
+                holiday_id: holiday_results[i].holiday_id,
+                start_date:start_date,
+                end_date:end_date,
+                name: holiday_results[i].name,
+                is_public_holiday: holiday_results[i].is_public_holiday,
+              })
             }
           }
         }
@@ -108,17 +117,24 @@
         this.state.highlighted.dates = dates;
       },
       getHoliday: function() {
-        let __this = this;
+        var __this = this;
+        var room_id = this.room_id || null;
+        var building_id = this.building_id || null;
+        var is_only= 0;
+        if (this.is_holidaypage) {
+          is_only = 1;
+        }
         global.ajax({
           url: '/api/holiday',
           type: 'GET',
           data: null,
           query: {
-            building_id : this.building_id,
-            room_id: this.room_id,
+            building_id : building_id,
+            room_id: room_id,
             year: this.year,
             month: this.month,
             need_dates: true,
+            is_only: is_only,
           },
         },
         function(data, status) {
@@ -153,5 +169,10 @@
     created: function() {
       this.getHoliday();
     },
+    watch: {
+      room_id : function (room_id) {
+        this.getHoliday();
+      }
+    }
   })
 </script> 

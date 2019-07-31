@@ -917,6 +917,7 @@ let self = {
           year,
           month,
           date,
+          is_only,
           page,
           page_length,
           sort_key,
@@ -925,6 +926,7 @@ let self = {
 
         year = year ? parseInt(year) : null;
         month = month ? parseInt(month) : null;
+        is_only = is_only == 1 ? true : null;
         sort_key = (sort_key) ? sort_key : 'holiday_id';
         sort_type = (sort_type == false) ? false : true;
 
@@ -945,8 +947,12 @@ let self = {
               .else(squel.expr().and('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)))
             .where(squel.case()
               .when('? IS NULL', room_id)
-              .then(squel.expr().and('holiday.room_id IS NULL'))
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.room_id = ? OR holiday.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_only)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and(room_id != null ? 'holiday.room_id IS NOT NULL' : 'holiday.building_id IS NOT NULL AND room_id IS NULL')))
             .where(squel.case()
               .when('? IS NULL OR ? IS NULL', year, month)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
@@ -970,8 +976,12 @@ let self = {
               .else(squel.expr().and('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)))
             .where(squel.case()
               .when('? IS NULL', room_id)
-              .then(squel.expr().and('holiday.room_id IS NULL'))
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.room_id = ? OR holiday.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_only)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and(room_id != null ? 'holiday.room_id IS NOT NULL' : 'holiday.building_id IS NOT NULL AND room_id IS NULL')))
             .where(squel.case()
               .when('? IS NULL OR ? IS NULL', year, month)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
@@ -998,8 +1008,12 @@ let self = {
               .else(squel.expr().and('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)))
             .where(squel.case()
               .when('? IS NULL', room_id)
-              .then(squel.expr().and('holiday.room_id IS NULL'))
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
               .else(squel.expr().and('holiday.room_id = ? OR holiday.room_id IS NULL', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', is_only)
+              .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
+              .else(squel.expr().and(room_id != null ? 'holiday.room_id IS NOT NULL' : 'holiday.building_id IS NOT NULL AND room_id IS NULL')))
             .where(squel.case()
               .when('? IS NULL OR ? IS NULL', year, month)
               .then(squel.expr().and('holiday.holiday_id IS NOT NULL'))
@@ -1746,7 +1760,7 @@ let self = {
       }
     });
   },
-  
+
   checkRoomRsvTime: (connection, object) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1759,7 +1773,7 @@ let self = {
           start_datetime,
           end_datetime,
         } = object;
-  
+
         let queryString = squel.select()
           .from('room_to_use')
           .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
@@ -1768,8 +1782,8 @@ let self = {
             .when('? IS NULL', not_room_rsv_id)
             .then(squel.expr().and('room_to_use.room_rsv_id IS NOT NULL'))
             .else(squel.expr().and('room_to_use.room_rsv_id != ?', not_room_rsv_id)))
-          .where('room_to_use.room_id IN ?',room_id_list)
-          .where('room_rsv.building_id = ?',building_id)
+          .where('room_to_use.room_id IN ?', room_id_list)
+          .where('room_rsv.building_id = ?', building_id)
           .where('room_rsv.rsv_status = ?', rsv_status)
           .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime, start_datetime)
           .field('room_rsv_time.*')
