@@ -136,6 +136,12 @@
             'btn btn-default disabled': _obj.is_next,
           }
         },
+        leftInfoClass: function (val) {
+          return {
+            'btn btn-primary': val != null,
+            'btn btn-gray': val == null,
+          }
+        },
         chageMethod: function(method) {
           if (method == 'R') {
             this.menu_step = 'room';

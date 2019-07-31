@@ -1,14 +1,14 @@
 <div>
   <button type="button" class="btn btn-default">교실</button>
-  <button type="button" class="btn btn_right">{{info.room_number}} {{info.room_name}}</button>
+  <button type="button" class="btn btn_right" :class="leftInfoClass(formData.room_id)">{{info.room_number}} {{info.room_name}}</button>
 </div>
 <div>
   <button type="button" class="btn btn-default">날짜</button>
-  <button type="button" class="btn btn_right">{{info.date}}</button>
+  <button type="button" class="btn btn_right" :class="leftInfoClass(info.date)">{{info.date}}</button>
 </div>
 <div>
   <button type="button" class="btn btn-default">시간</button>
-  <button type="button" class="btn btn_right">
+  <button type="button" class="btn btn_right" :class="leftInfoClass(info.start_time)">
     {{
       (info.start_time && !info.end_time) ? info.start_time.start_time_string + '~' + info.start_time.end_time_string : 
       (info.start_time && info.end_time) ? info.start_time.start_time_string + '~' + info.end_time.end_time_string : ''
