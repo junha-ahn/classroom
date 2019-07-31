@@ -1,7 +1,6 @@
 const squel = require('squel');
 
 const db_func = require('../global/db_func.js');
-const constant = require('../global/constant.js');
 
 let self = {
   user: (connection, object) => {
@@ -220,8 +219,8 @@ let self = {
         for (let i in time_list) {
           fieldsRows.push({
             room_rsv_id,
-            start_time : time_list[i].start_time,
-            end_time : time_list[i].end_time,
+            start_time: time_list[i].start_time,
+            end_time: time_list[i].end_time,
           })
         }
         let queryString = squel.insert()
@@ -246,7 +245,7 @@ let self = {
         for (let i in room_id_list) {
           fieldsRows.push({
             room_rsv_id,
-            room_id : room_id_list[i],
+            room_id: room_id_list[i],
           })
         }
         let queryString = squel.insert()
@@ -298,12 +297,44 @@ let self = {
         } = object;
         let queryString = squel.insert()
           .into('notification')
-          .set('notification_type',notification_type)
-          .set('sender_id',sender_id)
-          .set('receiver_id',receiver_id)
-          .set('room_rsv_id',room_rsv_id)
+          .set('notification_type', notification_type)
+          .set('sender_id', sender_id)
+          .set('receiver_id', receiver_id)
+          .set('room_rsv_id', room_rsv_id)
           .toParam();
         resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  available_time: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          day_of_the_week,
+          building_id,
+          time_list,
+        } = object;
+
+        let fieldsRows = [];
+        for (let i in time_list) {
+          fieldsRows.push({
+            day_of_the_week,
+            building_id,
+            start_time: time_list[i].start_time,
+            end_time: time_list[i].end_time,
+          })
+        }
+        console.log(fieldsRows);
+        let queryString = squel.insert()
+          .into('available_time')
+          .setFieldsRows(fieldsRows)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      
+
       } catch (error) {
         reject(error);
       }

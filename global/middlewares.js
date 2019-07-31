@@ -93,6 +93,10 @@ let self = {
       res.status(401).json({
         message: '날짜를 다시 선택해주세요'
       })
+    } else if (req.body.day_of_the_week != null && req.body.day_of_the_week < 0 && req.body.day_of_the_week > 6) {
+      res.status(401).json({
+        message: '요일을 다시 선택해주세요'
+      })
     } else {
       next();
     }
@@ -313,6 +317,19 @@ let self = {
       'end_date',
       'name',
       'is_public_holiday',
+    ]);
+    if (flag) {
+      res.status(401).json({
+        message: "필수값을 입력해주세요: " + flag,
+      })
+    } else {
+      next();
+    }
+  },
+  checkRequireAvailableTime: (req, res, next) => {
+    let flag = checkRequire(req.body, [
+      'available_time_list',
+      'day_of_the_week',
     ]);
     if (flag) {
       res.status(401).json({

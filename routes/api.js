@@ -31,6 +31,7 @@ const {
   checkRequireUpdateRoomRsv,
   checkRequireInsertRoomRsvAdmin,
   checkRequireHoliday,
+  checkRequireAvailableTime,
 } = require('../global/middlewares');
 
 router.put('/user/:user_id', isLoggedIn, checkReqInfo, checkRequirtUpdateUser, db_func.inDBStream(async (req, res, next, conn) => {
@@ -635,6 +636,35 @@ router.get('/available_time', async (req, res, next) => {
   }
 });
 
+router.post('/available_time', isAdmin, checkReqInfo, checkRequireAvailableTime, db_func.inDBStream(async (req, res, next, conn) => {
+  let {
+    available_time_list,
+    day_of_the_week,
+  } = req.body;
+  
+  checkTimeList(available_time_list);
+  
+  await db_func.beginTransaction(conn);
+  
+  await delete_func.available_time(conn, {
+    isTransaction: true,
+    building_id: req.user.building_id,
+    day_of_the_week,
+  })
+  if (available_time_list[0]) {
+    await insert_func.available_time(conn, {
+      isTransaction: true,
+      building_id: req.user.building_id,
+      day_of_the_week,
+      time_list: available_time_list,
+    })
+  }
+  await db_func.commit(conn);
+  res.status(200).json({
+    message: '성공'
+  })
+}));
+
 router.get('/room_to_use/:room_rsv_id', db_func.inDBStream(async (req, res, next, conn) => {
   let room_rsv_id = req.params.room_rsv_id;
 
@@ -815,6 +845,8 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
       message: '강의실을 다시 선택해주세요'
     })
   } else {
+    checkTimeList(time_list);
+    
     let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'end_time'))[time_list.length - 1].end_time)}`);
     let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'start_time'))[0].start_time)}`);
 
@@ -914,6 +946,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
         });
       }
     }
+    checkTimeList(time_list);
 
     for (let i in room_id_list) {
       let room_id = parseInt(room_id_list[i]);
@@ -1338,5 +1371,22 @@ function checkRoomRsvTime(conn, object) {
       reject(error);
     }
   });
+}
+function checkTimeList(time_list) {
+  for (let i in time_list) {
+    let start_dtime = moment('1970/1/1 ' + time_list[i].start_time, "YYYY-MM-DD HH:mm");
+    let end_dtime = moment('1970/1/1 ' + time_list[i].end_time, "YYYY-MM-DD HH:mm");
+    for (let j = parseInt(i) + 1; j < time_list.length; j ++) {
+      let _start_dtime = moment('1970/1/1 ' + time_list[j].start_time, "YYYY-MM-DD HH:mm");
+      let _end_dtime = moment('1970/1/1 ' + time_list[j].end_time, "YYYY-MM-DD HH:mm");
+
+      if (_start_dtime < end_dtime && _end_dtime > start_dtime) {
+        let error = new Error();
+        error.message = `시간을 다시 선택해주세요`
+        error.status = 401;
+        throw error;
+      }
+    }
+  }
 }
 module.exports = router;

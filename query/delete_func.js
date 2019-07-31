@@ -146,6 +146,26 @@ let self = {
       }
     });
   },
+  available_time: (connection, object) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let {
+          isTransaction,
+          building_id,
+          day_of_the_week,
+        } = object;
+
+        let queryString = squel.delete()
+          .from('available_time')
+          .where('day_of_the_week = ?', day_of_the_week)
+          .where('building_id = ?', building_id)
+          .toParam();
+        resolve(await db_func.sendQueryToDB(connection, queryString, isTransaction));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }
 
 module.exports = self;

@@ -83,7 +83,7 @@ let self = {
 
       if (show_meridiem) {
         res_string += getTime < 12 ? '오전 ' : '오후 ';
-        res_string += `${getTime == 12 ? getTime : getTime%12}:${time_string.substring(3,5)}`;
+        res_string += `${getTime == 12 || getTime == 24 ? 12 : getTime%12}:${time_string.substring(3,5)}`;
 
       } else {
         res_string = time_string;

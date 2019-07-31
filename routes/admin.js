@@ -86,6 +86,7 @@ router.get('/holiday', isAdmin, db_func.inDBStream(async (req, res, next, conn) 
 router.get('/schedule', isAdmin, async (req, res, next) => {
   res.render('admin/schedule', foo.getResJson(req.user, {
     building: info.building_object[req.user.building_id],
+    day_of_the_week_results: info.day_of_the_week_results,
   }))
 });
 

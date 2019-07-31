@@ -22,6 +22,10 @@ function validate(form, _conf) {
 
 
 var config = {
+  'day_of_the_week' : {
+    name: '요일',
+    data_type: 'number',
+  },
   'department_id' : {
     name: '학과',
     data_type: 'number',

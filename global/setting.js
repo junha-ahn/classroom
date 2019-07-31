@@ -37,6 +37,10 @@
       (squel.select()
         .from('rsv_status')
         .toParam()))
+    let day_of_the_week_results = await db_func.sendQueryToDB(connection,
+      (squel.select()
+        .from('day_of_the_week')
+        .toParam()))
         
     let data = {
       campus_results,
@@ -46,6 +50,7 @@
       room_rsv_category_results,
       permission_results,
       rsv_status_results,
+      day_of_the_week_results,
     };
     
     fs.writeFile(path.join('./global/db_data.json'), JSON.stringify(data), function(err) {
