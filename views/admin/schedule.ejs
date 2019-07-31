@@ -1,52 +1,53 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
-
-      <div class="single_input_body">
       
-        <div class="pack_div clearfix">
-          <div class="div_left">
-            <label>학습관</label>
-          </div>
-          <div class="div_right">
-            <p>{{ building.name }}</p>
-          </div>
-        </div>
-
-        <div class="pack_div clearfix">
-          <div class="div_left">
-            <label>요일</label>
-          </div>
-          <div class="div_right">
-            <select  class="form-control" v-model="formData.day_of_the_week"  @change="chageDayOfTheWeek">
-              <option v-for="(item, i) in day_of_the_week_results" v-bind:value="item.day_of_the_week"
-                :selected="formData.day_of_the_week == item.day_of_the_week" :key="i">
-                {{ item.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-  
-        <div class="form-inline pack_div clearfix" v-if="formData.day_of_the_week != null">
-          <div class="div_left">
-            <label>타임블럭</label>
-          </div>
-          <div class="div_right">
-            <div class="block" v-for="(available_time, i) in available_time_list">
-              <button
-              class="btn btn-default"
-              v-bind:value="available_time.available_time_id" 
-              :key="i"
-              disabled
-              >{{available_time.start_time}} ~ {{available_time.end_time}}</button>
-              <button 
-              type="button" 
-              class="btn btn-danger" 
-              @click="deleteAvailableTime()"
-              >-</button>
+      <div class="admin_right">
+        <div class="single_input_body">
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>학습관</label>
             </div>
-            <custom-timepicker
-              :add-time="addTime"
-            ></custom-timepicker>
+            <div class="div_right">
+              <p>{{ building.name }}</p>
+            </div>
+          </div>
+
+          <div class="pack_div clearfix">
+            <div class="div_left">
+              <label>요일</label>
+            </div>
+            <div class="div_right">
+              <select  class="form-control" v-model="formData.day_of_the_week"  @change="chageDayOfTheWeek">
+                <option v-for="(item, i) in day_of_the_week_results" v-bind:value="item.day_of_the_week"
+                  :selected="formData.day_of_the_week == item.day_of_the_week" :key="i">
+                  {{ item.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+    
+          <div class="form-inline pack_div clearfix" v-if="formData.day_of_the_week != null">
+            <div class="div_left">
+              <label>타임블럭</label>
+            </div>
+            <div class="div_right">
+              <div class="block" v-for="(available_time, i) in available_time_list">
+                <button
+                class="btn btn-default"
+                v-bind:value="available_time.available_time_id" 
+                :key="i"
+                disabled
+                >{{available_time.start_time}} ~ {{available_time.end_time}}</button>
+                <button 
+                type="button" 
+                class="btn btn-danger" 
+                @click="deleteAvailableTime(i)"
+                >-</button>
+              </div>
+              <custom-timepicker
+                :add-time="addTime"
+              ></custom-timepicker>
+            </div>
           </div>
         </div>
       </div>
@@ -112,8 +113,32 @@
         chageDayOfTheWeek: function() {
           this.getAvailableTime();
         },
-        addTime: function() {
+        addTime: function(start_time, end_time) {
+          var available_time_list = this.available_time_list;
+          var flag = false;
+          var start = new Date('1970/1/1 ' + start_time);
+          var end = new Date('1970/1/1 ' + end_time);
+          for (var i = 0; i < available_time_list.length; i++) {
+            var _start = new Date('1970/1/1 ' + available_time_list[i].start_time);
+            var _end = new Date('1970/1/1 ' + available_time_list[i].end_time);
+            if (_start < end && _end > start) {
+              flag = true;
+            }
+          }
+          
+          if (flag) {
+            alert('겹치는 시간을 확인해주세요');
+          } else {
+            this.available_time_list.push({
+              start_time: start_time,
+              end_time: end_time,
+            });
+            global.sortByKey(this.available_time_list, 'start_time');
+          }
+        },
 
+        deleteAvailableTime: function(index) {
+          this.available_time_list.splice(index, 1)
         },
         getAvailableTime: function() {
           var __this = this;
@@ -125,7 +150,6 @@
             type: 'GET',
           },
           function (data, status) {
-            console.log(data.results)
             __this.available_time_list = data.results;
           },
           function (message, status, data) {

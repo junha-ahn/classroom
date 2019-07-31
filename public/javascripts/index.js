@@ -141,7 +141,7 @@ function makeGlobal() {
   };
   function sortByKey(array, key) {
     array.sort(function (a,b) {
-      (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0)
+      return (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0)
     }); 
   }
   return {
