@@ -28,6 +28,7 @@
     props: {
       inline: Boolean,
       is_holidaypage: Boolean,
+      reload_holiday: Boolean,
       clear_button: Boolean,
       not_holiday: Boolean,
       maximumView: String,
@@ -179,7 +180,10 @@
     watch: {
       room_id : function (room_id) {
         this.getHoliday();
-      }
+      },
+      reload_holiday : function (room_id) {
+        this.getHoliday();
+      },
     }
   })
 </script> 

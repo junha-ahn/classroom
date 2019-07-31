@@ -42,6 +42,7 @@
                   <div class="div_right">
                     <custom-datepicker
                       :inline="false"
+                      :selected_date="formData.end_date"
                       :default_date="formData.end_date  || new Date()"
                       :on-selected="onSelectedEndDate"
                       :clear_button="true"
@@ -86,6 +87,7 @@
 
         <div class="holiday_right">
           <custom-datepicker
+            :reload_holiday="reload_holiday"
             :inline="true"
             :is_holidaypage="true"
             :default_date="new Date()"
@@ -121,6 +123,7 @@
           is_admin: <%- is_admin %>,
           results: results,
           building: building,
+          reload_holiday: true,
           formData: {
             building_id: building.building_id,
             holiday_id: null,
@@ -134,7 +137,8 @@
       },
       methods: {
         reload: function() {
-          location.reload();
+          this.reload_holiday = !this.reload_holiday;
+          this.resetFormData();
         },
         deleteHoliday: function() {
           var conf = confirm("정말 삭제하시겠습니까?");
@@ -155,8 +159,6 @@
         },
         onSubmitForm: function(e) {
           e.preventDefault();
-          // 시작 , 종료일 체크~
-          // reload...
           var _validate = validate(this.formData, {
             'start_date': {
               is_require: true,
@@ -173,6 +175,8 @@
           });
           if (_validate) {
             alert(_validate)
+          } else if(dateDiff(this.formData.start_date, this.formData.end_date) < 0) {
+            alert('시작/종료일을 다시 선택해주세요')
           } else {
             var __this = this;
             var mod = this.formData.holiday_id != null ? 'PUT' : 'POST'
@@ -224,6 +228,18 @@
         }
       }
     })
+
+    function dateDiff(start_date, end_date)  {
+      var diffDate_1 = start_date instanceof Date ? start_date : new Date(start_date);
+      var diffDate_2 = end_date instanceof Date ? end_date : new Date(end_date);
+      diffDate_1 = new Date(diffDate_1.getFullYear(), diffDate_1.getMonth() + 1, diffDate_1.getDate());
+      diffDate_2 = new Date(diffDate_2.getFullYear(), diffDate_2.getMonth() + 1, diffDate_2.getDate());
+
+      var diff = diffDate_2.getTime() - diffDate_1.getTime();
+      diff = Math.ceil(diff / (1000 * 3600 * 24));
+
+      return diff;
+    }
   </script>
 
 </body>

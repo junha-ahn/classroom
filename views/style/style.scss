@@ -339,12 +339,12 @@ thead {
   }
 
   &.disabled {
-    color: #b5bac4 !important;
+    color: #7e8282 !important;
 
     &.highlighted {
       background-color: transparent;
       color: red !important;
-      border: 1px solid #E4E5E5;
+      border: 1px solid #7e8282;
     }
   }
 }
