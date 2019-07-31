@@ -240,10 +240,8 @@
           </div>
         </div>
 
-        <div class="btn-group btn-bottom" role="group">
-          <div v-if="is_adminpage && is_admin==1">
-            <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
-          </div>
+        <div class="single_button">
+          <button type="button" class="btn btn-warning" v-if="is_adminpage && is_admin==1 && mod=='GET'" @click="setMod('PUT', $event)">수정</button>
 
           <button 
           type="button" 

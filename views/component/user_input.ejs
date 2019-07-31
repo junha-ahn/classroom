@@ -1,84 +1,146 @@
 <script type="text/x-template" id="input-template">
   <form class="form-lnline" v-on:submit="onSubmitForm">
-
-    <label v-if="is_adminpage && mod=='GET'" class="col-sm-2 control-label">권한</label>
+    <div class="single_input_body">
     
-    <div v-if="is_adminpage && mod=='GET'" class="col-sm-10">
-      <button type="button" @click="changeToUser(user)" :class="classIsPrimary(user.user_type == global.USER_TYPE)">유저</button>
-      <button type="button" @click="changeToAdmin(user)" :class="classIsPrimary(user.user_type ==  global.ADMIN_TYPE)">관리자</button>
-    </div>
-
-    <label class="col-sm-2 control-label">학과</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ user.department_name }}</p>
-    </div>
-    <select v-else class="form-control" v-model="user.department_id">
-      <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
-        {{ department.name }}
-      </option>
-    </select>
-    
-    <label class="col-sm-2 control-label">캠퍼스</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ user.campus_name }}</p>
-    </div>
-    <select v-else class="form-control" v-model="user.campus_id"  @change="replaceBuildings()">
-      <option v-for="(campus, i) in campus_results" v-bind:value="campus.campus_id" :key="i">
-        {{ campus.name }}
-      </option>
-    </select>
-
-    <label class="col-sm-2 control-label">학습관</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ user.building_name }}</p>
-    </div>
-    <select v-else class="form-control" v-model="user.building_id">
-      <option v-for="(building, i) in building_results" v-bind:value="building.building_id" :key="i">
-        {{ building.name }}
-      </option>
-    </select>
-
-    <label class="col-sm-2 control-label">이메일</label>
-    <div class="col-sm-10">
-      <p class="form-control-static">{{ user.email }}</p>
-    </div>
-
-    <label class="col-sm-2 control-label">이름</label>
-    <div>
-      <input type="text" class="form-control" v-model="user.name" :disabled="mod == 'GET'">
-    </div>
-    <label class="col-sm-2 control-label">전화번호</label>
-    <div>
-      <input type="text" class="form-control" v-model="user.phone" :disabled="mod == 'GET'">
-    </div>
-    
-    <label class="col-sm-2 control-label">학생/교직원</label>
-    <div v-if="mod=='GET'" class="col-sm-10">
-      <p class="form-control-static">{{ user.is_student == 1 ? '학생' : '교직원' }}</p>
-    </div>
-    <input v-else type="checkbox" v-model="user.is_student" true-value="1" false-value="0">
-
-    <label class="col-sm-2 control-label">학번</label>
-    <div>
-      <input type="text" class="form-control" v-model="user.student_number" :disabled="mod == 'GET'">
-    </div>
-
-    <div class="form-group" v-if="mod!='POST'">
-      <label class="col-sm-2 control-label">최근 수정일</label>
-      <div>
-        <p class="form-control-static">{{user.datetime_last_updated}}</p>
+      <div class="pack_div clearfix" v-if="is_adminpage && mod=='GET'">
+        <div class="div_left">
+          <label>권한</label>
+        </div>
+        <div class="div_right">
+          <button type="button" @click="changeToUser(user)" :class="classIsPrimary(user.user_type == global.USER_TYPE)">유저</button>
+          <button type="button" @click="changeToAdmin(user)" :class="classIsPrimary(user.user_type ==  global.ADMIN_TYPE)">관리자</button>
+        </div>
       </div>
-    </div>
-    <div class="form-group" v-if="mod!='POST'">
-      <label class="col-sm-2 control-label">생성일</label>
-      <div>
-        <p class="form-control-static">{{user.datetime_created}}</p>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>학과</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.department_name  }}</p>
+          </template>
+          <select v-else class="form-control" v-model="user.department_id">
+            <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
+              {{ department.name }}
+            </option>
+          </select>
+        </div>
       </div>
-    </div>
-    
-    <div>
-      <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
-      <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
+      
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>캠퍼스</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.campus_name  }}</p>
+          </template>
+          <select v-else class="form-control" v-model="user.campus_id"  @change="replaceBuildings()">
+            <option v-for="(campus, i) in campus_results" v-bind:value="campus.campus_id" :key="i">
+              {{ campus.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>학습관</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.building_name  }}</p>
+          </template>
+          <select v-else class="form-control" v-model="user.building_id">
+            <option v-for="(building, i) in building_results" v-bind:value="building.building_id" :key="i">
+              {{ building.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>이메일</label>
+        </div>
+        <div class="div_right">
+          <p>{{ user.email }}</p>
+        </div>
+      </div>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>이름</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.name }}</p>
+          </template>
+          <input v-else type="text" class="form-control" v-model="user.name" placeholder="이름을 입력해주세요">
+        </div>
+      </div>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>전화번호</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.phone }}</p>
+          </template>
+          <input v-else type="text" class="form-control" v-model="user.phone" placeholder="전화번호를 입력해주세요">
+        </div>
+      </div>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>학생/교직원</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.is_student == 1 ? '학생' : '교직원' }}</p>
+          </template>
+          <input v-else type="checkbox" v-model="user.is_student" true-value="1" false-value="0">
+        </div>
+      </div>
+
+      <div class="pack_div clearfix">
+        <div class="div_left">
+          <label>학번</label>
+        </div>
+        <div class="div_right">
+          <template v-if="mod=='GET'">
+            <p>{{ user.student_number }}</p>
+          </template>
+          <input v-else type="text" class="form-control" v-model="user.student_number" placeholder="학번을 입력해주세요">
+        </div>
+      </div>
+
+
+      <div class="pack_div clearfix" v-if="mod!='POST'">
+        <div class="div_left">
+          <label>업데이트일</label>
+        </div>
+        <div class="div_right">
+          <p>{{user.datetime_last_updated}}</p>
+        </div>
+      </div>
+
+      <div class="pack_div clearfix" v-if="mod!='POST'">
+        <div class="div_left">
+          <label>생성일</label>
+        </div>
+        <div class="div_right">
+          <p>{{user.datetime_created}}</p>
+        </div>
+      </div>
+
+      
+      <div class="single_button">
+        <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
+        <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
+      </div>
     </div>
   </form>
 </script>

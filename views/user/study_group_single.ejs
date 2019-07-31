@@ -2,23 +2,24 @@
       <template>
         <group-input v-bind:group="group" v-bind:department_results="department_results" v-bind:building_results="building_results" mod="GET"></group-input>
       </template>
-
-      <table class="table table-hover">
-        <thead>
-          <th>이름</th>
-          <th>학번</th>
-          <th>전화번호</th>
-          <th>가입일</th>
-        </thead>
-        <tbody>
-          <tr v-for="(person, i) in results" :key="i">
-            <td>{{person.name}}</td>
-            <td>{{person.student_number}}</td>
-            <td>{{person.phone}}</td>
-            <td>{{person.date_joined}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="lookup_body" style="margin-top:5%">
+        <table class="table table-hover">
+          <thead>
+            <th>이름</th>
+            <th>학번</th>
+            <th>전화번호</th>
+            <th>가입일</th>
+          </thead>
+          <tbody>
+            <tr v-for="(person, i) in results" :key="i">
+              <td>{{person.name}}</td>
+              <td>{{person.student_number}}</td>
+              <td>{{person.phone}}</td>
+              <td>{{person.date_joined}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </main>
     
     <footer>

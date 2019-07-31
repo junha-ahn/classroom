@@ -168,7 +168,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="single_button">
         <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
         <button type="submit" class="btn btn-primary" v-if="mod!='GET'">제출</button>
         <button type="button" class="btn btn-danger" v-if="mod=='GET'" @click="deleteRoom(room.room_id)">
