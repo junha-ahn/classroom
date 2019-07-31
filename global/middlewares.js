@@ -1,3 +1,4 @@
+const moment = require('moment');
 const info = require('./info')
 const foo = require('./foo')
 
@@ -58,7 +59,7 @@ let self = {
     }
   },
 
-  
+
   checkReqInfo: (req, res, next) => {
     if (req.body.department_id != null && info.department_object[req.body.department_id] == undefined) {
       res.status(401).json({
@@ -72,7 +73,7 @@ let self = {
       res.status(401).json({
         message: '건물을 다시 선택해주세요'
       })
-    }  else if (req.body.building_id != null &&  req.body.campus_id != null  && info.building_object[req.body.building_id].campus_id != req.body.campus_id) {
+    } else if (req.body.building_id != null && req.body.campus_id != null && info.building_object[req.body.building_id].campus_id != req.body.campus_id) {
       res.status(401).json({
         message: '건물을 다시 선택해주세요'
       })
@@ -83,6 +84,14 @@ let self = {
     } else if (req.body.is_public_holiday != null && req.body.is_public_holiday != 1 && req.body.is_public_holiday != 0) {
       res.status(401).json({
         message: '공휴일 여부를 다시 선택해주세요'
+      })
+    } else if (req.body.start_date != null && req.body.end_date != null && moment(req.body.end_date, 'YYYY/MM/DD').diff(moment(req.body.start_date, 'YYYY/MM/DD'), 'days') < 0) {
+      res.status(401).json({
+        message: '시작 종료일을 다시 선택해주세요'
+      })
+    } else if (req.body.date != null && !moment(req.body.date).isValid()) {
+      res.status(401).json({
+        message: '날짜를 다시 선택해주세요'
       })
     } else {
       next();
@@ -358,8 +367,7 @@ let self = {
             sort_type: false,
           })
           foo.cleaningList(results, req.user);
-          res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup'
-          ,  foo.getResJson(req.user, {
+          res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup', foo.getResJson(req.user, {
             is_adminpage,
             params: req.params,
             query: {
@@ -393,7 +401,7 @@ let self = {
         user_id: req.user ? req.user.user_id : null,
         building_id: is_adminpage ? req.user.building_id : null,
       });
-    
+
       if (!results[0]) {
         res.render('error', foo.getResJson(req.user, {
           error_name: "예약을 찾을수 없습니다",
@@ -401,8 +409,7 @@ let self = {
         }));
       } else {
         foo.cleaningList(results, req.user);
-        res.render((is_adminpage ? 'admin' : 'user') + '/reservation_single'
-        , foo.getResJson(req.user, {
+        res.render((is_adminpage ? 'admin' : 'user') + '/reservation_single', foo.getResJson(req.user, {
           is_adminpage,
           params: req.params,
           room_rsv: results[0],
@@ -417,7 +424,7 @@ let self = {
   getUserSingle: (is_adminpage) => {
     return db_func.inDBStream(async (req, res, next, conn) => {
       let user_id = is_adminpage ? req.params.user_id : req.user.user_id;
-    
+
       let {
         results,
         list_count
@@ -426,7 +433,7 @@ let self = {
         campus_id: req.user.campus_id,
         building_id: req.user.building_id,
       });
-  
+
       if (!results[0]) {
         res.status(401).render('error', foo.getResJson(req.user, {
           error_name: '404 NOT FOUND',

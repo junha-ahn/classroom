@@ -35,7 +35,6 @@ const {
   checkRequireHoliday,
 } = require('../global/middlewares');
 
-
 router.put('/user/:user_id', isLoggedIn, checkReqInfo, checkRequirtUpdateUser, db_func.inDBStream(async (req, res, next, conn) => {
   let user_id = req.params.user_id;
   let {
@@ -689,109 +688,103 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
   } = req.body;
 
   let _date = foo.resetTime(moment(date));
-  if (date != undefined && !_date.isValid()) {
+  let {
+    results
+  } = await select_func.room(conn, {
+    room_id,
+    building_id,
+  });
+
+  let now = foo.resetTime(moment());
+  let min_date = (() => {
+    let _min_date = now;
+    if (results[0]) {
+      _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
+    }
+    return _min_date;
+  })();
+  if (!results[0]) {
     res.status(401).json({
-      message: '날짜를 다시 입력해주세요'
+      message: '강의실을 다시 선택해주세요'
+    })
+  } else if (!foo.checkPermission(req.user, results[0].auth_rsv_create)) {
+    res.status(401).json({
+      message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
+    })
+  } else if (now < min_date) {
+    res.status(401).json({
+      message: `날짜를 다시 선택해주세요. ${foo.parseDate(min_date)}일 이전에는 예약 불가능합니다.`
     })
   } else {
-    let {
-      results
-    } = await select_func.room(conn, {
-      room_id,
-      building_id,
-    });
+    let is_holiday = (await select_func.vRoomHoliday(conn, {
+      room_id: results[0].room_id,
+      building_id: results[0].building_id,
+      date: moment(date).format('YYYY-MM-DD'),
+    })).results[0] ? true : false;
 
-    let now = foo.resetTime(moment());
-    let min_date = (() => {
-      let _min_date = now;
-      if (results[0]) {
-        _min_date.date(_min_date.date() + results[0].rsv_apply_min_day);
-      }
-      return _min_date;
-    })();
-    if (!results[0]) {
+    if (is_holiday) {
       res.status(401).json({
-        message: '강의실을 다시 선택해주세요'
-      })
-    } else if (!foo.checkPermission(req.user, results[0].auth_rsv_create)) {
-      res.status(401).json({
-        message: '강의실을 예약할 권한이 없습니다. 다시 선택해주세요'
-      })
-    } else if (now < min_date) {
-      res.status(401).json({
-        message: `날짜를 다시 선택해주세요. ${foo.parseDate(min_date)}일 이전에는 예약 불가능합니다.`
+        message: '휴일입니다. 다른 날짜를 선택해주세요'
       })
     } else {
-      let is_holiday = (await select_func.vRoomHoliday(conn, {
-        room_id: results[0].room_id,
+      let available_time_results = (await select_func.vRoomAvailableTime(conn, {
         building_id: results[0].building_id,
-        date: moment(date).format('YYYY-MM-DD'),
-      })).results[0] ? true : false;
-
-      if (is_holiday) {
+        room_id: results[0].room_id,
+        time_id_list,
+        day_of_the_week: _date.day(),
+        sort_key: 'start_time',
+        sort_type: true,
+      })).results;
+      if (!available_time_results[0] || time_id_list.length != available_time_results.length) {
         res.status(401).json({
-          message: '휴일입니다. 다른 날짜를 선택해주세요'
+          message: '시간을 다시 선택해주세요'
         })
       } else {
-        let available_time_results = (await select_func.vRoomAvailableTime(conn, {
-          building_id: results[0].building_id,
-          room_id: results[0].room_id,
-          time_id_list,
-          day_of_the_week: _date.day(),
-          sort_key: 'start_time',
-          sort_type: true,
-        })).results;
-        if (!available_time_results[0] || time_id_list.length != available_time_results.length) {
-          res.status(401).json({
-            message: '시간을 다시 선택해주세요'
-          })
-        } else {
-          let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[0].start_time)}`);
-          let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[available_time_results.length - 1].end_time)}`);
-          let rsv_status = (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS 
-          if (rsv_status == info.SUBMIT_RSV_STATUS) {
-            await checkRoomRsvTime(conn, {
-              room_id_list: [room_id],
-              building_id: building_id,
-              start_datetime,
-              end_datetime,
-              time_list: available_time_results,
-            });
-          }
-
-          await db_func.beginTransaction(conn);
-          let insert_result = await insert_func.room_rsv(conn, {
-            isTransaction: true,
-            building_id,
-            rsv_status,
-            room_rsv_category_id: 1,
-            title,
-            department_id,
-            study_group_id,
-            user_id: req.user ? req.user.user_id : null,
-            start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
-            end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
-            student_count,
-            non_student_count,
-            representative_name,
-            representative_phone,
-            description,
-          });
-          await insert_func.room_to_use(conn, {
-            isTransaction: true,
-            room_rsv_id: insert_result.insertId,
+        let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[0].start_time)}`);
+        let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[available_time_results.length - 1].end_time)}`);
+        let rsv_status = (results[0].is_require_rsv_accept) ? info.REQ_RSV_STATUS : info.SUBMIT_RSV_STATUS
+        if (rsv_status == info.SUBMIT_RSV_STATUS) {
+          await checkRoomRsvTime(conn, {
             room_id_list: [room_id],
-          })
-          await insert_func.room_rsv_time(conn, {
-            isTransaction: true,
-            room_rsv_id: insert_result.insertId,
+            building_id: building_id,
+            start_datetime,
+            end_datetime,
             time_list: available_time_results,
-          })
-          await db_func.commit(conn);
-          foo.setRes(res, insert_result, {
-            message: '성공했습니다'
-          })
+          });
         }
+
+        await db_func.beginTransaction(conn);
+        let insert_result = await insert_func.room_rsv(conn, {
+          isTransaction: true,
+          building_id,
+          rsv_status,
+          room_rsv_category_id: 1,
+          title,
+          department_id,
+          study_group_id,
+          user_id: req.user ? req.user.user_id : null,
+          start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+          end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+          student_count,
+          non_student_count,
+          representative_name,
+          representative_phone,
+          description,
+        });
+        await insert_func.room_to_use(conn, {
+          isTransaction: true,
+          room_rsv_id: insert_result.insertId,
+          room_id_list: [room_id],
+        })
+        await insert_func.room_rsv_time(conn, {
+          isTransaction: true,
+          room_rsv_id: insert_result.insertId,
+          time_list: available_time_results,
+        })
+        await db_func.commit(conn);
+        foo.setRes(res, insert_result, {
+          message: '성공했습니다'
+        })
       }
     }
   }
@@ -814,69 +807,63 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
   } = req.body;
 
   let _date = foo.resetTime(moment(date));
-  if (date != undefined && !_date.isValid()) {
+  let {
+    results
+  } = await select_func.room(conn, {
+    room_id_list,
+    building_id: req.user.building_id,
+  });
+
+  if (results.length != room_id_list.length) {
     res.status(401).json({
-      message: '날짜를 다시 입력해주세요'
+      message: '강의실을 다시 선택해주세요'
     })
   } else {
-    let {
-      results
-    } = await select_func.room(conn, {
-      room_id_list,
-      building_id: req.user.building_id,
-    });
+    let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'end_time'))[time_list.length - 1].end_time)}`);
+    let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'start_time'))[0].start_time)}`);
 
-    if (results.length != room_id_list.length) {
-      res.status(401).json({
-        message: '강의실을 다시 선택해주세요'
-      })
-    } else {
-      let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'end_time'))[time_list.length - 1].end_time)}`);
-      let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'start_time'))[0].start_time)}`);
-
-      if (rsv_status == info.SUBMIT_RSV_STATUS) {
-        await checkRoomRsvTime(conn, {
-          room_id_list,
-          building_id: req.user.building_id,
-          start_datetime,
-          end_datetime,
-          time_list,
-        });
-      }
-
-      await db_func.beginTransaction(conn);
-      let insert_result = await insert_func.room_rsv(conn, {
-        isTransaction: true,
-        building_id: req.user.building_id,
-        rsv_status,
-        room_rsv_category_id,
-        title,
-        department_id,
-        study_group_id,
-        user_id: req.user ? req.user.user_id : null,
-        start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
-        end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
-        student_count,
-        non_student_count,
-        representative_name,
-        representative_phone,
-        description,
-      });
-      await insert_func.room_to_use(conn, {
-        isTransaction: true,
-        room_rsv_id: insert_result.insertId,
+    if (rsv_status == info.SUBMIT_RSV_STATUS) {
+      await checkRoomRsvTime(conn, {
         room_id_list,
-      })
-      await insert_func.room_rsv_time(conn, {
-        isTransaction: true,
-        room_rsv_id: insert_result.insertId,
+        building_id: req.user.building_id,
+        start_datetime,
+        end_datetime,
         time_list,
-      })
-      await db_func.commit(conn);
-      foo.setRes(res, insert_result, {
-        message: '성공했습니다'
-      })
+      });
     }
+
+    await db_func.beginTransaction(conn);
+    let insert_result = await insert_func.room_rsv(conn, {
+      isTransaction: true,
+      building_id: req.user.building_id,
+      rsv_status,
+      room_rsv_category_id,
+      title,
+      department_id,
+      study_group_id,
+      user_id: req.user ? req.user.user_id : null,
+      start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+      end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+      student_count,
+      non_student_count,
+      representative_name,
+      representative_phone,
+      description,
+    });
+    await insert_func.room_to_use(conn, {
+      isTransaction: true,
+      room_rsv_id: insert_result.insertId,
+      room_id_list,
+    })
+    await insert_func.room_rsv_time(conn, {
+      isTransaction: true,
+      room_rsv_id: insert_result.insertId,
+      time_list,
+    })
+    await db_func.commit(conn);
+    foo.setRes(res, insert_result, {
+      message: '성공했습니다'
+    })
   }
 }));
 
@@ -960,7 +947,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
           end_datetime,
           time_list: _time_list,
         });
-      } 
+      }
       await db_func.beginTransaction(conn);
       let isTransaction = true;
 
@@ -1215,7 +1202,7 @@ router.get('/notification', isLoggedIn, db_func.inDBStream(async (req, res, next
     results,
     list_count,
   } = await select_func.notification(conn, {
-    receiver_id : req.user.user_id,
+    receiver_id: req.user.user_id,
     room_rsv_id,
     is_read,
     page,
@@ -1241,6 +1228,7 @@ function roomSortByFloor(room_results) {
   }
   return rooms;
 }
+
 function getDates(holiday_results) {
   let dates = [];
   for (let i in holiday_results) {
@@ -1248,6 +1236,7 @@ function getDates(holiday_results) {
   }
   return dates;
 }
+
 function getDateRange(startDate, endDate, listDate) {
   let dateMove = new Date(startDate);
   let strDate = startDate;
@@ -1263,6 +1252,7 @@ function getDateRange(startDate, endDate, listDate) {
   }
   return listDate;
 }
+
 function addNotification(conn, object) {
   return new Promise(async (resolve, reject) => {
     try {
