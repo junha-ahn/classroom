@@ -18,6 +18,12 @@
 
   <div id="app">
     <header>
+      <template v-if="global.ieVersion != null && global.ieVersion < 11">
+        <custom-modal
+          title="본 웹사이트는 크롬 브라우저에 최적화되어 있습니다"
+          message="인터넷 익스플로러 버전 10 이하일 경우, 예약 관련 기능은 이용 불가능합니다."
+        ></custom-modal>
+      </template>
       <nav class="navbar navbar-default">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -52,5 +58,6 @@
       </nav>
     </header>
     <script type="text/javascript" src="/javascripts/notification.js"></script>
+    <script type="text/javascript" src="/javascripts/modal.js"></script>
 
     <main class="clearfix">
