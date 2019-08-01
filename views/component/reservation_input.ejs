@@ -238,6 +238,15 @@
           </div>
         </div>
 
+        <div class="pack_div clearfix" v-if="mod!='POST' && is_admin && room_rsv.email != null">
+          <div class="div_left">
+            <label>생성자</label>
+          </div>
+          <div class="div_right">
+            <a v-bind:href="'/admin/user/single/' + room_rsv.user_id"> {{ displayName }} </a>
+          </div>
+        </div>
+
         <div class="single_button">
           <button type="button" class="btn btn-warning" v-if="is_adminpage && is_admin==1 && mod=='GET'" @click="setMod('PUT', $event)">수정</button>
 
@@ -453,7 +462,7 @@
         if (_validate) {
           alert(_validate);
         } else {
-          let need_location_href = mod == 'POST' ? true : false;
+          var need_location_href = mod == 'POST' ? true : false;
           var url = '/api' + (mod=='POST' ? '/admin' : '') + '/room_rsv' 
             + (mod == 'PUT' ? '/'+ this.room_rsv.room_rsv_id : '');
           var body  =  {
@@ -568,6 +577,15 @@
         function (message, status, data) {
           alert(message);
         });
+      },
+    },
+    computed: {
+      displayName: function() {
+        var name = room_rsv.name;
+        if (room_rsv.student_number != null) {
+          name += ' (' +  room_rsv.student_number + ')'
+        }
+        return name;
       },
     },
     watch: {

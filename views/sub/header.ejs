@@ -38,6 +38,7 @@
               <li :class="{active: header_menu_name=='mypage'}">
                 <a href="/mypage/dashboard">
                   마이페이지
+                  <template v-if="is_user">
                     <custom-notification
                       :is_user="is_user"
                     ></custom-notification>

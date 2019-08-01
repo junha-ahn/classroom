@@ -260,7 +260,7 @@
           }
         },
         classPassDiff: function () {
-          let is_mach = this.matchingPass(this.joinForm);
+          var is_mach = this.matchingPass(this.joinForm);
           return {
             'form-inline has-success': is_mach == true,
             'form-inline has-error': is_mach == false,

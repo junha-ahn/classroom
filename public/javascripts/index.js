@@ -74,8 +74,11 @@ function makeGlobal() {
   };
   var admin_name_by_class = {
     'admin_user_lookup' : 'user',
+    'admin_user_single' : 'user',
     'admin_room_lookup' : 'room',
+    'admin_room_single' : 'room',
     'admin_reservation_lookup' : 'reservation',
+    'admin_reservation_single' : 'reservation',
     'admin_holiday' : 'holiday',
     'admin_schedule' : 'schedule',
   };
