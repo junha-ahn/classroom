@@ -18,12 +18,15 @@ function validate(form, _conf) {
       if (typeof value == 'string' && data_type == 'string' && value.trim() == '') {
         return name + '을/를 입력해주세요'
       }
-      if (max_length != undefined && value.length > max_length) {
-        return max_length + '자 까지만 입력 가능합니다.'
-      }
-      if (min_length != undefined && value.length < min_length) {
-        return min_length + '자 이상 입력해 주세요.'
-      }
+    }
+    if (value != null && data_type == 'number' && isNaN(value)) {
+      return '숫자를 입력해주세요'
+    }
+    if (max_length != undefined && value.length > max_length) {
+      return max_length + '자 까지만 입력 가능합니다'
+    }
+    if (min_length != undefined && value.length < min_length) {
+      return min_length + '자 이상 입력해 주세요'
     }
   }
 } 
