@@ -12,7 +12,10 @@
           </thead>
           <tbody>
             <tr v-for="(person, i) in results" :key="i">
-              <td>{{person.name}}</td>
+              <td>
+                <p v-if="!is_admin">{{ person.name }}</p>
+                <a v-else v-bind:href="'/admin/user/single/' + person.user_id">{{ person.name }}</a>
+              </td>
               <td>{{person.student_number}}</td>
               <td>{{person.phone}}</td>
               <td>{{person.date_joined}}</td>
