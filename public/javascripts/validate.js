@@ -8,6 +8,8 @@ function validate(form, _conf) {
     var is_require = _conf[key].is_require;
     var name = config[key].name;
     var data_type = config[key].data_type;
+    var max_length = config[key].max_length;
+    var min_length = config[key].min_length;
 
     if (is_require) {
       if (value == undefined) {
@@ -15,6 +17,12 @@ function validate(form, _conf) {
       }
       if (typeof value == 'string' && data_type == 'string' && value.trim() == '') {
         return name + '을/를 입력해주세요'
+      }
+      if (max_length != undefined && value.length > max_length) {
+        return max_length + '자 까지만 입력 가능합니다.'
+      }
+      if (min_length != undefined && value.length < min_length) {
+        return min_length + '자 이상 입력해 주세요.'
       }
     }
   }
@@ -53,30 +61,44 @@ var config = {
   'password' : {
     name: '암호',
     data_type: 'string',
+    min_length: 6,
+    max_length: 20,
   },
   'password_check' : {
     name: '암호 확인',
     data_type: 'string',
+    min_length: 6,
+    max_length: 20,
   },
   'old_password' : {
     name: '기존 암호',
     data_type: 'string',
+    min_length: 6,
+    max_length: 20,
   },
   'name' : {
     name: '이름',
     data_type: 'string',
+    min_length: 2,
+    max_length: 20,
   },
   'phone' : {
     name: '전화번호',
     data_type: 'string',
+    min_length: 2,
+    max_length: 20,
   },
   'student_number' : {
     name: '학번',
     data_type: 'string',
+    min_length: 6,
+    max_length: 20,
   },
   'representative_name' : {
     name: '대표자 이름',
     data_type: 'string',
+    min_length: 2,
+    max_length: 20,
   },
   'description' : {
     name: '설명',
@@ -85,6 +107,8 @@ var config = {
   'title' : {
     name: '제목',
     data_type: 'string',
+    min_length: 2,
+    max_length: 20,
   },
   'date' : {
     name: '날짜',
@@ -117,9 +141,11 @@ var config = {
   'room_number' : {
     name: '호수',
     data_type: 'string',
+    min_length: 2,
+    max_length: 20,
   },
   'floor' : {
-    name: '호수',
+    name: '층',
     data_type: 'number',
   },
   'seat_count' : {
