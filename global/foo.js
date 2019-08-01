@@ -182,7 +182,7 @@ let self = {
         })(array[i].auth_rsv_cancel);
       }
 
-      if (!user || (user.user_id != array[i].user_id && user.user_type != info.ADMIN_TYPE)) {
+      if (!user || user.user_id != array[i].user_id || user.user_type != info.ADMIN_TYPE) {
         if (array[i].representative_name) {
           array[i].representative_name = array[i].representative_name.slice(0, 1) + ('*'.repeat(array[i].representative_name.length - 1));
         }

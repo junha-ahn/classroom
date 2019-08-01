@@ -54,7 +54,8 @@
         </div>
         <div class="div_right">
           <template v-if="mod=='GET'">
-            <p>{{ group.representative_name }}</p>
+            <p v-if="!is_admin">{{ group.representative_name }}</p>
+            <a v-else v-bind:href="'/admin/user/single/' + group.user_id">{{ group.representative_name }}</a>
           </template>
           <input v-else type="text" class="form-control" v-model="group.representative_name" placeholder="대표 성명을 입력해주세요" :disabled="mod == 'GET'">
         </div>
@@ -97,11 +98,9 @@
 <script>
   Vue.component('group-input', {
     template: '#input-template',
-    props: ['mod', 'group', 'department_results', 'building_results'],
+    props: ['mod', 'group', 'department_results', 'building_results', 'is_admin'],
     data: function () {
       return {
-        mod: this.mod,
-        group: this.group,
       }
     }, 
     methods: {

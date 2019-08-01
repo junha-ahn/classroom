@@ -1,6 +1,6 @@
 <% include ../sub/header %>
       <template>
-        <group-input v-bind:group="group" v-bind:department_results="department_results" v-bind:building_results="building_results" mod="GET"></group-input>
+        <group-input :is_admin="is_admin" v-bind:group="group" v-bind:department_results="department_results" v-bind:building_results="building_results" mod="GET"></group-input>
       </template>
       <div class="lookup_body" style="margin-top:5%">
         <table class="table table-hover">
