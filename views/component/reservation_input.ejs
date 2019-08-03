@@ -86,24 +86,26 @@
             <label>타임블럭</label>
           </div>
           <div class="div_right">
-            <div class="block" v-for="(room_rsv_time, i) in room_rsv_time_list" >
-              <button
-              class="btn btn-default"
-              v-bind:value="room_rsv_time.room_rsv_time_id" 
-              :key="i"
-              disabled
-              >{{room_rsv_time.start_time}} ~ {{room_rsv_time.end_time}}</button>
-              <button 
-              type="button" 
-              class="btn btn-danger" 
-              @click="deleteRsvTime(i)"
-              v-if="mod!='GET'"
-              >-</button>
-            </div>
-            <div v-if="mod!='GET'">
+            <div class="block_gruop clearfix">
+              <div class="block" v-for="(room_rsv_time, i) in room_rsv_time_list" >
+                <button
+                class="btn btn-default item"
+                v-bind:value="room_rsv_time.room_rsv_time_id" 
+                :key="i"
+                disabled
+                >{{room_rsv_time.start_time}} ~ {{room_rsv_time.end_time}}</button>
+                <button 
+                type="button" 
+                class="btn btn-danger delete" 
+                @click="deleteRsvTime(i)"
+                v-if="mod!='GET'"
+                >-</button>
+              </div>
+              <div v-if="mod!='GET'">
                 <custom-timepicker
                   :add-time="addTime"
                 ></custom-timepicker>
+              </div>
             </div>
           </div>
         </div>
@@ -113,32 +115,36 @@
             <label>강의실</label>
           </div>
           <div class="div_right">
-            <div class="block" v-for="(room, i) in room_to_use_list" >
-              <button
-              class="btn btn-default"
-              v-bind:value="room.room_id" 
-              :key="i"
-              disabled
-              >{{room.room_number}}({{room.name}})</button>
-              <button 
-              type="button" 
-              class="btn btn-danger" 
-              @click="deleteRoom(i)"
-              v-if="mod!='GET'"
-              >-</button>
-            </div>
-            <div v-if="mod!='GET'" class="add_block">
-              <select class="form-control" v-model="room_index">
-                <option v-for="(room, i) in room_results" v-bind:value="i" :key="i">
-                  {{ room.name }}
-                </option>
-              </select>
-              <button 
+            <div class="block_gruop clearfix">
+              <div class="block" v-for="(room, i) in room_to_use_list" >
+                <button
+                class="btn btn-default item"
+                v-bind:value="room.room_id" 
+                :key="i"
+                disabled
+                >{{room.room_number}}({{room.name}})</button>
+                <button 
                 type="button" 
-                class="btn btn-primary" 
-                @click="addRoom($event)"
+                class="btn btn-danger delete" 
+                @click="deleteRoom(i)"
                 v-if="mod!='GET'"
-              >+</button>
+                >-</button>
+              </div>
+              <div v-if="mod!='GET'" class="add_block">
+                <div class="center">
+                  <select style="width: 85%;"class="form-control" v-model="room_index">
+                    <option v-for="(room, i) in room_results" v-bind:value="i" :key="i">
+                      {{ room.name }}
+                    </option>
+                  </select>
+                  <button 
+                    type="button" 
+                    class="btn btn-primary" 
+                    @click="addRoom($event)"
+                    v-if="mod!='GET'"
+                  >+</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
