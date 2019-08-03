@@ -1571,7 +1571,7 @@ let self = {
         is_mine = is_mine || 0;
 
         let search_table
-        
+
         switch (search_type) {
           case 'email':
             search_table = 'user'
@@ -1580,7 +1580,7 @@ let self = {
             search_table = 'room_rsv'
             break;
         };
-        
+
         if (page && page_length) {
           countString = squel.select()
             .from('room_rsv')
@@ -1637,10 +1637,10 @@ let self = {
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
-              .where(squel.case()
-                .when('? IS NULL', is_req)
-                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
-                .else(squel.expr().and('room_rsv.rsv_status IN ?', [info.REQ_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])))
+            .where(squel.case()
+              .when('? IS NULL', is_req)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status IN ?', [info.REQ_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])))
             .where(squel.case()
               .when('? IS NULL', department_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1661,10 +1661,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
-              .where(squel.case()
-                .when('? IS NULL', search_type)
-                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
-                .else(squel.expr().and(`${search_table}.${search_type || 'title'} LIKE ?`, `%${search_value}%`)))
+            .where(squel.case()
+              .when('? IS NULL', search_type)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and(`${search_table}.${search_type || 'title'} LIKE ?`, `%${search_value}%`)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()
@@ -1695,10 +1695,10 @@ let self = {
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
-              .where(squel.case()
-                .when('? IS NULL', is_req)
-                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
-                .else(squel.expr().and('room_rsv.rsv_status IN ?', [info.REQ_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])))
+            .where(squel.case()
+              .when('? IS NULL', is_req)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status IN ?', [info.REQ_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])))
             .where(squel.case()
               .when('? IS NULL', department_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1719,10 +1719,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
-              .where(squel.case()
-                .when('? IS NULL', search_type)
-                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
-                .else(squel.expr().and(`${search_table}.${search_type || 'title'} LIKE ?`, `%${search_value}%`)))
+            .where(squel.case()
+              .when('? IS NULL', search_type)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and(`${search_table}.${search_type || 'title'} LIKE ?`, `%${search_value}%`)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()
@@ -1820,7 +1820,6 @@ let self = {
           not_room_rsv_id,
           building_id,
           room_id_list,
-          rsv_status,
           start_datetime,
           end_datetime,
         } = object;
@@ -1835,7 +1834,7 @@ let self = {
             .else(squel.expr().and('room_to_use.room_rsv_id != ?', not_room_rsv_id)))
           .where('room_to_use.room_id IN ?', room_id_list)
           .where('room_rsv.building_id = ?', building_id)
-          .where('room_rsv.rsv_status = ?', rsv_status)
+          .where('room_rsv.rsv_status IN ?', [info.SUBMIT_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])
           .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime, start_datetime)
           .field('room_rsv_time.*')
           .field('room_rsv.title')
@@ -2149,4 +2148,3 @@ let self = {
 }
 
 module.exports = self;
-

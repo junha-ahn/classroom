@@ -309,7 +309,7 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
       .from('room_to_use')
       .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
       .where('room_to_use.room_id IN ?', room_id_list)
-      .where('room_rsv.rsv_status = ?', info.SUBMIT_RSV_STATUS)
+      .where('room_rsv.rsv_status IN ?', [info.SUBMIT_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])
       .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime.format('YYYY-MM-DD HH:mm'), start_datetime.format('YYYY-MM-DD HH:mm'))
       .field('room_to_use.room_id')
       .group('room_to_use.room_id')
@@ -833,7 +833,7 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
     let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'end_time'))[time_list.length - 1].end_time)}`);
     let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'start_time'))[0].start_time)}`);
 
-    if (rsv_status == info.SUBMIT_RSV_STATUS) {
+    if (rsv_status == info.SUBMIT_RSV_STATUS || rsv_status == info.CANCEL_REQ_RSV_STATUS) {
       await checkRoomRsvTime(conn, {
         room_id_list,
         building_id: req.user.building_id,
@@ -950,7 +950,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
         message: '강의실을 다시 입력하세요'
       })
     } else {
-      if (results[0].rsv_status == info.SUBMIT_RSV_STATUS) {
+      if (results[0].rsv_status == info.SUBMIT_RSV_STATUS || results[0].rsv_status == info.CANCEL_REQ_RSV_STATUS) {
         await checkRoomRsvTime(conn, {
           room_rsv_id: results[0].room_rsv_id,
           room_id_list: _room_id_list,
@@ -1092,7 +1092,7 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
       message: '이미 해당 예약상태입니다'
     })
   } else {
-    if (rsv_status == info.SUBMIT_RSV_STATUS) {
+    if (rsv_status == info.SUBMIT_RSV_STATUS || rsv_status == info.CANCEL_REQ_RSV_STATUS) {
       let start_datetime = moment(foo.parseDateTime(results[0].start_datetime, true));
       let end_datetime = moment(foo.parseDateTime(results[0].end_datetime, true));
 
@@ -1329,7 +1329,6 @@ function checkRoomRsvTime(conn, object) {
         not_room_rsv_id: room_rsv_id,
         building_id,
         room_id_list,
-        rsv_status: info.SUBMIT_RSV_STATUS,
         start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
         end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
       });
