@@ -17,6 +17,7 @@ const db_func = require('../global/db_func');
 const redis_func = (process.env.REDIS_ENABLE == 1) ? require('../global/redis_func') : undefined;
 const sgMail = require('../global/sgMail');
 
+const passStorage = {};
 
 const {
   select_func,
@@ -41,7 +42,8 @@ router.post('/email/password', isNotLoggedIn, checkRequireEmailPassword, db_func
       html: `발급된 이메일 인증 암호를 3분안에 입력해주세요.<br/><strong>${email_password}</strong>`,
     };
     await sgMail.send(msg);
-    await redis_func.set(email, email_password, 60 * 3);
+    await setEmailPassword(email, email_password);
+
     res.status(200).json({
       message: '완료',
     })
@@ -71,29 +73,22 @@ router.post('/join', isNotLoggedIn, checkReqInfo, checkRequireJoin, db_func.inDB
   })).results[0] ? false : true;
 
   if (email_is_unique) {
-    let _email_password = await redis_func.get(email);
-    if (email_password != _email_password) {
-      res.status(401).json({
-        message: _email_password == null ?
-          '다시 이메일 인증 암호를 발급해주세요' : '이메일 인증 암호가 다릅니다.'
-      })
-    } else {
-      let hashed_password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
-      await insert_func.user(conn, {
-        is_student,
-        email,
-        hashed_password,
-        campus_id,
-        building_id,
-        department_id,
-        name,
-        phone,
-        student_number,
-      });
-      res.status(200).json({
-        message: '가입 성공',
-      })
-    }
+    await matchEmailPassword(email, email_password);
+    let hashed_password = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
+    await insert_func.user(conn, {
+      is_student,
+      email,
+      hashed_password,
+      campus_id,
+      building_id,
+      department_id,
+      name,
+      phone,
+      student_number,
+    });
+    res.status(200).json({
+      message: '가입 성공',
+    })
   } else {
     res.status(401).json({
       message: '이미 가입된 이메일 입니다',
@@ -184,4 +179,45 @@ router.put('/password', isLoggedIn, checkRequireUpdatePassword, db_func.inDBStre
   }
 }));
 
+
+function setEmailPassword(email, email_password) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log(email_password)
+      if (process.env.REDIS_ENABLE == 1) {
+        await redis_func.set(email, email_password, 60 * 3);
+      } else {
+        passStorage[email] = email_password;
+      }
+      console.log(passStorage)
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+function matchEmailPassword(email, email_password) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let _email_password = null;
+      if (process.env.REDIS_ENABLE == 1) {
+        _email_password = await redis_func.get(email);
+      } else {
+        _email_password = passStorage[email];
+      }
+      
+      if (email_password != _email_password) {
+        let error = new Error();
+        error.status = 401;
+        error.message = _email_password == null ? '다시 이메일 인증 암호를 발급해주세요' : '이메일 인증 암호가 다릅니다.'
+        throw error;
+      }
+
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 module.exports = router;
