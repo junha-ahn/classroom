@@ -18,6 +18,7 @@ const foo = require('../global/foo');
 const {
   isLoggedIn,
   isAdmin,
+
   checkReqInfo,
   checkRequireInsertStudyGroup,
   checkRequireUpdateStudyGroup,

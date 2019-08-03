@@ -12,19 +12,19 @@ const {
 } = require('../query/index');
 
 const {
-  isLoggedIn,
-  isNotLoggedIn,
+  renderIsLoggedIn,
+  renderIsNotLoggedIn,
   getRerservationLookup,
   getRerservationSingle,
   getUserSingle,
 } = require('../global/middlewares');
 
-router.get('/login', isNotLoggedIn, async (req, res, next) => {
+router.get('/login', renderIsNotLoggedIn, async (req, res, next) => {
   res.render('user/login', foo.getResJson(req.user, {
 
   }));
 });
-router.get('/join', isNotLoggedIn, async (req, res, next) => {
+router.get('/join', renderIsNotLoggedIn, async (req, res, next) => {
   res.render('user/join', foo.getResJson(req.user, {
     department_results: info.department_results,
     campus_results: info.campus_results,
@@ -193,7 +193,7 @@ router.get('/study_group/single/:study_group_id', async (req, res, next) => {
     db_func.release(connection);
   }
 });
-router.get('/study_group/write', isLoggedIn, async (req, res, next) => {
+router.get('/study_group/write', renderIsLoggedIn, async (req, res, next) => {
   res.render('user/study_group_write', foo.getResJson(req.user, {
     department_results: info.department_results,
     building_results: req.user ? info.buildings[req.user.campus_id] : info.building_results,
@@ -203,7 +203,7 @@ router.get('/study_group/write', isLoggedIn, async (req, res, next) => {
 });
 
 
-router.get('/mypage/dashboard', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+router.get('/mypage/dashboard', renderIsLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   let {
     results,
     list_count,
@@ -220,10 +220,10 @@ router.get('/mypage/dashboard', isLoggedIn, db_func.inDBStream(async (req, res, 
     list_count,
   }))
 }));
-router.get('/mypage/account', isLoggedIn, getUserSingle(false));
+router.get('/mypage/account', renderIsLoggedIn, getUserSingle(false));
 
 
-router.get('/notification/read/:notification_id', isLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
+router.get('/notification/read/:notification_id', renderIsLoggedIn, db_func.inDBStream(async (req, res, next, conn) => {
   let notification_id = req.params.notification_id;
   let {
     results,
