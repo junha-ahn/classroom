@@ -81,17 +81,19 @@
       </div>
     </div>
 
-    <table class="table">
+    <table class="table" style="text-align: center;">
       <thead>
-        <th>교실</th>
-        <th v-if="is_lookup">카테고리</th>
-        <th>학과(스터디)</th>
-        <th>상태</th>
-        <th>제목</th>
-        <th>날짜</th>
-        <th>시간</th>
-        <th v-if="!is_lookup">업데이트일</th>
-        <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
+        <tr>
+          <th>교실</th>
+          <th v-if="is_lookup">카테고리</th>
+          <th>학과(스터디)</th>
+          <th>상태</th>
+          <th>제목</th>
+          <th>날짜</th>
+          <th>시간</th>
+          <th v-if="!is_lookup">업데이트일</th>
+          <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
+        </tr>
       </thead>
       <tbody>
         <tr v-for="(room_rsv, i) in room_rsv_results" :key="i">
