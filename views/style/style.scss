@@ -527,12 +527,11 @@ thead {
     .left_info {
       float: left;
       width: 50%;
-      button{
-        text-align: center !important;
-        font-size:1.6vmin !important;
-        span{
-          
+      button {
+        .left {
+          text-align: center !important;
         }
+        font-size:1.6vmin !important;
       }
 
       div {
@@ -541,12 +540,10 @@ thead {
         .btn {
           height: 40px;
           width: 30%;
-        //  padding: 2% 10%;
         }
 
         .btn_right {
-          text-align: left;
-          width: 40%;
+          width: 50%;
           height:40px;
         }
       }
@@ -597,7 +594,7 @@ thead {
             margin-bottom: 1%;
 
             button {
-              width: 50%;
+              width: 55%;
             }
           }
         }
