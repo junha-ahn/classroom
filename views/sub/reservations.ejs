@@ -139,13 +139,13 @@
       </li>
     </ul>
   </nav>
-  <div v-if="is_lookup" class="lookup_search"> 
-    <select class="form-control">
+  <div v-if="is_lookup" class="lookup_search clearfix"> 
+    <select class="form-control search_type">
       <option>제목</option>
       <option>이름</option>
       <option>이메일</option>
     </select>
-    <div class="input-group">
+    <div class="input-group search_value">
       <input type="text" class="form-control" placeholder="검색어를 입력해주세요">
       <div class="input-group-addon"><span class="glyphicon glyphicon-search"></div>
     </div>

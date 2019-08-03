@@ -312,6 +312,19 @@ thead {
     }
   }
 
+  .lookup_search {
+    width: 100%;
+    padding: 0 25% 5% 25%;
+    .search_type {
+      width: 30%;
+      float: left;
+    }
+    .search_value {
+      padding-left: 2%;
+      float: right;
+      width: 70%;
+    }
+  }
 }
 
 .vdp-datepicker__calendar .cell {
