@@ -2,28 +2,10 @@
       <% include ../sub/admin_menu %>
       
       <div class="admin_right" style="text-align:center;">
-        <div class="single_input_body">
-            <div class="pack_div clearfix">
-              <div class="div_left">
-                <label>캠퍼스</label>
-              </div>
-              <div class="div_right">
-                <p>{{ campus.name }}</p>
-              </div>
-            </div>
-
-            <div class="pack_div clearfix">
-              <div class="div_left">
-                <label>학습관</label>
-              </div>
-              <div class="div_right">
-                <p>{{ building.name }}</p>
-              </div>
-            </div>
-        </div>
         <div class="title">
-          <h2>미처리 예약 목록</h2>
-          <p>예약을 처리해주세요</p>
+        
+          <h2><strong>{{ building.name }}</strong> 미처리 예약 목록</h2>
+          <p>처리되지 않은 목록을 확인해주세요</p>
         </div>
         <% include ../sub/reservations %>
       </div>
