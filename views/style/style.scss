@@ -159,8 +159,6 @@ thead {
 
     }
   }
-
-  //main끝
 }
 
 .login {
@@ -314,13 +312,6 @@ thead {
     }
   }
 
-}
-
-.reservation_intro {
-  main {
-    margin: 0 auto;
-    width: 80%;
-  }
 }
 
 .vdp-datepicker__calendar .cell {
@@ -554,11 +545,11 @@ thead {
       }
 
       .step_date {
-        .vdp-datepicker {
-          width: 80%;
-
-          .vdp-datepicker__calendar {
-            width: 100%;
+        .custom_datepicker {
+          width: 100%;
+          .vdp-datepicker {
+           margin:0 auto;
+           width:60%; 
           }
         }
 
@@ -601,6 +592,13 @@ thead {
 
     .cell.selected {
       background: none !important;
+    }
+    .custom_datepicker {
+      width: 100%;
+      .vdp-datepicker {
+       margin:0 auto;
+       width:90%; 
+      }
     }
   }
 }
