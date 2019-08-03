@@ -70,6 +70,7 @@ router.get('/reservation/intro/:building_id', async (req, res, next) => {
         query: req.query,
         params: req.params,
         department_id : req.user ? req.user.department_id || 0 : 0,
+        building,
       }));
     }
   } catch (error) {

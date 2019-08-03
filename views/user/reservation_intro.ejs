@@ -1,5 +1,8 @@
 <% include ../sub/header %>
-      <h1>예약/조회 페이지입니다.</h1>
+      <div class="title">
+        <h1>{{building.name}} 예약 페이지</h1>
+        <p>원하시는 방법을 선택해 예약하거나 목록을 조회하세요</p>
+      </div>
       <div class="mom_div clearfix">
         <div class="panel panel-primary" @click="chageMethod('R')">
           <div class="panel-heading">
@@ -47,6 +50,7 @@
           is_admin: <%- is_admin %>,
           department_id: <%- department_id %>,
           params : <%-JSON.stringify(params) %>,
+          building : <%-JSON.stringify(building) %>,
         }
       },
       methods: {

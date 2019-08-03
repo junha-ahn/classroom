@@ -1,13 +1,15 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
       
-      <div class="admin_right" style="text-align:center;">
-        <div class="title">
-        
-          <h2><strong>{{ building.name }}</strong> 미처리 예약 목록</h2>
-          <p>처리되지 않은 목록을 확인해주세요</p>
-        </div>
-        <% include ../sub/reservations %>
+      <div class="admin_right">
+        <reservation-list
+          :is_user="is_user"
+          :is_admin="is_admin"
+          :is_adminpage="is_adminpage"
+          :is_lookup="is_lookup"
+          :room_rsv_results="results"
+        >
+        </reservation-list>
       </div>
     </main>
 
@@ -17,7 +19,7 @@
   </div>
 
   
-  <script type="text/javascript" src="/javascripts/validate.js"></script>
+  <% include ../component/reservation_list %>
   <% include ../component/datepicker %>
   <script>
     var global = makeGlobal();

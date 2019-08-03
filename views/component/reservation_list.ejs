@@ -1,5 +1,10 @@
 <script type="text/x-template" id="list-template">
   <div class="lookup_body">
+    <div v-if="!is_lookup" class="title">
+      <h1><strong>{{ building.name }}</strong> ({{campus.name}})</h1>
+      <p>처리되지 않은 목록을 확인해주세요</p>
+    </div>
+
     <div v-if="is_lookup" class="lookup_select">
       <div class="pack_datepicker">
         <div class="select_div">
@@ -91,7 +96,7 @@
           <th>제목</th>
           <th>날짜</th>
           <th>시간</th>
-          <th v-if="!is_lookup">업데이트일</th>
+          <th v-if="!is_lookup">업데이트</th>
           <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
         </tr>
       </thead>
@@ -138,7 +143,7 @@
       </template>
     </div>
 
-    <nav>
+    <nav v-if="is_lookup">
       <ul class="pagination">
         <li v-for="page in pagenation" :key="page.value" :class="{active: page.isSelf}">
           <a @click="chagePage(page.value)" aria-label="Previous">
@@ -331,10 +336,11 @@
       },
     },
     created: function() {
-      this.getRoomResults();
-      if (this.query.department_id) {
-        this.getStudyGroupResults();
-      }
+      if (this.is_lookup ) {
+        this.getRoomResults();
+        if ( this.query.department_id) {}
+          this.getStudyGroupResults();
+        }
     },
   })
 </script>

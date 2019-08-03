@@ -1,9 +1,5 @@
 // SASS 스타일적용페이지
 
-div {
-  //  border: 1px solid red;
-}
-
 // 전체스타일적용!
 .clearfix:after {
   display: block;
@@ -17,6 +13,16 @@ div {
 
 body {
   font-size: 1.8vmin !important;
+
+  h1 {
+    font-size: 4vmin !important;
+    font-weight: 600 !important;
+  }
+  
+  h2 {
+    font-size: 3vmin !important;
+    font-weight: 400 !important;
+  }
 }
 
 thead {
@@ -59,17 +65,12 @@ thead {
 .jumbotron {
   text-align: center;
 }
+
 .main {
   main {
-    h1 {
-      font-size: 4vmin;
-      text-align: center;
-      padding: 1.2%;
-      font-weight: 600;
-    }
-
     .campuses {
-      width: 100%;
+      width: 80%;
+      margin: 0 auto;
 
       dl {
         text-align: center;
@@ -114,17 +115,7 @@ thead {
     width: 80%;
     text-align: center;
     display: block;
-    content: '';
     clear: both;
-
-    h1 {
-      font-size: 4vmin;
-      text-align: center;
-      padding: 2%;
-      font-weight: 600;
-      border-bottom: 1px solid #ddd;
-      margin-bottom: 2%;
-    }
 
     .mom_div {
       width: 100%;
@@ -215,6 +206,10 @@ thead {
 .mypage_right {
   float: right;
   width: 90%;
+  .title {
+    margin: 0 auto;
+    margin-bottom: 2%;
+  }
 }
 
 .admin_right {
@@ -388,6 +383,8 @@ thead {
 
 .title {
   text-align: center;
+  margin-bottom: 5%;
+  border-bottom: 1px solid #ddd;
 }
 
 .single_input_body {
