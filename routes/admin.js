@@ -13,10 +13,13 @@ const foo = require('../global/foo');
 
 const {
   renderIsAdmin,
+} = require('../global/middlewares');
+
+const {
   getRerservationLookup,
   getRerservationSingle,
   getUserSingle,
-} = require('../global/middlewares');
+} = require('../global/replacement');
 
 router.use(renderIsAdmin, (req, res ,next) => {
   next();

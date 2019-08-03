@@ -152,6 +152,9 @@
         },
         clickIsMine: function(is_mine) {
           this.query.is_mine = is_mine;
+          if (this.query.is_mine == 0) {
+            this.query.is_mine = undefined;
+          }
           this.refresh();
         },
         chagePage: function(page) {

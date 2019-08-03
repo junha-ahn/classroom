@@ -257,12 +257,11 @@
         this.refresh();
       },
       clickIsMine: function(is_mine) {
-        if (is_mine == 0 && this.query.building_id == undefined) {
-          alert('내 예약 조회 버튼을 통해 오셨을 경우, 내 예약 조회만 가능합니다.')
-        } else {
-          this.query.is_mine = is_mine;
-          this.refresh();
+        this.query.is_mine = is_mine;
+        if (this.query.is_mine == 0) {
+          this.query.is_mine = undefined;
         }
+        this.refresh();
       },
       chagePage: function(page) {
         this.query.page = page;

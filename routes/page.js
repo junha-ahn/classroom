@@ -14,10 +14,13 @@ const {
 const {
   renderIsLoggedIn,
   renderIsNotLoggedIn,
+} = require('../global/middlewares');
+
+const {
   getRerservationLookup,
   getRerservationSingle,
   getUserSingle,
-} = require('../global/middlewares');
+} = require('../global/replacement');
 
 router.get('/login', renderIsNotLoggedIn, async (req, res, next) => {
   res.render('user/login', foo.getResJson(req.user, {
