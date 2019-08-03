@@ -1,5 +1,6 @@
 const moment = require('moment');
 const info = require('./info')
+const constant = require('./constant')
 const foo = require('./foo')
 
 const db_func = require('./db_func')
@@ -351,60 +352,71 @@ let self = {
         rsv_status,
         is_mine,
         date,
+        search_type,
+        search_value,
         page,
         page_length,
       } = req.query;
       page_length = page_length || 10;
       rsv_status = rsv_status ? rsv_status : null;
-      let connection;
-      try {
-        let building = info.building_object[building_id];
-        if (!building) {
-          res.render('error', foo.getResJson(req.user, {
-            error_name: "건물을 찾을수 없습니다",
-            message: "다시 확인해주세요"
-          }));
-        } else {
-          connection = await db_func.getDBConnection();
-          let {
-            results,
-            list_count,
-          } = await select_func.vRoomRsvList(connection, {
-            room_id,
-            building_id,
-            department_id,
-            study_group_id,
-            rsv_status,
-            is_mine,
-            user_id: req.user ? req.user.user_id : null,
-            date,
-            page,
-            page_length,
-            sort_key: 'start_datetime',
-            sort_type: false,
-          })
-          foo.cleaningList(results, req.user);
-          res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup', foo.getResJson(req.user, {
-            is_adminpage,
-            params: req.params,
-            query: {
-              ...req.query,
-              room_id: room_id || 0,
-              department_id: department_id || 0,
-              study_group_id: study_group_id || 0,
-              rsv_status: rsv_status || 0,
-            },
-            building_id: is_adminpage ? req.user.building_id : req.params.building_id,
-            department_results: info.department_results,
-            rsv_status_results: info.rsv_status_results,
-            results,
-            list_count,
-          }));
+      if (search_type != undefined &&  !constant.SEARCH_TYPE_LIST.includes(search_type)) {
+        res.status(401).json({
+          message: '검색 타입을 다시 선택해주세요'
+        })
+      } else {
+        let connection;
+        try {
+          let building = info.building_object[building_id];
+          if (!building) {
+            res.render('error', foo.getResJson(req.user, {
+              error_name: "건물을 찾을수 없습니다",
+              message: "다시 확인해주세요"
+            }));
+          } else {
+            connection = await db_func.getDBConnection();
+            let {
+              results,
+              list_count,
+            } = await select_func.vRoomRsvList(connection, {
+              room_id,
+              building_id,
+              department_id,
+              study_group_id,
+              rsv_status,
+              is_mine,
+              user_id: req.user ? req.user.user_id : null,
+              date,
+              search_type,
+              search_value,
+              page,
+              page_length,
+              sort_key: 'start_datetime',
+              sort_type: false,
+            })
+            foo.cleaningList(results, req.user);
+            res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup', foo.getResJson(req.user, {
+              is_adminpage,
+              params: req.params,
+              query: {
+                ...req.query,
+                room_id: room_id || 0,
+                department_id: department_id || 0,
+                study_group_id: study_group_id || 0,
+                rsv_status: rsv_status || 0,
+                search_type: search_type || 'title',
+              },
+              building_id: is_adminpage ? req.user.building_id : req.params.building_id,
+              department_results: info.department_results,
+              rsv_status_results: info.rsv_status_results,
+              results,
+              list_count,
+            }));
+          }
+        } catch (error) {
+          next(error)
+        } finally {
+          db_func.release(connection);
         }
-      } catch (error) {
-        next(error)
-      } finally {
-        db_func.release(connection);
       }
     }
   },

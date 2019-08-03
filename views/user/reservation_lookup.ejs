@@ -7,7 +7,7 @@
     </footer>
   </div>
   
-  
+  <script type="text/javascript" src="/javascripts/validate.js"></script>
   <script>
     var global = makeGlobal();
     var app = new Vue({
@@ -77,6 +77,18 @@
           this.query.page = page;
           this.refresh();
         },
+        clickSearch: function() {
+          var _validate = validate(this.query, {
+            'search_value': {
+              is_require: true,
+            },
+          });
+          if (_validate) {
+            alert(_validate);
+          } else {
+            this.refresh();
+          }
+        },
         refresh: function() {
           this.query.department_id = this.query.department_id || undefined;
           if (!this.query.department_id) {
@@ -86,7 +98,19 @@
           this.query.study_group_id = this.query.study_group_id || undefined;
           this.query.rsv_status = this.query.rsv_status || undefined;
           this.query.building_id = undefined;
-          location.href= '/reservation/lookup/' + this.params.building_id + global.serializeQuery(this.query);
+          if (this.query.search_value == undefined || this.query.search_value == '') {
+            this.query.search_type == undefined;
+          }
+          var _validate = validate(this.query, {
+            'search_value': {
+              is_require: false,
+            },
+          });
+          if (_validate) {
+            alert(_validate);
+          } else {
+            location.href= '/reservation/lookup/' + this.params.building_id + global.serializeQuery(this.query);
+          }
         },
         classRsvStatus: function(rsv_status) {
           return {

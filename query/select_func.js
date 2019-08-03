@@ -1559,6 +1559,8 @@ let self = {
           is_mine,
           user_id,
           date,
+          search_type,
+          search_value,
           page,
           page_length,
           sort_key,
@@ -1568,10 +1570,22 @@ let self = {
         sort_type = (sort_type == false) ? false : true;
         is_mine = is_mine || 0;
 
+        let search_table
+        
+        switch (search_type) {
+          case 'email':
+            search_table = 'user'
+            break;
+          default:
+            search_table = 'room_rsv'
+            break;
+        };
+        
         if (page && page_length) {
           countString = squel.select()
             .from('room_rsv')
             .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
+            .left_join('user', null, 'user.user_id = room_rsv.user_id')
             .where(squel.case()
               .when('? IS NULL', building_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1604,12 +1618,17 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+            .where(squel.case()
+              .when('? IS NULL', search_type)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and(`${search_table}.${search_type || 'title'} LIKE ?`, `${search_value}`)))
             .field('COUNT(DISTINCT room_rsv.room_rsv_id)', 'list_count')
             .toParam();
           queryString = squel.select()
             .from('room_rsv')
             .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
             .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
+            .left_join('user', null, 'user.user_id = room_rsv.user_id')
             .where(squel.case()
               .when('? IS NULL', building_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1642,6 +1661,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+              .where(squel.case()
+                .when('? IS NULL', search_type)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and(`${search_table}.${search_type || 'title'} LIKE ?`, `${search_value}`)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()
@@ -1663,6 +1686,7 @@ let self = {
             .from('room_rsv')
             .left_join('room_to_use', null, 'room_to_use.room_rsv_id = room_rsv.room_rsv_id')
             .left_join('study_group', null, 'study_group.study_group_id = room_rsv.study_group_id')
+            .left_join('user', null, 'user.user_id = room_rsv.user_id')
             .where(squel.case()
               .when('? IS NULL', building_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1695,6 +1719,10 @@ let self = {
               .when('? IS NULL', room_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_to_use.room_id = ?', room_id)))
+              .where(squel.case()
+                .when('? IS NULL', search_type)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and(`${search_table}.${search_type || 'title'} LIKE ?`, `${search_value}`)))
             .field('room_rsv.*')
             .field('study_group.name', 'study_group_name')
             .field(squel.case()
@@ -2121,3 +2149,4 @@ let self = {
 }
 
 module.exports = self;
+

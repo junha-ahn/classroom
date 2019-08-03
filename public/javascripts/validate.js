@@ -93,6 +93,12 @@ var config = {
     min_length: 2,
     max_length: 20,
   },
+  'search_value' : {
+    name: '검색어',
+    data_type: 'string',
+    min_length: 2,
+    max_length: 20,
+  },
   'student_number' : {
     name: '학번',
     data_type: 'string',
