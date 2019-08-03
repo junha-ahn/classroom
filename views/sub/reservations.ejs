@@ -125,6 +125,11 @@
       </tr>
     </tbody>
   </table>
+  <div v-if="is_lookup" class="lookup_button">
+    <button v-if="is_adminpage" type="button" class="btn btn-primary"  @click="gotoWrite">생성</button>
+    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
+    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
+  </div>
   <nav>
     <ul class="pagination">
       <li v-for="page in pagenation" :key="page.value" :class="{active: page.isSelf}">
@@ -134,10 +139,16 @@
       </li>
     </ul>
   </nav>
-  <div v-if="is_lookup" class="lookup_button">
-    <button v-if="is_adminpage" type="button" class="btn btn-primary"  @click="gotoWrite">생성</button>
-    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
-    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
+  <div v-if="is_lookup" class="lookup_search"> 
+    <select class="form-control">
+      <option>제목</option>
+      <option>이름</option>
+      <option>이메일</option>
+    </select>
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="검색어를 입력해주세요">
+      <div class="input-group-addon"><span class="glyphicon glyphicon-search"></div>
+    </div>
   </div>
 </div>
 <% include ../component/datepicker %>
