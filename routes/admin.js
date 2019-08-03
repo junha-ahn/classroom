@@ -19,7 +19,6 @@ const {
 } = require('../global/middlewares');
 
 router.get('/', isAdmin, db_func.inDBStream(async (req, res, next, conn) => {
-  
   let {
     results,
     list_count,
@@ -29,10 +28,10 @@ router.get('/', isAdmin, db_func.inDBStream(async (req, res, next, conn) => {
     user_id: req.user ? req.user.user_id : null,
     page: 1,
     page_length: 10,
-    sort_key: 'date_created',
+    sort_key: 'date_last_updated',
     sort_type: true,
   })
-
+  foo.cleaningList(results);
   res.render('admin/main', foo.getResJson(req.user, {
     results,
     campus: info.campus_object[req.user.campus_id],

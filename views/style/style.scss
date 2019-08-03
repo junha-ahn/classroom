@@ -353,12 +353,15 @@ thead {
   }
 }
 
+.title {
+  text-align: center;
+}
+
 .single_input_body {
   margin: 0 auto;
   width: 50%;
   
   .title {
-    text-align: center;
     margin-bottom: 5%;
   }
 

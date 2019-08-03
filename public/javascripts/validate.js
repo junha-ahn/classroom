@@ -22,11 +22,13 @@ function validate(form, _conf) {
     if (value != null && data_type == 'number' && isNaN(value)) {
       return '숫자를 입력해주세요'
     }
-    if (max_length != undefined && value.length > max_length) {
-      return max_length + '자 까지만 입력 가능합니다'
-    }
-    if (min_length != undefined && value.length < min_length) {
-      return min_length + '자 이상 입력해 주세요'
+    if (value != undefined) {
+      if (max_length != undefined && value.length > max_length) {
+        return max_length + '자 까지만 입력 가능합니다'
+      }
+      if (min_length != undefined && value.length < min_length) {
+        return min_length + '자 이상 입력해 주세요'
+      }
     }
   }
 } 
