@@ -10,7 +10,7 @@
             :inline="false" 
             :selected_date="query.date" 
             :default_date="new Date()"
-            :building_id="params.building_id" 
+            :building_id="query.building_id" 
             :on-selected="onSelected" 
             :clear_button="true"
             maximum-view="day">
@@ -127,8 +127,10 @@
   </table>
   <div v-if="is_lookup" class="lookup_button">
     <button v-if="is_adminpage" type="button" class="btn btn-primary"  @click="gotoWrite">생성</button>
-    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-primary" v-if="query.is_mine==1" @click="clickIsMine(0)">내 예약</button>
-    <button v-if="is_user && !is_adminpage" type="button" class="btn btn-default" v-else @click="clickIsMine(1)">내 예약</button>
+    <template  v-if="is_user && !is_adminpage">
+      <button v-if="query.is_mine==1" type="button" class="btn btn-primary" @click="clickIsMine(0)">내 예약</button>
+      <button v-else type="button" class="btn btn-default" @click="clickIsMine(1)">내 예약</button>
+    </template>
   </div>
   <nav>
     <ul class="pagination">
@@ -139,7 +141,7 @@
       </li>
     </ul>
   </nav>
-  <div v-if="is_lookup" class="lookup_search clearfix"> 
+  <div v-if="is_lookup && is_adminpage" class="lookup_search clearfix"> 
     <select class="form-control search_type"  v-model="query.search_type">
       <option value="title" :selected="query.search_type == 'title'">제목</option>
       <option value="email" :selected="query.search_type == 'email'">이메일</option>

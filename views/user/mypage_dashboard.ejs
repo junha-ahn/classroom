@@ -3,6 +3,7 @@
 <div class="mypage_right">
   <div class="lookup_body">
     <div class="lookup_button">
+      <button type="button" class="btn btn-default" @click="gotoRsvLookup()">내 예약</button>
       <button type="button" class="btn btn-success" 
         @click="readNotification()">
         전체읽음
@@ -68,6 +69,11 @@
       }
     },
     methods: {
+      gotoRsvLookup: function() {
+        var link = '/reservation/lookup?page=1&is_mine=1';
+        
+        location.href= link
+      },
       makeDisplayMsg: function(notification) {
         var message = '"' + notification.title +'"'
         switch (notification.notification_type) {

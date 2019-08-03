@@ -111,9 +111,9 @@
           this.query.room_id = this.query.room_id || undefined;
           this.query.study_group_id = this.query.study_group_id || undefined;
           this.query.rsv_status = this.query.rsv_status || undefined;
-
+          this.query.is_search = undefined;
           if (this.query.search_value == undefined || this.query.search_value == '') {
-            this.query.search_type == undefined;
+            this.query.search_type = undefined;
           }
           var _validate = validate(this.query, {
             'search_value': {

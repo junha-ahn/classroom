@@ -344,7 +344,7 @@ let self = {
 
   getRerservationLookup: (is_adminpage) => {
     return async function (req, res, next) {
-      let building_id = (is_adminpage) ? req.user.building_id : req.params.building_id;
+      let building_id = (is_adminpage) ? req.user.building_id : req.query.building_id;
       let {
         room_id,
         department_id,
@@ -366,53 +366,46 @@ let self = {
       } else {
         let connection;
         try {
-          let building = info.building_object[building_id];
-          if (!building) {
-            res.render('error', foo.getResJson(req.user, {
-              error_name: "건물을 찾을수 없습니다",
-              message: "다시 확인해주세요"
-            }));
-          } else {
-            connection = await db_func.getDBConnection();
-            let {
-              results,
-              list_count,
-            } = await select_func.vRoomRsvList(connection, {
-              room_id,
-              building_id,
-              department_id,
-              study_group_id,
-              rsv_status,
-              is_mine,
-              user_id: req.user ? req.user.user_id : null,
-              date,
-              search_type,
-              search_value,
-              page,
-              page_length,
-              sort_key: 'start_datetime',
-              sort_type: false,
-            })
-            foo.cleaningList(results, req.user);
-            res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup', foo.getResJson(req.user, {
-              is_adminpage,
-              params: req.params,
-              query: {
-                ...req.query,
-                room_id: room_id || 0,
-                department_id: department_id || 0,
-                study_group_id: study_group_id || 0,
-                rsv_status: rsv_status || 0,
-                is_search: search_type ? 1 : 0,
-                search_type: search_type || 'title',
-              },
-              building_id: is_adminpage ? req.user.building_id : req.params.building_id,
-              department_results: info.department_results,
-              rsv_status_results: info.rsv_status_results,
-              results,
-              list_count,
-            }));
-          }
+          connection = await db_func.getDBConnection();
+          let {
+            results,
+            list_count,
+          } = await select_func.vRoomRsvList(connection, {
+            room_id,
+            building_id,
+            department_id,
+            study_group_id,
+            rsv_status,
+            is_mine,
+            user_id: req.user ? req.user.user_id : null,
+            date,
+            search_type,
+            search_value,
+            page,
+            page_length,
+            sort_key: 'start_datetime',
+            sort_type: false,
+          })
+          foo.cleaningList(results, req.user);
+          res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup', foo.getResJson(req.user, {
+            is_adminpage,
+            params: req.params,
+            query: {
+              ...req.query,
+              room_id: room_id || 0,
+              department_id: department_id || 0,
+              study_group_id: study_group_id || 0,
+              rsv_status: rsv_status || 0,
+              is_search: search_type ? 1 : 0,
+              search_type: search_type || 'title',
+            },
+            building_id: is_adminpage ? req.user.building_id : req.params.building_id,
+            department_results: info.department_results,
+            rsv_status_results: info.rsv_status_results,
+            results,
+            list_count,
+          }));
+        
         } catch (error) {
           next(error)
         } finally {

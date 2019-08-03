@@ -19,7 +19,6 @@
           is_admin: <%- is_admin %>,
           is_adminpage: <%- is_adminpage %>,
           is_lookup: true,
-          building_id: <%- building_id %>,
           params : <%-JSON.stringify(params) %>,
           query : <%-JSON.stringify(query) %>,
           results : <%-JSON.stringify(results) %>,
@@ -70,8 +69,12 @@
           this.refresh();
         },
         clickIsMine: function(is_mine) {
-          this.query.is_mine = is_mine;
-          this.refresh();
+          if (is_mine == 0 && this.query.building_id == undefined) {
+            alert('내 예약 조회 버튼을 통해 오셨을 경우, 내 예약 조회만 가능합니다.')
+          } else {
+            this.query.is_mine = is_mine;
+            this.refresh();
+          }
         },
         chagePage: function(page) {
           this.query.page = page;
@@ -102,9 +105,9 @@
           this.query.room_id = this.query.room_id || undefined;
           this.query.study_group_id = this.query.study_group_id || undefined;
           this.query.rsv_status = this.query.rsv_status || undefined;
-          this.query.building_id = undefined;
+          this.query.is_search = undefined;
           if (this.query.search_value == undefined || this.query.search_value == '') {
-            this.query.search_type == undefined;
+            this.query.search_type = undefined;
           }
           var _validate = validate(this.query, {
             'search_value': {
@@ -114,7 +117,7 @@
           if (_validate) {
             alert(_validate);
           } else {
-            location.href= '/reservation/lookup/' + this.params.building_id + global.serializeQuery(this.query);
+            location.href= '/reservation/lookup' + global.serializeQuery(this.query);
           }
         },
         classRsvStatus: function(rsv_status) {

@@ -73,6 +73,10 @@ router.get('/reservation/intro/:building_id', async (req, res, next) => {
     next(error)
   } 
 });
+
+router.get('/reservation/lookup', getRerservationLookup(false));
+router.get('/reservation/single/:room_rsv_id', getRerservationSingle(false));
+
 router.get('/reservation/:building_id', async (req, res, next) => {
   try {
     let {
@@ -101,9 +105,6 @@ router.get('/reservation/:building_id', async (req, res, next) => {
     next(error)
   }
 });
-
-router.get('/reservation/lookup/:building_id', getRerservationLookup(false));
-router.get('/reservation/single/:room_rsv_id', getRerservationSingle(false));
 
 
 router.get('/study_group/lookup', async (req, res, next) => {

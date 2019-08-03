@@ -56,7 +56,7 @@
           }
         },
         locationHrefLookup: function() {
-          var link ='/reservation/lookup/' + this.params.building_id + '?page=1'
+          var link ='/reservation/lookup?building_id=' + this.params.building_id + '&page=1'
           if (this.department_id) {
             link += '&department_id=' + this.department_id
           }

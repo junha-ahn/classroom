@@ -150,6 +150,7 @@
 
       
       <div class="single_button">
+        <button type="button" class="btn btn-default" v-if="mod=='GET' && is_adminpage" @click="gotoRsvLookup(user.email, user.building_id)">예약목록</button>
         <button type="button" class="btn btn-warning" v-if="mod=='GET'" @click="setMod('PUT', $event)">수정</button>
         <button type="submit" class="btn btn-primary" v-if="mod=='PUT'">제출</button>
       </div>
@@ -176,6 +177,12 @@
       }
     }, 
     methods: {
+      gotoRsvLookup: function(email) {
+        var link = this.is_adminpage ? '/admin' : '/'
+        link+= '/reservation/lookup?page=1&search_type=email&search_value=' + email;
+        
+        location.href= link
+      },
       changeToUser: function(user) {
         if (user.user_type == global.USER_TYPE) {
           alert('이미 해당 권한입니다.')
