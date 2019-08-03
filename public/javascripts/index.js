@@ -9,6 +9,26 @@ function makeGlobal() {
     date.setMilliseconds(0);
     return date;
   }
+  function getIEVersion() {
+    var word;
+    var ieVersion = null;
+    var userAgent = window.navigator.userAgent;
+    var agent = userAgent.toLowerCase();
+    var name = navigator.appName;
+  
+    // IE old version ( IE 10 or Lower ) 
+    if (name == "Microsoft Internet Explorer") word = "msie ";
+    else {
+      // IE 11 
+      if (agent.search("trident") > -1) word = "trident/.*rv:";
+      // IE 12  ( Microsoft Edge ) 
+      else if (agent.search("edge/") > -1) word = "edge/";
+    }
+    var reg = new RegExp(word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})");
+    if (reg.exec(agent) != null) ieVersion = RegExp.$1 + RegExp.$2;
+  
+    return ieVersion;
+  }
 
   var parseDate = function (date_string, is_seoul_tz) {
     var date = new Date(date_string);
@@ -219,24 +239,15 @@ function pagenation(data) {
   return pages;
 }
 
-
-function getIEVersion() {
-  var word;
-  var ieVersion = null;
-  var userAgent = window.navigator.userAgent;
-  var agent = userAgent.toLowerCase();
-  var name = navigator.appName;
-
-  // IE old version ( IE 10 or Lower ) 
-  if (name == "Microsoft Internet Explorer") word = "msie ";
-  else {
-    // IE 11 
-    if (agent.search("trident") > -1) word = "trident/.*rv:";
-    // IE 12  ( Microsoft Edge ) 
-    else if (agent.search("edge/") > -1) word = "edge/";
+function getBrowserSize() {
+  var w=window;
+  var d=document;
+  var e=d.documentElement;
+  var g=d.getElementsByTagName('body')[0];
+  var x=w.innerWidth||e.clientWidth||g.clientWidth;
+  var y=w.innerHeight||e.clientHeight||g.clientHeight;
+  return {
+    x:x,
+    y:y
   }
-  var reg = new RegExp(word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})");
-  if (reg.exec(agent) != null) ieVersion = RegExp.$1 + RegExp.$2;
-
-  return ieVersion;
 }
