@@ -593,39 +593,21 @@ router.get('/available_time', async (req, res, next) => {
         day_of_the_week,
         sort_key: 'start_time',
       });
-      let rsv_results;
-      if (room_id) {
-        rsv_results = (await select_func.vRoomRsv(connection, {
-          room_id: room_id,
-          rsv_status: info.SUBMIT_RSV_STATUS,
-          start_datetime: moment(`${foo.parseDate(date)} 00:00`).format('YYYY-MM-DD HH:mm'),
-          end_datetime: moment(`${foo.parseDate(date)} 24:00`).format('YYYY-MM-DD HH:mm'),
-        })).results;
+      let {
+        time_list,
+        is_active,
+      } = await checkRoomRsvTime(connection, {
+        room_id_list: [room_id],
+        building_id,
+        start_datetime:moment(`${foo.parseDate(date)} 00:00`, 'YYYY-MM-DD HH:mm'),
+        end_datetime: moment(`${foo.parseDate(date)} 24:00`, 'YYYY-MM-DD HH:mm'),
+        time_list: results,
+        is_reservationpage: true,
 
-      }
-      let is_active = false;
-      for (let i in results) {
-        results[i].is_seleted = 0;
-        results[i].is_active = 1;
-        results[i].start_time_string = foo.parseTimeString(results[i].start_time, true)
-        results[i].end_time_string = foo.parseTimeString(results[i].end_time, true)
-
-        for (let j in rsv_results) {
-          let _start = moment(`${foo.parseDate(date)} ${results[i].start_time}`);
-          let _end = moment(`${foo.parseDate(date)} ${results[i].end_time}`);
-          let start_datetime = moment(foo.parseDateTime(rsv_results[j].start_datetime, true));
-          let end_datetime = moment(foo.parseDateTime(rsv_results[j].end_datetime, true));
-          if (_start < end_datetime && _end > start_datetime) {
-            results[i].is_active = 0;
-          }
-        }
-        if (results[i].is_active) {
-          is_active = true;
-        }
-      }
-      foo.cleaningList(results)
+      }); 
+      foo.cleaningList(time_list)
       res.status(200).json({
-        results,
+        results: time_list,
         list_count,
         is_active,
       })
@@ -1337,6 +1319,7 @@ function checkRoomRsvTime(conn, object) {
         building_id,
         room_id_list,
         time_list,
+        is_reservationpage,
       } = object;
 
       let {
@@ -1350,24 +1333,43 @@ function checkRoomRsvTime(conn, object) {
         start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
         end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
       });
-      if (results[0]) {
-        for (let i in time_list) {
-          let start_dtime = moment('1970/1/1 ' + time_list[i].start_time, "YYYY-MM-DD HH:mm");
-          let end_dtime = moment('1970/1/1 ' + time_list[i].end_time, "YYYY-MM-DD HH:mm");
-          for (let j in results) {
-            let _start_dtime = moment('1970/1/1 ' + results[j].start_time, "YYYY-MM-DD HH:mm");
-            let _end_dtime = moment('1970/1/1 ' + results[j].end_time, "YYYY-MM-DD HH:mm");
+      let is_active = false;
+      for (let i in time_list) {
+        if (is_reservationpage) {
+          time_list[i].is_seleted = 0;
+          time_list[i].is_active = 1;
+          time_list[i].start_time_string = foo.parseTimeString(time_list[i].start_time, true)
+          time_list[i].end_time_string = foo.parseTimeString(time_list[i].end_time, true)
+        }
+        let start_dtime = moment('1970/1/1 ' + time_list[i].start_time, "YYYY-MM-DD HH:mm");
+        let end_dtime = moment('1970/1/1 ' + time_list[i].end_time, "YYYY-MM-DD HH:mm");
+        for (let j in results) {
+          let _start_dtime = moment('1970/1/1 ' + results[j].start_time, "YYYY-MM-DD HH:mm");
+          let _end_dtime = moment('1970/1/1 ' + results[j].end_time, "YYYY-MM-DD HH:mm");
 
-            if (_start_dtime < end_dtime && _end_dtime > start_dtime) {
+          if (_start_dtime < end_dtime && _end_dtime > start_dtime) {
+            if (is_reservationpage) {
+              time_list[i].is_active = 0;
+            } else {
               let error = new Error();
               error.message = `시간을 다시 선택해주세요 (${results[j].title} : ${foo.parseTimeString(results[j].start_time)} ~ ${foo.parseTimeString(results[j].end_time)})`
               error.status = 401;
-              reject(error);
+              throw error;
             }
           }
         }
+        if (time_list[i].is_active) {
+          is_active = true;
+        }
       }
-      resolve(true);
+      if (is_reservationpage) {
+        resolve({
+          is_active,
+          time_list
+        })
+      } else {
+        resolve(true);
+      }
     } catch (error) {
       reject(error);
     }
