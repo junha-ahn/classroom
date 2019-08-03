@@ -43,14 +43,15 @@
                 </div>
                 <div class="div_right clearfix">
                   <div class="block_gruop clearfix">
-                    <div class="block" 
+                    <div class="block"
                       v-for="(available_time, i) in available_time_list">
                       <button
-                      class="btn btn-default time"
+                      class="btn btn-default item"
                       v-bind:value="available_time.available_time_id" 
                       :key="i"
                       disabled
                       >{{available_time.start_time}} ~ {{available_time.end_time}}</button>
+
                       <button 
                       type="button" 
                       class="btn btn-danger delete" 
@@ -58,7 +59,6 @@
                       >-</button>
                     </div>
                   </div>
-
                   <custom-timepicker
                     :add-time="addTime"
                   ></custom-timepicker>

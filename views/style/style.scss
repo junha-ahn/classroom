@@ -444,24 +444,20 @@ thead {
             font-size:1.8vmin!important;
           }
 
-          .time { width: 88%;}
+          .item { width: 88%;}
 
           .delete { width:10%; }
         }
       }
 
-      .custom_timepicker {
+      .add_block {
         width: 100%;
         .center {
           margin:0 auto;
           width:65%;
-          .center {
-            width:100%;
-            .div{
-              width:100%;
-            
-            }
-
+          display: flex;
+          button {
+            width:15%;
           }
         }
       }
