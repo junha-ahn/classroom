@@ -52,9 +52,10 @@ thead {
 }
 
 #custom_modal {
-  text-align:center;
-  margin-bottom : 0px;
+  text-align: center;
+  margin-bottom: 0px;
 }
+
 .main {
   main {
     h1 {
@@ -360,7 +361,7 @@ thead {
 .single_input_body {
   margin: 0 auto;
   width: 50%;
-  
+
   .title {
     margin-bottom: 5%;
   }
@@ -398,23 +399,54 @@ thead {
       float: right;
       width: 70%;
 
-      .add_block {
-        
-      }
-      .block {
+      .block_gruop {
+        width: 100%;
 
+        .block {
+          width:100%;
+          float:left;
+          padding-bottom: 2%;
+          display: inline-block!important;
+
+          button{
+            font-size:1.8vmin!important;
+          }
+
+          .time { width: 88%;}
+
+          .delete { width:10%; }
+        }
       }
 
-      input, textarea {
-        width : 100%;
+      .custom_timepicker {
+        width: 100%;
+        .center {
+          margin:0 auto;
+          width:65%;
+          .center {
+            width:100%;
+            .div{
+              width:100%;
+            
+            }
+
+          }
+        }
+      }
+
+      input,
+      textarea {
+        width: 100%;
         display: inline;
+
         .radio {
-          width : 5% !important;
+          width: 5% !important;
         }
       }
 
       .text-left {
         width: 100%;
+
         span {
           font-weight: bold;
           display: inline-block;
@@ -422,21 +454,23 @@ thead {
           width: 20%;
         }
 
-        input, select {
+        input,
+        select {
           width: 78% !important;
         }
+
         .form-control {
           display: inline;
         }
       }
     }
   }
-  
+
   .single_button {
     display: inline-flex;
     // 중앙정렬??..
-    margin-left:50%;
-    margin-right:50%;
+    margin-left: 50%;
+    margin-right: 50%;
   }
 }
 
@@ -542,22 +576,27 @@ thead {
 .admin_holiday {
   .holiday_left {
     float: left;
-    width:50%;
+    width: 50%;
+
     .single_input_body {
-      width:70%;
+      width: 70%;
+
       .custom_datepicker input {
         width: 90%;
       }
     }
   }
+
   .holiday_right {
     float: right;
-    width:50%;
+    width: 50%;
+
     .cell.selected {
       background: none !important;
     }
   }
 }
+
 /********** 상단nav틀어지는부분 **********/
 
 @media (max-width: 768px) {

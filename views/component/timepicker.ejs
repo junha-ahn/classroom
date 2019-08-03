@@ -1,21 +1,28 @@
 <script type="text/x-template" id="timepicker-template">
-  <div>
-    <select v-model="start_index" @change="changeStartTime" class="form-control" style="width:100px; display:initial;">
-      <option v-if="i != time_list.length - 1" v-for="(time, i) in time_list" v-bind:value="i" :key="i">
-        {{ time }}
-      </option>
-    </select>
-    ~
-    <select v-model="end_index" :disabled="start_index==null" class="form-control" style="width:100px; display:initial;">
-      <option v-for="(time, i) in end_time_list" v-bind:value="i" :key="i">
-        {{ time }}
-      </option>
-    </select>
-    <button 
-      type="button" 
-      class="btn btn-primary"
-      @click="clickAddTime" 
-    >+</button>
+  <div class="custom_timepicker">
+    <div class="center">
+      <div class="center">
+        <div class="div">
+          <select v-model="start_index" @change="changeStartTime" class="form-control" style="width:38%; display:initial;">
+            <option v-if="i != time_list.length - 1" v-for="(time, i) in time_list" v-bind:value="i" :key="i">
+              {{ time }}
+            </option>
+          </select>
+          ~
+          <select v-model="end_index" :disabled="start_index==null" class="form-control" style="width:38%; display:initial;">
+            <option v-for="(time, i) in end_time_list" v-bind:value="i" :key="i">
+              {{ time }}
+            </option>
+          </select>
+          <button 
+            type="button" 
+            style="width:15%;"
+            class="btn btn-primary"
+            @click="clickAddTime" 
+          >+</button>
+        </div>
+      </div>
+    </div>
   </div>
 </script>
 
