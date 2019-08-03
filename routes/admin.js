@@ -18,9 +18,27 @@ const {
   getUserSingle,
 } = require('../global/middlewares');
 
-router.get('/', isAdmin, async (req, res, next) => {
-  res.redirect('/admin/reservation/lookup?page=1');
-});
+router.get('/', isAdmin, db_func.inDBStream(async (req, res, next, conn) => {
+  
+  let {
+    results,
+    list_count,
+  } = await select_func.vRoomRsvList(conn, {
+    building_id: req.user.building_id,
+    is_req: true,
+    user_id: req.user ? req.user.user_id : null,
+    page: 1,
+    page_length: 10,
+    sort_key: 'date_created',
+    sort_type: true,
+  })
+
+  res.render('admin/main', foo.getResJson(req.user, {
+    results,
+    campus: info.campus_object[req.user.campus_id],
+    building: info.building_object[req.user.building_id],
+  }))
+}));
 
 router.get('/user/lookup', isAdmin, async (req, res, next) => {
   let {

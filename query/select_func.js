@@ -1,6 +1,7 @@
 const squel = require('squel');
 
 const db_func = require('../global/db_func.js');
+const info = require('../global/info.js');
 
 let self = {
   user: (connection, object) => {
@@ -1554,6 +1555,7 @@ let self = {
           department_id,
           study_group_id,
           rsv_status,
+          is_req,
           is_mine,
           user_id,
           date,
@@ -1578,6 +1580,10 @@ let self = {
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+            .where(squel.case()
+              .when('? IS NULL', is_req)
+              .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+              .else(squel.expr().and('room_rsv.rsv_status IN ?', [info.REQ_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])))
             .where(squel.case()
               .when('? IS NULL', department_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1612,6 +1618,10 @@ let self = {
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+              .where(squel.case()
+                .when('? IS NULL', is_req)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.rsv_status IN ?', [info.REQ_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])))
             .where(squel.case()
               .when('? IS NULL', department_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
@@ -1661,6 +1671,10 @@ let self = {
               .when('? IS NULL', rsv_status)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
               .else(squel.expr().and('room_rsv.rsv_status = ?', rsv_status)))
+              .where(squel.case()
+                .when('? IS NULL', is_req)
+                .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))
+                .else(squel.expr().and('room_rsv.rsv_status IN ?', [info.REQ_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])))
             .where(squel.case()
               .when('? IS NULL', department_id)
               .then(squel.expr().and('room_rsv.room_rsv_id IS NOT NULL'))

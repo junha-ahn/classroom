@@ -1,5 +1,6 @@
 <div class="left_menu">
   <ul class="nav nav-sidebar">
+    <li :class="{active: admin_menu_name=='main'}"><a href="/admin">메인</a></li>
     <li :class="{active: admin_menu_name=='user'}"><a href="/admin/user/lookup?page=1">회원</a></li>
     <li :class="{active: admin_menu_name=='holiday'}"><a href="/admin/holiday">휴일</a></li>
     <li :class="{active: admin_menu_name=='schedule'}"><a href="/admin/schedule">스케쥴</a></li>

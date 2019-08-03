@@ -62,6 +62,7 @@ function makeGlobal() {
     'reservation_lookup': 'reservation',
     'reservation_single': 'reservation',
 
+    'admin': 'admin',
     'admin_user_lookup': 'admin',
     'admin_user_single': 'admin',
     'admin_room_lookup': 'admin',
@@ -74,6 +75,7 @@ function makeGlobal() {
     'admin_schedule': 'admin',
   };
   var admin_name_by_class = {
+    'admin': 'main',
     'admin_user_lookup': 'user',
     'admin_user_single': 'user',
     'admin_room_lookup': 'room',
