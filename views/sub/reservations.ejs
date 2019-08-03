@@ -146,6 +146,7 @@
     </select>
     <div class="input-group search_value">
       <input type="text" class="form-control" v-model="query.search_value" placeholder="검색어를 입력해주세요">
+      <div class="input-group-addon" v-if="query.is_search == 1" @click="resetSearch">X</div>
       <div class="input-group-addon" @click="clickSearch"><span class="glyphicon glyphicon-search"></div>
     </div>
   </div>

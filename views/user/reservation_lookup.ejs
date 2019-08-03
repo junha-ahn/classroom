@@ -77,6 +77,11 @@
           this.query.page = page;
           this.refresh();
         },
+        resetSearch: function() {
+          this.query.search_value = undefined;
+          this.query.search_type = undefined;
+          this.refresh();
+        },
         clickSearch: function() {
           var _validate = validate(this.query, {
             'search_value': {

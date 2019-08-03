@@ -11,7 +11,7 @@
     </footer>
   </div>
   
-  
+  <script type="text/javascript" src="/javascripts/validate.js"></script>
   <script>
     var global = makeGlobal();
     var app = new Vue({
@@ -85,6 +85,24 @@
           this.query.page = page;
           this.refresh();
         },
+        resetSearch: function() {
+          this.query.search_value = undefined;
+          this.query.search_type = undefined;
+          this.query.page = 1;
+          this.refresh();
+        },
+        clickSearch: function() {
+          var _validate = validate(this.query, {
+            'search_value': {
+              is_require: true,
+            },
+          });
+          if (_validate) {
+            alert(_validate);
+          } else {
+            this.refresh();
+          }
+        },
         refresh: function() {
           this.query.department_id = this.query.department_id || undefined;
           if (!this.query.department_id) {
@@ -93,7 +111,20 @@
           this.query.room_id = this.query.room_id || undefined;
           this.query.study_group_id = this.query.study_group_id || undefined;
           this.query.rsv_status = this.query.rsv_status || undefined;
-          location.href= '/admin/reservation/lookup' + global.serializeQuery(this.query);
+
+          if (this.query.search_value == undefined || this.query.search_value == '') {
+            this.query.search_type == undefined;
+          }
+          var _validate = validate(this.query, {
+            'search_value': {
+              is_require: false,
+            },
+          });
+          if (_validate) {
+            alert(_validate);
+          } else {
+            location.href= '/admin/reservation/lookup' + global.serializeQuery(this.query);
+          }
         },
         classRsvStatus: function(rsv_status) {
           return {

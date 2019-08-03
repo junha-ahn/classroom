@@ -403,6 +403,7 @@ let self = {
                 department_id: department_id || 0,
                 study_group_id: study_group_id || 0,
                 rsv_status: rsv_status || 0,
+                is_search: search_type ? 1 : 0,
                 search_type: search_type || 'title',
               },
               building_id: is_adminpage ? req.user.building_id : req.params.building_id,
