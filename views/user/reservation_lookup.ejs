@@ -1,5 +1,18 @@
 <% include ../sub/header %>
-      <% include ../sub/reservations %>
+      <reservation-list
+        :query="query"
+        :params="params"
+        :is_user="is_user"
+        :is_admin="is_admin"
+        :is_adminpage="is_adminpage"
+        :is_lookup="is_lookup"
+        :list_count="list_count"
+        :room_rsv_results="results"
+        :department_results="department_results"
+        :rsv_status_results="rsv_status_results"
+      >
+      </reservation-list>
+
     </main>
     
     <footer>
@@ -7,6 +20,7 @@
     </footer>
   </div>
   
+  <% include ../component/reservation_list %>
   <script type="text/javascript" src="/javascripts/validate.js"></script>
   <script>
     var global = makeGlobal();
@@ -30,154 +44,11 @@
         }
       },
       methods: {
-        chageRsvStatus: function(e, room_rsv, rsv_status) {
-          if (e) {
-            e.preventDefault();
-          }
-          var __this = this;
-          var url = '/api/room_rsv/status/' + room_rsv.room_rsv_id;
-          global.ajax({
-            url: url,
-            type: 'PUT',
-            data: {
-              rsv_status: rsv_status,
-            },
-          },
-          function (data, status) {
-            __this.refresh();
-          },
-          function (message, status, data) {
-            alert(message);
-          });
-        },
-        makeDisplayName: function (room_rsv) {
-          var name = ''
-          if (room_rsv.department_name)
-            name += room_rsv.department_name
-          if (room_rsv.study_group_name)
-            name += ' (' + room_rsv.study_group_name + ')'
-          return name;
-        },
-        onSelected: function(date) {
-          if (date != null) {
-            date = global.parseDate(date)
-          }
-          this.query.date = date;
-          this.refresh();
-        },
-        onChange: function() {
-          this.refresh();
-        },
-        clickIsMine: function(is_mine) {
-          if (is_mine == 0 && this.query.building_id == undefined) {
-            alert('내 예약 조회 버튼을 통해 오셨을 경우, 내 예약 조회만 가능합니다.')
-          } else {
-            this.query.is_mine = is_mine;
-            this.refresh();
-          }
-        },
-        chagePage: function(page) {
-          this.query.page = page;
-          this.refresh();
-        },
-        resetSearch: function() {
-          this.query.search_value = undefined;
-          this.query.search_type = undefined;
-          this.refresh();
-        },
-        clickSearch: function() {
-          var _validate = validate(this.query, {
-            'search_value': {
-              is_require: true,
-            },
-          });
-          if (_validate) {
-            alert(_validate);
-          } else {
-            this.refresh();
-          }
-        },
-        refresh: function() {
-          this.query.department_id = this.query.department_id || undefined;
-          if (!this.query.department_id) {
-            this.query.study_group_id = 0;
-          }
-          this.query.room_id = this.query.room_id || undefined;
-          this.query.study_group_id = this.query.study_group_id || undefined;
-          this.query.rsv_status = this.query.rsv_status || undefined;
-          this.query.is_search = undefined;
-          if (this.query.search_value == undefined || this.query.search_value == '') {
-            this.query.search_type = undefined;
-          }
-          var _validate = validate(this.query, {
-            'search_value': {
-              is_require: false,
-            },
-          });
-          if (_validate) {
-            alert(_validate);
-          } else {
-            location.href= '/reservation/lookup' + global.serializeQuery(this.query);
-          }
-        },
-        classRsvStatus: function(rsv_status) {
-          return {
-            'bg-info': rsv_status == global.REQ_RSV_STATUS,
-            'bg-danger': rsv_status == global.CANCEL_RSV_STATUS,
-            'bg-warning': rsv_status == global.CANCEL_REQ_RSV_STATUS,
-            'bg-success': rsv_status == global.SUBMIT_RSV_STATUS,
-          }
-        },
-        getRoomResults: function() {
-          var __this = this;
-          global.ajax({
-            url: '/api/room' + global.serializeQuery({
-              building_id: this.building_id,
-            }),
-            type: 'GET',
-          },
-          function (data, status) {
-            __this.room_results = data.results;
-          },
-          function (message, status, data) {
-            alert(message);
-          });
-        },
-        getStudyGroupResults: function() {
-          var __this = this;
-          global.ajax({
-            url: '/api/study_group' + global.serializeQuery({
-              department_id: this.query.department_id,
-            }),
-            type: 'GET',
-          },
-          function (data, status) {
-            __this.study_group_results = data.results;
-          },
-          function (message, status, data) {
-            alert(message);
-          });
-        },
+
       },
       computed: {
-        pagenation: function() {
-          return pagenation({
-            numberOfItems:this.list_count,
-            itemsPerPage: 10,
-            pagesPerNav:5,
-            indexOfPage: this.query.page,
-            hasPrevAndNext: true,
-            prevText:'&laquo;',
-            nextText:'&raquo;',
-          })
-        },
+
       }, 
-      created: function() {
-        this.getRoomResults();
-        if (this.query.department_id) {
-          this.getStudyGroupResults();
-        }
-      },
     })
   </script>
 

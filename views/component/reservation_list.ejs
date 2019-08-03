@@ -1,0 +1,339 @@
+<script type="text/x-template" id="list-template">
+  <div class="lookup_body">
+    <div v-if="is_lookup" class="lookup_select">
+      <div class="pack_datepicker">
+        <div class="select_div">
+          <div class="div_l">
+            <label>날짜</label>
+          </div>
+          <div class="div_r">
+            <custom-datepicker 
+              :inline="false" 
+              :selected_date="query.date" 
+              :default_date="new Date()"
+              :building_id="query.building_id" 
+              :on-selected="onSelected" 
+              :clear_button="true"
+              maximum-view="day">
+            </custom-datepicker>
+          </div>
+        </div>
+      </div>
+      <div class="pack_div clearfix">
+        <div class="select_div">
+          <div class="div_l">
+            <label>예약상태</label>
+          </div>
+          <div class="div_r">
+            <select class="form-control" v-model="query.rsv_status" @change="onChange()">
+              <option v-bind:value="0" :selected="query.rsv_status==0">전체</option>
+              <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
+                :selected="query.rsv_status == status.rsv_status" :key="i">
+                {{ status.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="select_div">
+          <div class="div_l">
+            <label>강의실</label>
+          </div>
+          <div class="div_r">
+            <select class="form-control" v-model="query.room_id" @change="onChange()">
+              <option v-bind:value="0" :selected="query.room_id===0">전체</option>
+              <option v-for="(room, j) in room_results" v-bind:value="room.room_id" :key="j">
+                {{ room.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="select_div">
+          <div class="div_l">
+            <label>학과</label>
+          </div>
+          <div class="div_r">
+            <select class="form-control" v-model="query.department_id" @change="onChange()">
+              <option v-bind:value="0" :selected="query.department_id===0">전체</option>
+              <option v-for="(department, i) in department_results" v-bind:value="department.department_id"
+                :selected="query.department_id == department.department_id" :key="i">
+                {{ department.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="select_div">
+          <div class="div_l">
+            <label>스터디</label>
+          </div>
+          <div class="div_r">
+            <select class="form-control" v-model="query.study_group_id" @change="onChange()" :disabled="query.department_id===0">
+              <option v-bind:value="0" :selected="query.study_group_id===0">전체</option>
+              <option v-for="(study_group, j) in study_group_results" v-bind:value="study_group.study_group_id" :key="j">
+                {{ study_group.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <th>교실</th>
+        <th v-if="is_lookup">카테고리</th>
+        <th>학과(스터디)</th>
+        <th>상태</th>
+        <th>제목</th>
+        <th>날짜</th>
+        <th>시간</th>
+        <th v-if="!is_lookup">업데이트일</th>
+        <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
+      </thead>
+      <tbody>
+        <tr v-for="(room_rsv, i) in room_rsv_results" :key="i">
+          <td>{{room_rsv.rooms_name}}</td>
+          <td v-if="is_lookup">{{room_rsv.room_rsv_category_name}}</td>
+          <td>{{makeDisplayName(room_rsv)}}</td>
+          <td><label :class="classRsvStatus(room_rsv.rsv_status)">{{room_rsv.rsv_status_name}}</label></td>
+          <td>{{room_rsv.title}}</td>
+          <td>{{room_rsv.rsv_date}}</td>
+          <td>{{room_rsv.rsv_start_time}} ~ {{room_rsv.rsv_end_time}}</td>
+          <td v-if="!is_lookup">{{room_rsv.date_last_updated}}</th>
+          <td>
+            <button 
+              type="button" 
+              class="btn btn-default"
+              @click="location.href=(is_adminpage ? '/admin' : '') + '/reservation/single/' + room_rsv.room_rsv_id">조회</button>
+            <button 
+              type="button" 
+              class="btn btn-info"
+              v-if="is_adminpage"
+              @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
+            <button 
+              type="button" 
+              class="btn btn-success"
+              v-if="is_adminpage"
+              @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
+            <button 
+              type="button" 
+              class="btn btn-danger"
+              v-if="is_adminpage"
+              @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button> 
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div v-if="is_lookup" class="lookup_button">
+      <button v-if="is_adminpage" type="button" class="btn btn-primary"  @click="gotoWrite">생성</button>
+      <template  v-if="is_user && !is_adminpage">
+        <button v-if="query.is_mine==1" type="button" class="btn btn-primary" @click="clickIsMine(0)">내 예약</button>
+        <button v-else type="button" class="btn btn-default" @click="clickIsMine(1)">내 예약</button>
+      </template>
+    </div>
+
+    <nav>
+      <ul class="pagination">
+        <li v-for="page in pagenation" :key="page.value" :class="{active: page.isSelf}">
+          <a @click="chagePage(page.value)" aria-label="Previous">
+            <span aria-hidden="true" v-html="page.name"></span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div v-if="is_lookup && is_adminpage" class="lookup_search clearfix"> 
+      <select class="form-control search_type"  v-model="query.search_type">
+        <option value="title" :selected="query.search_type == 'title'">제목</option>
+        <option value="email" :selected="query.search_type == 'email'">이메일</option>
+      </select>
+      <div class="input-group search_value">
+        <input type="text" class="form-control" v-model="query.search_value" placeholder="검색어를 입력해주세요">
+        <div class="input-group-addon" v-if="query.is_search == 1" @click="resetSearch">X</div>
+        <div class="input-group-addon" @click="clickSearch"><span class="glyphicon glyphicon-search"></div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<% include ../component/datepicker %>
+<script type="text/javascript" src="/javascripts/validate.js"></script>
+<script>
+  Vue.component('reservation-list', {
+    template: '#list-template',
+    props: {
+      is_user: Boolean,
+      is_admin: Boolean,
+      is_adminpage: Boolean,
+      is_lookup: Boolean,
+      query: Object,
+      params: Object,
+      room_rsv_results: Array,
+      list_count: Number,
+      department_results: Array,
+      rsv_status_results: Array,
+    },
+    data: function () {
+      return {
+        study_group_results : [],
+        room_results: [],
+      }
+    }, 
+    methods: {
+      refresh: function() {
+        this.query.department_id = this.query.department_id || undefined;
+        if (!this.query.department_id) {
+          this.query.study_group_id = 0;
+        }
+        this.query.room_id = this.query.room_id || undefined;
+        this.query.study_group_id = this.query.study_group_id || undefined;
+        this.query.rsv_status = this.query.rsv_status || undefined;
+        this.query.is_search = undefined;
+        if (this.query.search_value == undefined || this.query.search_value == '') {
+          this.query.search_type = undefined;
+        }
+        var _validate = validate(this.query, {
+          'search_value': {
+            is_require: false,
+          },
+        });
+        if (_validate) {
+          alert(_validate);
+        } else {
+          location.href= (this.is_adminpage ? '/admin' : '') + '/reservation/lookup' + global.serializeQuery(this.query);
+        }
+      },
+      resetSearch: function() {
+        this.query.search_value = undefined;
+        this.query.search_type = undefined;
+        this.refresh();
+      },
+      clickSearch: function() {
+        var _validate = validate(this.query, {
+          'search_value': {
+            is_require: true,
+          },
+        });
+        if (_validate) {
+          alert(_validate);
+        } else {
+          this.refresh();
+        }
+      },
+      chageRsvStatus: function(e, room_rsv, rsv_status) {
+        if (e) {
+          e.preventDefault();
+        }
+        var __this = this;
+        var url = '/api/room_rsv/status/' + room_rsv.room_rsv_id;
+        global.ajax({
+          url: url,
+          type: 'PUT',
+          data: {
+            rsv_status: rsv_status,
+          },
+        },
+        function (data, status) {
+          __this.refresh();
+        },
+        function (message, status, data) {
+          alert(message);
+        });
+      },
+      onChange: function() {
+        this.refresh();
+      },
+      onSelected: function(date) {
+        if (date != null) {
+          date = global.parseDate(date)
+        }
+        this.query.date = date;
+        this.refresh();
+      },
+      clickIsMine: function(is_mine) {
+        if (is_mine == 0 && this.query.building_id == undefined) {
+          alert('내 예약 조회 버튼을 통해 오셨을 경우, 내 예약 조회만 가능합니다.')
+        } else {
+          this.query.is_mine = is_mine;
+          this.refresh();
+        }
+      },
+      chagePage: function(page) {
+        this.query.page = page;
+        this.refresh();
+      },
+      makeDisplayName: function (room_rsv) {
+        var name = ''
+        if (room_rsv.department_name)
+          name += room_rsv.department_name
+        if (room_rsv.study_group_name)
+          name += ' (' + room_rsv.study_group_name + ')'
+        return name;
+      },
+      classRsvStatus: function(rsv_status) {
+        return {
+          'bg-info': rsv_status == global.REQ_RSV_STATUS,
+          'bg-danger': rsv_status == global.CANCEL_RSV_STATUS,
+          'bg-warning': rsv_status == global.CANCEL_REQ_RSV_STATUS,
+          'bg-success': rsv_status == global.SUBMIT_RSV_STATUS,
+        }
+      },
+      gotoWrite: function() {
+        location.href='/admin/reservation/write'
+      },
+      getRoomResults: function() {
+        var __this = this;
+        global.ajax({
+          url: '/api/room' + global.serializeQuery({
+            building_id: this.building_id,
+          }),
+          type: 'GET',
+        },
+        function (data, status) {
+          __this.room_results = data.results;
+        },
+        function (message, status, data) {
+          alert(message);
+        });
+      },
+      getStudyGroupResults: function() {
+        var __this = this;
+        global.ajax({
+          url: '/api/study_group' + global.serializeQuery({
+            department_id: this.query.department_id,
+          }),
+          type: 'GET',
+        },
+        function (data, status) {
+          __this.study_group_results = data.results;
+        },
+        function (message, status, data) {
+          alert(message);
+        });
+      },
+    },
+    computed: {
+      pagenation: function() {
+        return pagenation({
+          numberOfItems:this.list_count,
+          itemsPerPage: 10,
+          pagesPerNav:5,
+          indexOfPage: this.query.page,
+          hasPrevAndNext: true,
+          prevText:'&laquo;',
+          nextText:'&raquo;',
+        })
+      },
+    },
+    created: function() {
+      this.getRoomResults();
+      if (this.query.department_id) {
+        this.getStudyGroupResults();
+      }
+    },
+  })
+</script>
