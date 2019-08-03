@@ -82,6 +82,7 @@ function makeGlobal() {
     'admin_room_single': 'room',
     'admin_reservation_lookup': 'reservation',
     'admin_reservation_single': 'reservation',
+    'admin_reservation_write': 'reservation',
     'admin_holiday': 'holiday',
     'admin_schedule': 'schedule',
   };
