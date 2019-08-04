@@ -327,7 +327,6 @@ let self = {
             end_time: time_list[i].end_time,
           })
         }
-        console.log(fieldsRows);
         let queryString = squel.insert()
           .into('available_time')
           .setFieldsRows(fieldsRows)

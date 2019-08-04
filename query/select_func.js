@@ -930,7 +930,6 @@ let self = {
         is_only = is_only == 1 ? true : null;
         sort_key = (sort_key) ? sort_key : 'holiday_id';
         sort_type = (sort_type == false) ? false : true;
-        console.log(room_id)
         if (page && page_length) {
           countString = squel.select()
             .from('holiday')
