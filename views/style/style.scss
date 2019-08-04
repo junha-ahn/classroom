@@ -604,31 +604,41 @@ thead {
 }
 
 .admin_holiday {
-  .holiday_left {
-    float: left;
-    width: 50%;
-
-    .single_input_body {
-      width: 70%;
-
-      .custom_datepicker input {
-        width: 90%;
+  .admin_right {
+    width:80%;
+  }
+  .body {
+    margin:0 auto;
+    width:80%;
+    .title {
+      width : 10px;
+    }
+    .holiday_left {
+      float: left;
+      width: 50%;
+  
+      .single_input_body {
+        width: 70%;
+  
+        .custom_datepicker input {
+          width: 90%;
+        }
       }
     }
-  }
-
-  .holiday_right {
-    float: right;
-    width: 50%;
-
-    .cell.selected {
-      background: none !important;
-    }
-    .custom_datepicker {
-      width: 100%;
-      .vdp-datepicker {
-       margin:0 auto;
-       width:90%; 
+  
+    .holiday_right {
+      float: right;
+      width: 50%;
+  
+      .cell.selected {
+        background: none !important;
+      }
+      .custom_datepicker {
+        width: 100%;
+        .vdp-datepicker {
+         margin:0 auto;
+         width:90%; 
+        }
       }
     }
   }

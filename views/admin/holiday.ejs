@@ -2,114 +2,116 @@
       <% include ../sub/admin_menu %>
       
       <div class="admin_right">
-        <div class="title" style="width:100%;">
-          <h1>휴일</h1>
-          <p>학습관 또는 각 강의실에 휴일을 설정해주세요</p>
-        </div>
-        <div class="holiday_left">
-          <form v-on:submit="onSubmitForm">
-            <div class="single_input_body">
-                <div class="pack_div clearfix">
-                  <div class="div_left">
-                    <label>강의실</label>
+        <div class="body">
+          <div class="title" style="width:100%;">
+            <h1>휴일</h1>
+            <p>학습관 또는 각 강의실에 휴일을 설정해주세요</p>
+          </div>
+          <div class="holiday_left">
+            <form v-on:submit="onSubmitForm">
+              <div class="single_input_body">
+                  <div class="pack_div clearfix">
+                    <div class="div_left">
+                      <label>강의실</label>
+                    </div>
+                    <div class="div_right">
+                      <p v-if="mod != 'POST'">{{ displayName }}</p>
+                      <select v-else class="form-control" v-model="formData.room_id" @change="onChangeRoom()">
+                        <option :value="0">{{building.name}}</option>
+                        <option v-for="(room, i) in results" v-bind:value="room.room_id" :key="i">
+                          {{ room.name }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
-                  <div class="div_right">
-                    <p v-if="mod != 'POST'">{{ displayName }}</p>
-                    <select v-else class="form-control" v-model="formData.room_id" @change="onChangeRoom()">
-                      <option :value="0">{{building.name}}</option>
-                      <option v-for="(room, i) in results" v-bind:value="room.room_id" :key="i">
-                        {{ room.name }}
-                      </option>
-                    </select>
+  
+                  <div class="pack_div clearfix">
+                    <div class="div_left">
+                      <label>시작일</label>
+                    </div>
+                    <div class="div_right">
+                      <p v-if="mod == 'GET'">{{ displayStartDate }}</p>
+                      <custom-datepicker
+                        v-else
+                        :inline="false"
+                        :selected_date="formData.start_date"
+                        :default_date="formData.start_date || new Date()"
+                        :on-selected="onSelectedStartDate"
+                        :clear_button="true"
+                        :not_holiday="true"
+                      ></custom-datepicker>
+                    </div>
                   </div>
+  
+                  <div class="pack_div clearfix">
+                    <div class="div_left">
+                      <label>종료일</label>
+                    </div>
+                    <div class="div_right">
+                      <p v-if="mod == 'GET'">{{ displayEndDate }}</p>
+                      <custom-datepicker
+                        v-else
+                        :inline="false"
+                        :selected_date="formData.end_date"
+                        :default_date="formData.end_date  || new Date()"
+                        :on-selected="onSelectedEndDate"
+                        :clear_button="true"
+                        :not_holiday="true"
+                      ></custom-datepicker>
+                    </div>
+                  </div>
+  
+                  
+                  <div class="pack_div clearfix">
+                    <div class="div_left">
+                      <label>이름</label>
+                    </div>
+                    <div class="div_right">
+                      <p v-if="mod == 'GET'">{{ formData.name }}</p>
+                      <input v-else type="text" class="form-control" v-model="formData.name" placeholder="이름을 입력해주세요">
+                    </div>
+                  </div>
+  
+                  <div class="pack_div clearfix">
+                    <div class="div_left">
+                      <label>공휴일</label>
+                    </div>
+                    <div class="div_right">
+                      <p v-if="mod == 'GET'">{{ formData.is_public_holiday == 1 ? '공휴일' : '기타' }}</p>
+                      <template v-else>
+                        <div class="text-left">
+                          <span>공휴일</span>
+                          <input class="radio" type="radio" :value="1" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 1">
+                        </div>
+                        <div class="text-left">
+                          <span>기타</span>
+                          <input class="radio" type="radio" :value="0" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 0">
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+  
+                <div class="single_button">
+                  <button v-if="mod == 'GET'" type="button" class="btn btn-warning" @click="setMod('PUT', $event)">수정</button>
+                  <button v-if="mod == 'GET'" type="button" class="btn btn-danger" @click="deleteHoliday">삭제</button>
+                  <button v-if="mod != 'GET'" type="submit" class="btn btn-primary">제출</button>
                 </div>
-
-                <div class="pack_div clearfix">
-                  <div class="div_left">
-                    <label>시작일</label>
-                  </div>
-                  <div class="div_right">
-                    <p v-if="mod == 'GET'">{{ displayStartDate }}</p>
-                    <custom-datepicker
-                      v-else
-                      :inline="false"
-                      :selected_date="formData.start_date"
-                      :default_date="formData.start_date || new Date()"
-                      :on-selected="onSelectedStartDate"
-                      :clear_button="true"
-                      :not_holiday="true"
-                    ></custom-datepicker>
-                  </div>
-                </div>
-
-                <div class="pack_div clearfix">
-                  <div class="div_left">
-                    <label>종료일</label>
-                  </div>
-                  <div class="div_right">
-                    <p v-if="mod == 'GET'">{{ displayEndDate }}</p>
-                    <custom-datepicker
-                      v-else
-                      :inline="false"
-                      :selected_date="formData.end_date"
-                      :default_date="formData.end_date  || new Date()"
-                      :on-selected="onSelectedEndDate"
-                      :clear_button="true"
-                      :not_holiday="true"
-                    ></custom-datepicker>
-                  </div>
-                </div>
-
-                
-                <div class="pack_div clearfix">
-                  <div class="div_left">
-                    <label>이름</label>
-                  </div>
-                  <div class="div_right">
-                    <p v-if="mod == 'GET'">{{ formData.name }}</p>
-                    <input v-else type="text" class="form-control" v-model="formData.name" placeholder="이름을 입력해주세요">
-                  </div>
-                </div>
-
-                <div class="pack_div clearfix">
-                  <div class="div_left">
-                    <label>공휴일</label>
-                  </div>
-                  <div class="div_right">
-                    <p v-if="mod == 'GET'">{{ formData.is_public_holiday == 1 ? '공휴일' : '기타' }}</p>
-                    <template v-else>
-                      <div class="text-left">
-                        <span>공휴일</span>
-                        <input class="radio" type="radio" :value="1" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 1">
-                      </div>
-                      <div class="text-left">
-                        <span>기타</span>
-                        <input class="radio" type="radio" :value="0" v-model="formData.is_public_holiday" :checked="formData.is_public_holiday == 0">
-                      </div>
-                    </template>
-                  </div>
-                </div>
-
-              <div class="single_button">
-                <button v-if="mod == 'GET'" type="button" class="btn btn-warning" @click="setMod('PUT', $event)">수정</button>
-                <button v-if="mod == 'GET'" type="button" class="btn btn-danger" @click="deleteHoliday">삭제</button>
-                <button v-if="mod != 'GET'" type="submit" class="btn btn-primary">제출</button>
               </div>
-            </div>
-          </form>
-        </div>
-
-        <div class="holiday_right">
-          <custom-datepicker
-            :reload_holiday="reload_holiday"
-            :inline="true"
-            :is_holidaypage="true"
-            :default_date="new Date()"
-            :building_id="building.building_id"
-            :room_id="formData.room_id"
-            :on-selected="onSelected"
-            :on-disable-selected="onDisableSelected"
-          ></custom-datepicker>
+            </form>
+          </div>
+  
+          <div class="holiday_right">
+            <custom-datepicker
+              :reload_holiday="reload_holiday"
+              :inline="true"
+              :is_holidaypage="true"
+              :default_date="new Date()"
+              :building_id="building.building_id"
+              :room_id="formData.room_id"
+              :on-selected="onSelected"
+              :on-disable-selected="onDisableSelected"
+            ></custom-datepicker>
+          </div>
         </div>
       </div>
     </main>
