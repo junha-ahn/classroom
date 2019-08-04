@@ -1234,7 +1234,7 @@ function addNotification(conn, object) {
         receiver_id,
         room_rsv_id,
       } = object;
-      if (sender_id != receiver_id) {
+      if (sender_id != receiver_id && receiver_id != null) {
         let {
           results,
         } = await select_func.notification(conn, {
