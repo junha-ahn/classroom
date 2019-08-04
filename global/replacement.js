@@ -48,7 +48,7 @@ let self = {
           room_category_id: req.query.room_category_id || 0,
         },
         params: req.params,
-        campus_id: req.user.campus_id || null,
+        campus_id: req.user ? req.user.campus_id : null,
         building_id: building_id,
         campus_results: info.campus_results,
         buildings: info.buildings,
