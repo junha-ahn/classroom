@@ -171,7 +171,7 @@
           </div>
           <div class="div_right">
             <template v-if="mod=='GET'">
-              <p>{{ room_rsv.study_group_name }}</p>
+              <a v-bind:href="'/study_group/single/' + room_rsv.study_group_id">{{ room_rsv.study_group_name }}</a>
             </template>
             <select v-else class="form-control" v-model="room_rsv.study_group_id" :disabled="!room_rsv.department_id">
               <option v-for="(study_group, i) in study_group_results" v-bind:value="study_group.study_group_id" :key="i">
