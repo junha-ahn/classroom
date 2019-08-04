@@ -428,6 +428,7 @@
               alert(_validate)
             } else {
               this.formData.building_id = this.params.building_id,
+              this.formData.date = global.parseDate(this.formData.date);
               global.ajax({
                 url: '/api/room_rsv',
                 type: 'POST',
