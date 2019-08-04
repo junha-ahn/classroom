@@ -122,6 +122,7 @@
       query: Object,
       params: Object,
       building_id: Number,
+      campus_id: Number,
       room_category_results: Array,
       campus_results: Array,
       buildings: Array,
@@ -182,6 +183,9 @@
       },
     },
     created: function () {
+      if (this.campus_id && this.query.campus_id == null) {
+        this.query.campus_id = this.campus_id;
+      }
       var building_id = this.is_adminpage ? this.building_id : this.query.building_id;
       if (building_id) {
         this.getFloorResults(building_id);
