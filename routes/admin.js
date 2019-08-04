@@ -19,6 +19,8 @@ const {
   getRerservationLookup,
   getRerservationSingle,
   getUserSingle,
+  getRoomLookup,
+  getRoomSingle,
 } = require('../global/replacement');
 
 router.use(renderIsAdmin, (req, res ,next) => {
@@ -114,87 +116,9 @@ router.get('/schedule', async (req, res, next) => {
   }))
 });
 
-router.get('/room/lookup', async (req, res, next) => {
-  let {
-    page,
-    page_length,
-    floor,
-    room_category_id,
-  } = req.query
+router.get('/room/lookup', getRoomLookup(true));
+router.get('/room/single/:room_id', getRoomSingle(true));
 
-  page_length = page_length || 10;
-  page = page || 1;
-
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-    let {
-      results,
-      list_count,
-    } = await select_func.room(connection, {
-      building_id: req.user.building_id,
-      floor,
-      room_category_id,
-      page,
-      page_length,
-      sort_key: 'room_number',
-      sort_type: true,
-    });
-    foo.cleaningList(results);
-    res.render('admin/room_lookup', foo.getResJson(req.user, {
-      results,
-      list_count,
-      room_category_results: info.room_category_results,
-      query: {
-        ...req.query,
-        floor: req.query.floor || 0,
-        room_category_id: req.query.room_category_id || 0,
-      },
-      params: req.params,
-      building_id: req.user.building_id,
-    }))
-  } catch (error) {
-    next(error)
-  } finally {
-    db_func.release(connection);
-  }
-});
-router.get('/room/single/:room_id', async (req, res, next) => {
-  let room_id = req.params.room_id;
-
-  let connection;
-  try {
-    connection = await db_func.getDBConnection();
-    let {
-      results,
-      list_count
-    } = await select_func.room(connection, {
-      room_id,
-      building_id: req.user.building_id,
-    });
-
-    if (!results[0]) {
-      res.status(401).render('error', foo.getResJson(req.user, {
-        error_name: '404 NOT FOUND',
-        message: '강의실을 찾을 수 없습니다',
-      }));
-    } else {
-      foo.cleaningList(results);
-      res.render('admin/room_single', foo.getResJson(req.user, {
-        room: results[0],
-        list_count,
-        query: req.query,
-        params: req.params,
-        room_category_results: info.room_category_results,
-        permission_results: info.permission_results,
-      }))
-    }
-  } catch (error) {
-    next(error);
-  } finally {
-    db_func.release(connection);
-  }
-});
 router.get('/room/write', async (req, res, next) => {
   res.render('admin/room_write', foo.getResJson(req.user, {
     room_category_results: info.room_category_results,

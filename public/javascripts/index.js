@@ -73,6 +73,8 @@ function makeGlobal() {
     'main': 'main',
     'study_group_lookup': 'study_group',
     'study_group_single': 'study_group',
+    'room_lookup': 'room',
+    'room_single': 'room',
     'study_group_write': 'study_group',
     'mypage_dashboard': 'mypage',
     'mypage_account': 'mypage',

@@ -1,0 +1,147 @@
+<script type="text/x-template" id="list-template">
+  <div class="lookup_body">
+    <div class="lookup_select">
+      <div class="pack_div clearfix">
+        <div class="select_div">
+          <div class="div_l">
+            <label>층</label>
+          </div>
+          <div class="div_r">
+            <select v-model="query.floor" class="form-control" @change="refresh">
+              <option v-bind:value="0" :selected="query.floor==0">전체</option>
+              <option 
+                v-for="(floor, i) in floor_results"
+                v-bind:value="floor.floor"
+                :selected="query.floor == floor.floor" 
+                :key="i">
+              {{floor.floor}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="select_div">
+          <div class="div_l">
+            <label>카테고리</label>
+          </div>
+          <div class="div_r">
+            <select v-model="query.room_category_id" class="form-control" @change="refresh">
+              <option v-bind:value="0" :selected="query.room_category_id==0">전체</option>
+              <option 
+                v-for="(room_category, i) in room_category_results"
+                v-bind:value="room_category.room_category_id"
+                :selected="query.room_category_id == room_category.room_category_id" 
+                :key="i">
+              {{room_category.name}}
+              </option>
+            </select>
+        </div>
+        </div>
+      </div>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>카테고리</th>
+          <th>호실(층)</th>
+          <th>이름</th>
+          <th>{{ is_adminpage ? '관리' : '자세히보기'}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(room, i) in results" :key="i"> 
+          <td> {{ room.room_category_name }}</td>
+          <td> {{ room.room_number }}</td>
+          <td> {{ room.name }} </td>
+          <td> 
+            <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
+              조회
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="lookup_button" v-if="is_adminpage">
+      <button type="button" class="btn btn-primary"  @click="gotoWrite">생성</button>
+    </div>
+    <nav>
+      <ul class="pagination">
+        <li v-for="page in pagenation" :key="page.value" :class="{active: page.isSelf}">
+          <a @click="chagePage(page.value)" aria-label="Previous">
+            <span aria-hidden="true" v-html="page.name"></span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</script>
+
+<script>
+  Vue.component('room-list', {
+    template: '#list-template',
+    props: {
+      is_user: Boolean,
+      is_admin: Boolean,
+      is_adminpage: Boolean,
+      results: Boolean,
+      list_count: Number,
+      query: Object,
+      params: Object,
+      building_id: Number,
+      room_category_results: Array,
+    },
+    data: function () {
+      return {
+        floor_results: [],
+      }
+    },
+    methods: {
+      gotoWrite: function () {
+        location.href = '/admin/room/write'
+      },
+      onChange: function () {
+        alert(this.query.floor)
+      },
+      chagePage: function (page) {
+        this.query.page = page;
+        this.refresh();
+      },
+      refresh: function () {
+        this.query.floor = this.query.floor || undefined;
+        this.query.room_category_id = this.query.room_category_id || undefined;
+        location.href = '/admin/room/lookup' + global.serializeQuery(this.query)
+      },
+      getFloorResults: function () {
+        var __this = this;
+        global.ajax({
+            url: '/api/room/floor/' + this.building_id,
+            type: 'GET',
+          },
+          function (data, status) {
+            __this.floor_results = data.results;
+          },
+          function (message, status, data) {
+            alert(message);
+          });
+
+      },
+    },
+    computed: {
+      pagenation: function () {
+        return pagenation({
+          numberOfItems: this.list_count,
+          itemsPerPage: 10,
+          pagesPerNav: 5,
+          indexOfPage: this.query.page,
+          hasPrevAndNext: true,
+          prevText: '&laquo;',
+          nextText: '&raquo;',
+        })
+      },
+    },
+    created: function () {
+      console.log(this.results)
+      this.getFloorResults();
+    },
+  })
+</script>

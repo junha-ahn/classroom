@@ -9,6 +9,78 @@ const {
 } = require('../query/index');
 
 let self = {
+  getRoomLookup: (is_adminpage) => {
+    return db_func.inDBStream(async function (req, res, next, conn) {
+      let {
+        page,
+        page_length,
+        floor,
+        room_category_id,
+        building_id,
+      } = req.query;
+
+      building_id = (is_adminpage) ? req.user.building_id : building_id;
+
+      page_length = page_length || 10;
+      page = page || 1;
+
+      let {
+        results,
+        list_count,
+      } = await select_func.room(conn, {
+        building_id,
+        floor,
+        room_category_id,
+        page,
+        page_length,
+        sort_key: 'room_number',
+        sort_type: true,
+      });
+      foo.cleaningList(results);
+      res.render((is_adminpage ? 'admin' : 'user') + '/room_lookup', foo.getResJson(req.user, {
+        results,
+        list_count,
+        room_category_results: info.room_category_results,
+        query: {
+          ...req.query,
+          floor: req.query.floor || 0,
+          room_category_id: req.query.room_category_id || 0,
+        },
+        params: req.params,
+        building_id: building_id,
+      }))
+    });
+  },
+  getRoomSingle: (is_adminpage) => {
+    return db_func.inDBStream(async function (req, res, next, conn) {
+      let room_id = req.params.room_id;
+
+      let {
+        results,
+        list_count
+      } = await select_func.room(conn, {
+        room_id,
+        building_id: is_adminpage ? req.user.building_id : null,
+      });
+
+      if (!results[0]) {
+        res.status(401).render('error', foo.getResJson(req.user, {
+          error_name: '404 NOT FOUND',
+          message: '강의실을 찾을 수 없습니다',
+        }));
+      } else {
+        foo.cleaningList(results);
+        res.render((is_adminpage ? 'admin' : 'user') + '/room_single', foo.getResJson(req.user, {
+          room: results[0],
+          list_count,
+          query: req.query,
+          params: req.params,
+          room_category_results: info.room_category_results,
+          permission_results: info.permission_results,
+        }))
+      }
+    });
+  },
   getRerservationLookup: (is_adminpage) => {
     return async function (req, res, next) {
       let building_id = (is_adminpage) ? req.user.building_id : req.query.building_id;

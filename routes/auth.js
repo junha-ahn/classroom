@@ -6,6 +6,7 @@ const passport = require('passport');
 const {
   isLoggedIn,
   isNotLoggedIn,
+  renderIsLoggedIn,
   checkReqInfo,
   checkRequireEmailPassword,
   checkRequireJoin,
@@ -121,7 +122,7 @@ router.post('/login', isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get('/logout', isLoggedIn, async (req, res) => {
+router.get('/logout', renderIsLoggedIn, async (req, res) => {
   req.logout();
   req.session.destroy();
   res.redirect('/');

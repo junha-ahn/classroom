@@ -29,6 +29,7 @@
             <ul class="nav navbar-nav">
               <li :class="{active: header_menu_name=='main'}"><a href="/">메인</a></li>
               <li :class="{active: header_menu_name=='reservation'}"><a href="/reservation">예약</a></li>
+              <li :class="{active: header_menu_name=='room'}"><a href="/room/lookup?page=1">강의실</a></li>
               <li :class="{active: header_menu_name=='study_group'}"><a href="/study_group/lookup?page=1">스터디</a></li>
             </ul>
             <ul v-if="is_user==false" class="nav navbar-nav navbar-right">

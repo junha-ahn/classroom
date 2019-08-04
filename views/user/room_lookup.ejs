@@ -2,18 +2,18 @@
       <% include ../sub/admin_menu %>
 
       <div class="admin_right">
-          <room-list
-            :query="query"
-            :params="params"
-            :is_user="is_user"
-            :is_admin="is_admin"
-            :is_adminpage="true"
-            :results="results"
-            :list_count="list_count"
-            :building_id="building_id"
-            :room_category_results="room_category_results"
-          >
-          </room-list>
+        <room-list
+          :query="query"
+          :params="params"
+          :is_user="is_user"
+          :is_admin="is_admin"
+          :is_adminpage="false"
+          :results="results"
+          :list_count="list_count"
+          :building_id="building_id"
+          :room_category_results="room_category_results"
+        >
+        </room-list>
       </div>
     </main>
 
@@ -25,6 +25,7 @@
   <% include ../component/room_list %>
   <script>
     var global = makeGlobal();
+    var building_id = '<%-locals.building_id %>';
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -37,7 +38,7 @@
           list_count: <%-JSON.stringify(list_count) %> ,
           query: <%-JSON.stringify(query) %> ,
           params: <%-JSON.stringify(params) %>,
-          building_id: <%-JSON.stringify(building_id) %>,
+          building_id: building_id,
           room_category_results: <%-JSON.stringify(room_category_results) %>,
         }
       },

@@ -20,6 +20,8 @@ const {
   getRerservationLookup,
   getRerservationSingle,
   getUserSingle,
+  getRoomLookup,
+  getRoomSingle,
 } = require('../global/replacement');
 
 router.get('/login', renderIsNotLoggedIn, async (req, res, next) => {
@@ -44,6 +46,9 @@ router.get('/', async (req, res, next) => {
     message,
   }));
 });
+
+router.get('/room/lookup', getRoomLookup(false));
+router.get('/room/single/:room_id', getRoomSingle(false));
 
 router.get('/reservation', async (req, res, next) => {
   if (req.user && req.user.building_id) {
