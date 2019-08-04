@@ -403,10 +403,13 @@
             },
             function(data, status) {
               __this.setRepresentative(data.result)
+              __this.getStudyGroup();
             },
             function(message, status, data) {
               alert(message);
             })
+          } else {
+            this.getStudyGroup();
           }
         },
         setRepresentative: function(person) {
@@ -526,9 +529,8 @@
               case 'detail':
                 this.resetDetail();
                 this.getDepartment();
-                this.getStudyGroup();
-                
                 this.getPersonInfo();
+                
                 break;
             }
           } else {
@@ -553,9 +555,8 @@
               case 'detail':
                 this.resetDetail();
                 this.getDepartment();
-                this.getStudyGroup();
-
                 this.getPersonInfo();
+
                 break;
             }
           }
