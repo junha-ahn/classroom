@@ -74,7 +74,7 @@
           <div class="text-left">
             <span>예약 요청</span>
             <template v-if="mod=='GET'">
-              {{ room.is_require_rsv_accept == 1 ? '자동승인' : '관리자 수동 승인' }}
+              {{ room.is_require_rsv_accept == 1 ? '수동승인' : '자동승인' }}
             </template>
             <select v-else class="form-control" v-model="room.is_require_rsv_accept">
               <option v-bind:value="1" >
@@ -88,7 +88,7 @@
           <div class="text-left">
             <span>예약 취소</span>
             <template v-if="mod=='GET'">
-              {{ room.is_require_cancel_accept == 1 ? '자동승인' : '관리자 수동 승인' }}
+              {{ room.is_require_cancel_accept == 1 ? '수동승인' : '자동승인' }}
             </template>
             <select v-else class="form-control" v-model="room.is_require_cancel_accept">
               <option v-bind:value="1" >
