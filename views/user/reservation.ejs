@@ -219,8 +219,7 @@
               building_id : this.params.building_id,
               sort_by_floor: 1,
               date: global.parseDate(this.formData.date),
-              start_time: this.info.start_time ? this.info.start_time.start_time : null,
-              end_time: this.info.end_time ? this.info.end_time.end_time : null,
+              time_id_list: this.formData.time_id_list,
             }
           },
           function(data, status) {

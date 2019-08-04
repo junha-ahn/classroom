@@ -930,7 +930,7 @@ let self = {
         is_only = is_only == 1 ? true : null;
         sort_key = (sort_key) ? sort_key : 'holiday_id';
         sort_type = (sort_type == false) ? false : true;
-
+        console.log(room_id)
         if (page && page_length) {
           countString = squel.select()
             .from('holiday')
@@ -1838,6 +1838,7 @@ let self = {
           .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime, start_datetime)
           .field('room_rsv_time.*')
           .field('room_rsv.title')
+          .field('room_to_use.room_id')
           .toParam();
         let results = await db_func.sendQueryToDB(connection, queryString, isTransaction);
         resolve({

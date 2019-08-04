@@ -282,8 +282,7 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
     building_id,
     sort_by_floor,
     date,
-    start_time,
-    end_time,
+    time_id_list,
   } = req.query;
 
   let {
@@ -293,53 +292,14 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
     building_id,
     sort_key: 'room_number',
   });
-  let room_id_list = [];
 
-  for (let i in results) {
-    results[i].is_active = 1;
-    room_id_list.push(results[i].room_id)
-  }
+  await checkRoomTime(conn, {
+    building_id,
+    results,
+    time_id_list,
+    date,
+  })
 
-  if (date && start_time && end_time && room_id_list[0]) {
-    date = foo.parseDate(date);
-
-    let start_datetime = moment(`${date} ${foo.parseTimeString(start_time)}`);
-    let end_datetime = moment(`${date} ${foo.parseTimeString(end_time)}`);
-    let rsvQeuryString = squel.select()
-      .from('room_to_use')
-      .join('room_rsv', null, 'room_rsv.room_rsv_id = room_to_use.room_rsv_id')
-      .where('room_to_use.room_id IN ?', room_id_list)
-      .where('room_rsv.rsv_status IN ?', [info.SUBMIT_RSV_STATUS, info.CANCEL_REQ_RSV_STATUS])
-      .where('room_rsv.start_datetime < ? && room_rsv.end_datetime > ?', end_datetime.format('YYYY-MM-DD HH:mm'), start_datetime.format('YYYY-MM-DD HH:mm'))
-      .field('room_to_use.room_id')
-      .group('room_to_use.room_id')
-      .toParam();
-    let holidayQueryString = squel.select()
-      .from('holiday')
-      .where('room_id IN ?', room_id_list)
-      .where('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)
-      .toParam();
-    let holiday_results = await db_func.sendQueryToDB(conn, holidayQueryString);
-    let rsv_results = await db_func.sendQueryToDB(conn, rsvQeuryString);
-    for (let i in results) {
-      for (let j in holiday_results) {
-        if (holiday_results[j].room_id == results[i].room_id) {
-          results[i].is_active = 0;
-          results[i].message = `[ ${holiday_results[j].name }]\n다른 날짜를 선택해주세요`
-          break;
-        }
-      }
-      if (results[i].is_active == 0)
-        continue;
-      for (let j in rsv_results) {
-        if (rsv_results[j].room_id == results[i].room_id) {
-          results[i].is_active = 0;
-          results[i].message = `이미 예약됬습니다.`
-          break;
-        }
-      }
-    }
-  }
   foo.cleaningList(results, req.user);
   res.status(200).json({
     results: sort_by_floor ? roomSortByFloor(results) : results,
@@ -483,7 +443,7 @@ router.get('/holiday', async (req, res, next) => {
         building_id,
         year,
         month,
-        is_only,
+        is_only: room_id == null ? 1 : is_only,
         sort_key: 'start_date',
       });
       let dates = need_dates ? getDates(results) : []
@@ -599,12 +559,12 @@ router.get('/available_time', async (req, res, next) => {
       } = await checkRoomRsvTime(connection, {
         room_id_list: [room_id],
         building_id,
-        start_datetime:moment(`${foo.parseDate(date)} 00:00`, 'YYYY-MM-DD HH:mm'),
+        start_datetime: moment(`${foo.parseDate(date)} 00:00`, 'YYYY-MM-DD HH:mm'),
         end_datetime: moment(`${foo.parseDate(date)} 24:00`, 'YYYY-MM-DD HH:mm'),
         time_list: results,
         is_reservationpage: true,
 
-      }); 
+      });
       foo.cleaningList(time_list)
       res.status(200).json({
         results: time_list,
@@ -624,11 +584,11 @@ router.post('/available_time', isAdmin, checkReqInfo, checkRequireAvailableTime,
     available_time_list,
     day_of_the_week,
   } = req.body;
-  
+
   checkTimeList(available_time_list);
-  
+
   await db_func.beginTransaction(conn);
-  
+
   await delete_func.available_time(conn, {
     isTransaction: true,
     building_id: req.user.building_id,
@@ -829,7 +789,7 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
     })
   } else {
     checkTimeList(time_list);
-    
+
     let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'end_time'))[time_list.length - 1].end_time)}`);
     let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString((foo.sortByKey(time_list, 'start_time'))[0].start_time)}`);
 
@@ -1374,11 +1334,99 @@ function checkRoomRsvTime(conn, object) {
     }
   });
 }
+
+function checkRoomTime(conn, object) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let {
+        isTransaction,
+        building_id,
+        results,
+        time_id_list,
+        date,
+      } = object;
+      if (time_id_list != null) {
+        time_id_list = JSON.parse(time_id_list);
+      }
+      let room_id_list = [];
+    
+      for (let i in results) {
+        results[i].is_active = 1;
+        room_id_list.push(results[i].room_id)
+      }
+      if (date && time_id_list[0] && room_id_list[0]) {
+        let _date = new Date(date);
+        let available_time_results = (await select_func.vRoomAvailableTime(conn, {
+          building_id: results[0].building_id,
+          room_id: results[0].room_id,
+          time_id_list,
+          day_of_the_week: _date.getDay(),
+          sort_key: 'start_time',
+          sort_type: true,
+        })).results;
+        if (!available_time_results[0] || time_id_list.length != available_time_results.length) {
+          let error = new Error('시간을 다시 선택해주세요');
+          error.status = 401;
+          throw error;
+        } else {
+          let holidayQueryString = squel.select()
+            .from('holiday')
+            .where('room_id IN ?', room_id_list)
+            .where('holiday.start_date <= ? AND holiday.end_date >= ?', date, date)
+            .toParam();
+          let holiday_results = await db_func.sendQueryToDB(conn, holidayQueryString);
+
+          let start_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[0].start_time)}`);
+          let end_datetime = moment(`${foo.parseDate(date)} ${foo.parseTimeString(available_time_results[available_time_results.length - 1].end_time)}`);
+          let rsv_time_results = (await select_func.checkRoomRsvTime(conn, {
+            isTransaction,
+            building_id,
+            room_id_list,
+            start_datetime: start_datetime.format('YYYY-MM-DD HH:mm'),
+            end_datetime: end_datetime.format('YYYY-MM-DD HH:mm'),
+          })).results;
+  
+          for (let i in results) {
+            for (let j in holiday_results) {
+              if (holiday_results[j].room_id == results[i].room_id) {
+                results[i].is_active = 0;
+                results[i].message = `[ ${holiday_results[j].name }]\n다른 날짜를 선택해주세요`
+                break;
+              }
+            }
+            if (results[i].is_active == 0)
+              continue;
+            
+            for (let i in available_time_results) {
+              let start_dtime = moment('1970/1/1 ' + available_time_results[i].start_time, "YYYY-MM-DD HH:mm");
+              let end_dtime = moment('1970/1/1 ' + available_time_results[i].end_time, "YYYY-MM-DD HH:mm");
+    
+              for (let j in rsv_time_results) {
+                let _start_dtime = moment('1970/1/1 ' + rsv_time_results[j].start_time, "YYYY-MM-DD HH:mm");
+                let _end_dtime = moment('1970/1/1 ' + rsv_time_results[j].end_time, "YYYY-MM-DD HH:mm");
+    
+                if (results[i].room_id == rsv_time_results[j].room_id && _start_dtime < end_dtime && _end_dtime > start_dtime) {
+                  results[i].is_active = 0;
+                  results[i].message = `이미 예약됬습니다.`
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      resolve(results)
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 function checkTimeList(time_list) {
   for (let i in time_list) {
     let start_dtime = moment('1970/1/1 ' + time_list[i].start_time, "YYYY-MM-DD HH:mm");
     let end_dtime = moment('1970/1/1 ' + time_list[i].end_time, "YYYY-MM-DD HH:mm");
-    for (let j = parseInt(i) + 1; j < time_list.length; j ++) {
+    for (let j = parseInt(i) + 1; j < time_list.length; j++) {
       let _start_dtime = moment('1970/1/1 ' + time_list[j].start_time, "YYYY-MM-DD HH:mm");
       let _end_dtime = moment('1970/1/1 ' + time_list[j].end_time, "YYYY-MM-DD HH:mm");
 

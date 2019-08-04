@@ -136,6 +136,9 @@ function makeGlobal() {
         } else {
           queryString += '&'
         }
+        if (Array.isArray(value)) {
+          value = JSON.stringify(value);
+        }
         queryString += key + '=' + value;
       }
     }
