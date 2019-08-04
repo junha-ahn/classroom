@@ -13,9 +13,7 @@
             <button type="submit" class="button_width">로그인</button>
           </form>
         </div>
-        <center><button type="button" @click="_user">유저 채우기</button></center>
-        <center><button type="button" @click="_admin">관리자 채우기</button></center>
-      </div><!--mom_div끝-->
+      </div>
     </main>
     
     <footer>
@@ -41,14 +39,6 @@
         }
       },
       methods: {
-        _user : function() {
-          this.loginForm.email = "email@email.com"
-          this.loginForm.password = "password"
-        },
-        _admin : function() {
-          this.loginForm.email = "admin@email.com"
-          this.loginForm.password = "password"
-        },
         logout: function () {
           global.ajax({
             url: '/auth/logout',
