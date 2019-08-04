@@ -468,6 +468,8 @@
         });
         if (_validate) {
           alert(_validate);
+        } else if (this.room_rsv_time_list.length < 1) {
+          alert('시간을 선택해주세요');
         } else {
           var need_location_href = mod == 'POST' ? true : false;
           var url = '/api' + (mod=='POST' ? '/admin' : '') + '/room_rsv' 
