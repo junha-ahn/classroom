@@ -1,0 +1,47 @@
+<% include ../sub/header %>
+        <room-input 
+        mod="GET"
+        :room="room" 
+        :is_user="is_user"
+        :is_admin="is_admin"
+        :is_adminpage="false"
+        :room_category_results="room_category_results"
+        :permission_results="permission_results"
+        >
+        </room-input>
+    </main>
+
+    <footer>
+      <% include ../sub/footer %>
+    </footer>
+  </div>
+
+  
+  <% include ../component/room_input %>
+  <script>
+    var global = makeGlobal();
+    var app = new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          header_menu_name: global.getHeaderMenuName("<%-pagename %>"),
+          admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
+          is_user: <%- is_user %>,
+          is_admin: <%- is_admin %>,
+          room: <%-JSON.stringify(room) %> ,
+          query: <%-JSON.stringify(query) %> ,
+          params: <%-JSON.stringify(params) %> ,
+          room_category_results: <%-JSON.stringify(room_category_results) %> ,
+          permission_results: <%-JSON.stringify(permission_results) %> ,
+        }
+      },
+      methods: {
+
+      }
+    })
+
+  </script>
+
+</body>
+
+</html>

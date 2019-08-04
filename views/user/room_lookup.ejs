@@ -7,6 +7,7 @@
           :is_adminpage="false"
           :results="results"
           :list_count="list_count"
+          :building_id="building_id"
           :campus_id="campus_id"
           :campus_results="campus_results"
           :buildings="buildings"
@@ -24,8 +25,8 @@
   <% include ../component/room_list %>
   <script>
     var global = makeGlobal();
+    var building_id = '<%-locals.building_id %>';
     var campus_id = '<%-locals.campus_id %>';
-    console.log('::'+ campus_id)
     var app = new Vue({
       el: '#app',
       data: function () {
@@ -34,7 +35,8 @@
           admin_menu_name: global.getAdminMenuName("<%-pagename %>"),
           is_user: <%- is_user %> ,
           is_admin: <%- is_admin %> ,
-          campus_id: <%-JSON.stringify(campus_id) %> ,
+          building_id: building_id ,
+          campus_id: campus_id ,
           results: <%-JSON.stringify(results) %> ,
           list_count: <%-JSON.stringify(list_count) %> ,
           query: <%-JSON.stringify(query) %> ,

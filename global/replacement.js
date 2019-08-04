@@ -19,8 +19,7 @@ let self = {
         building_id,
       } = req.query;
 
-      building_id = (is_adminpage) ? req.user.building_id : building_id;
-
+      building_id = (is_adminpage) ? req.user.building_id : (building_id  || (req.user ? req.user.building_id : null));
       page_length = page_length || 10;
       page = page || 1;
       let results = [], list_count = 0;
@@ -49,7 +48,7 @@ let self = {
         },
         params: req.params,
         campus_id: req.user ? req.user.campus_id : null,
-        building_id: building_id,
+        building_id: building_id || (req.user ? req.user.building_id : null),
         campus_results: info.campus_results,
         buildings: info.buildings,
       }))

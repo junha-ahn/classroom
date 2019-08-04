@@ -151,6 +151,7 @@
       },
       replaceBuildings: function (event) {
         this.building_results = this.buildings[this.query.campus_id];
+        console.log(this.building_results)
         if (event) {
           this.query.building_id = null;
         }
@@ -185,6 +186,10 @@
     created: function () {
       if (this.campus_id && this.query.campus_id == null) {
         this.query.campus_id = this.campus_id;
+      }
+      console.log(this.building_id)
+      if (this.building_id && this.query.building_id == null) {
+        this.query.building_id = this.building_id;
       }
       var building_id = this.is_adminpage ? this.building_id : this.query.building_id;
       if (building_id) {

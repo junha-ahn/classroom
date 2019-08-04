@@ -184,13 +184,11 @@ router.put('/password', isLoggedIn, checkRequireUpdatePassword, db_func.inDBStre
 function setEmailPassword(email, email_password) {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log(email_password)
       if (process.env.REDIS_ENABLE == 1) {
         await redis_func.set(email, email_password, 60 * 3);
       } else {
         passStorage[email] = email_password;
       }
-      console.log(passStorage)
       resolve();
     } catch (error) {
       reject(error);
