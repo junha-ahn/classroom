@@ -52,6 +52,7 @@ let self = {
           isTransaction,
           person_id,
           user_id,
+          department_id,
           campus_id,
           building_id,
           is_student,
@@ -63,6 +64,7 @@ let self = {
         if (person_id) {
           queryString = squel.update()
             .table('person')
+            .set('department_id', department_id)
             .set('campus_id', campus_id)
             .set('building_id', building_id)
             .set('is_student', is_student)
@@ -74,6 +76,7 @@ let self = {
         } else {
           queryString = squel.update()
             .table('person')
+            .set('department_id', department_id)
             .set('campus_id', campus_id)
             .set('building_id', building_id)
             .set('is_student', is_student)
