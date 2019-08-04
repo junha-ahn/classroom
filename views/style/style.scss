@@ -326,10 +326,21 @@ thead {
     thead {
       tr {
         background: #337ab7;
+        
 
         th {
           text-align: center;
           color: #fff;
+        }
+      }
+    }
+    tbody{
+      tr{
+        .rooms_ellipsis{
+          width:120px ;
+          overflow:hidden;
+          white-space:nowrap;
+          text-overflow:ellipsis;
         }
       }
     }

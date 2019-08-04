@@ -102,7 +102,7 @@
       </thead>
       <tbody>
         <tr v-for="(room_rsv, i) in room_rsv_results" :key="i">
-          <td>{{room_rsv.rooms_name}}</td>
+          <td><div class="rooms_ellipsis">{{room_rsv.rooms_name}}</div></td>
           <td v-if="is_lookup">{{room_rsv.room_rsv_category_name}}</td>
           <td>{{makeDisplayName(room_rsv)}}</td>
           <td><label :class="classRsvStatus(room_rsv.rsv_status)">{{room_rsv.rsv_status_name}}</label></td>
