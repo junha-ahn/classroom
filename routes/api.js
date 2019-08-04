@@ -280,9 +280,12 @@ router.put('/person/:person_id', isLoggedIn, checkReqInfo, checkRequirePerson, d
 router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
   let {
     building_id,
+    room_category_id,
     sort_by_floor,
     date,
     time_id_list,
+    page,
+    page_length,
   } = req.query;
 
   let {
@@ -290,7 +293,10 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
     list_count,
   } = await select_func.room(conn, {
     building_id,
+    room_category_id,
     sort_key: 'room_number',
+    page,
+    page_length,
   });
 
   await checkRoomTime(conn, {

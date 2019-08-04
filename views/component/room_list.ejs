@@ -2,6 +2,40 @@
   <div class="lookup_body">
     <div class="lookup_select">
       <div class="pack_div clearfix">
+        <template v-if="!is_adminpage">
+          <div class="select_div">
+            <div class="div_l">
+              <label>캠퍼스</label>
+            </div>
+            <div class="div_r">
+              <select v-model="query.campus_id" class="form-control" @change="replaceBuildings($event)">
+                <option 
+                  v-for="(campus, i) in campus_results"
+                  v-bind:value="campus.campus_id"
+                  :selected="query.campus_id == campus.campus_id" 
+                  :key="i">
+                {{campus.name}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="select_div">
+            <div class="div_l">
+              <label>학습관</label>
+            </div>
+            <div class="div_r">
+              <select v-model="query.building_id" class="form-control" @change="refresh" :disabled="!query.campus_id">
+                <option 
+                  v-for="(building, i) in building_results"
+                  v-bind:value="building.building_id"
+                  :selected="query.building_id == building.building_id" 
+                  :key="i">
+                {{building.name}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </template>
         <div class="select_div">
           <div class="div_l">
             <label>층</label>
@@ -54,7 +88,7 @@
           <td> {{ room.room_number }}</td>
           <td> {{ room.name }} </td>
           <td> 
-            <button type="button" class="btn btn-default" @click="location.href='/admin/room/single/' + room.room_id">
+            <button type="button" class="btn btn-default" @click="gotoSingle(room.room_id)">
               조회
             </button>
           </td>
@@ -89,32 +123,41 @@
       params: Object,
       building_id: Number,
       room_category_results: Array,
+      campus_results: Array,
+      buildings: Array,
     },
     data: function () {
       return {
         floor_results: [],
+        building_results: [],
       }
     },
     methods: {
+      refresh: function () {
+        this.query.floor = this.query.floor || undefined;
+        this.query.room_category_id = this.query.room_category_id || undefined;
+        location.href = (this.is_adminpage ? '/admin' : '') + '/room/lookup' + global.serializeQuery(this.query)
+      },
+      gotoSingle: function(room_id) {
+        location.href= (this.is_adminpage ? '/admin' : '') + '/room/single/' + room_id
+      },
       gotoWrite: function () {
         location.href = '/admin/room/write'
-      },
-      onChange: function () {
-        alert(this.query.floor)
       },
       chagePage: function (page) {
         this.query.page = page;
         this.refresh();
       },
-      refresh: function () {
-        this.query.floor = this.query.floor || undefined;
-        this.query.room_category_id = this.query.room_category_id || undefined;
-        location.href = '/admin/room/lookup' + global.serializeQuery(this.query)
+      replaceBuildings: function (event) {
+        this.building_results = this.buildings[this.query.campus_id];
+        if (event) {
+          this.query.building_id = null;
+        }
       },
-      getFloorResults: function () {
+      getFloorResults: function (building_id) {
         var __this = this;
         global.ajax({
-            url: '/api/room/floor/' + this.building_id,
+            url: '/api/room/floor/' + building_id,
             type: 'GET',
           },
           function (data, status) {
@@ -123,7 +166,6 @@
           function (message, status, data) {
             alert(message);
           });
-
       },
     },
     computed: {
@@ -140,8 +182,13 @@
       },
     },
     created: function () {
-      console.log(this.results)
-      this.getFloorResults();
+      var building_id = this.is_adminpage ? this.building_id : this.query.building_id;
+      if (building_id) {
+        this.getFloorResults(building_id);
+      }
+      if (this.query.campus_id) {
+        this.replaceBuildings();
+      }
     },
   })
 </script>

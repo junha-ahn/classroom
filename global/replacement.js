@@ -23,20 +23,21 @@ let self = {
 
       page_length = page_length || 10;
       page = page || 1;
-
-      let {
-        results,
-        list_count,
-      } = await select_func.room(conn, {
-        building_id,
-        floor,
-        room_category_id,
-        page,
-        page_length,
-        sort_key: 'room_number',
-        sort_type: true,
-      });
-      foo.cleaningList(results);
+      let results = [], list_count = 0;
+      if (building_id) {
+        let _room = await select_func.room(conn, {
+          building_id,
+          floor,
+          room_category_id,
+          page,
+          page_length,
+          sort_key: 'room_number',
+          sort_type: true,
+        });
+        results = _room.results;
+        list_count = _room.list_count;
+        foo.cleaningList(results);
+      }
       res.render((is_adminpage ? 'admin' : 'user') + '/room_lookup', foo.getResJson(req.user, {
         results,
         list_count,
@@ -47,7 +48,10 @@ let self = {
           room_category_id: req.query.room_category_id || 0,
         },
         params: req.params,
+        campus_id: req.user.campus_id || null,
         building_id: building_id,
+        campus_results: info.campus_results,
+        buildings: info.buildings,
       }))
     });
   },
