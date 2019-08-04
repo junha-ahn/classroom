@@ -12,17 +12,17 @@
                 type="button" 
                 class="btn btn-info"
                 v-if="is_adminpage && mod=='GET'"
-                @click="chageRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
+                @click="changeRsvStatus($event, room_rsv, global.REQ_RSV_STATUS)">요청</button> 
               <button 
                 type="button" 
                 class="btn btn-success"
                 v-if="is_adminpage && mod=='GET'"
-                @click="chageRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
+                @click="changeRsvStatus($event, room_rsv, global.SUBMIT_RSV_STATUS)">승인</button> 
               <button 
                 type="button" 
                 class="btn btn-danger"
                 v-if="is_adminpage && mod=='GET'"
-                @click="chageRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button>
+                @click="changeRsvStatus($event, room_rsv, global.CANCEL_RSV_STATUS)">취소</button>
             </template>
             <select v-else class="form-control" v-model="room_rsv.rsv_status">
               <option v-for="(status, i) in rsv_status_results" v-bind:value="status.rsv_status"
@@ -157,7 +157,7 @@
             <template v-if="mod=='GET'">
               <p>{{ room_rsv.department_name }}</p>
             </template>
-            <select v-else class="form-control" v-model="room_rsv.department_id" @change="chageDepartment">
+            <select v-else class="form-control" v-model="room_rsv.department_id" @change="changeDepartment">
               <option v-for="(department, i) in department_results" v-bind:value="department.department_id" :key="i">
                 {{ department.name }}
               </option>
@@ -391,12 +391,13 @@
         },
         function (data, status) {
           alert(data.message);
+          location.reload();
         },
         function (message, status, data) {
           alert(message);
         });
       },
-      chageRsvStatus: function(e, room_rsv, rsv_status) {
+      changeRsvStatus: function(e, room_rsv, rsv_status) {
         if (e) {
           e.preventDefault();
         }
@@ -524,7 +525,7 @@
           'bg-success': rsv_status == global.SUBMIT_RSV_STATUS,
         }
       },
-      chageDepartment: function() {
+      changeDepartment: function() {
         this.room_rsv.study_group_id = null;
         this.getStudyGroupResults();
       },

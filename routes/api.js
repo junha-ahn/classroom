@@ -1068,6 +1068,7 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
       }
 
       await checkRoomRsvTime(conn, {
+        room_rsv_id,
         room_id_list,
         building_id: req.user.building_id,
         start_datetime,
@@ -1404,10 +1405,10 @@ function checkRoomTime(conn, object) {
               for (let j in rsv_time_results) {
                 let _start_dtime = moment('1970/1/1 ' + rsv_time_results[j].start_time, "YYYY-MM-DD HH:mm");
                 let _end_dtime = moment('1970/1/1 ' + rsv_time_results[j].end_time, "YYYY-MM-DD HH:mm");
-    
+                
                 if (results[i].room_id == rsv_time_results[j].room_id && _start_dtime < end_dtime && _end_dtime > start_dtime) {
                   results[i].is_active = 0;
-                  results[i].message = `이미 예약됬습니다.`
+                  results[i].message = `시간을 다시 선택해주세요 (${rsv_time_results[j].title} : ${foo.parseTimeString(rsv_time_results[j].start_time)} ~ ${foo.parseTimeString(rsv_time_results[j].end_time)})`
                   break;
                 }
               }

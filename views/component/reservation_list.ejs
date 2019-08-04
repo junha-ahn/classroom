@@ -245,7 +245,12 @@
           },
         },
         function (data, status) {
-          __this.refresh();
+          alert(data.message);
+          if (__this.is_lookup) {
+            __this.refresh();
+          } else {
+            location.reload();
+          }
         },
         function (message, status, data) {
           alert(message);
@@ -338,9 +343,10 @@
     created: function() {
       if (this.is_lookup ) {
         this.getRoomResults();
-        if ( this.query.department_id) {}
+        if (this.query.department_id) {
           this.getStudyGroupResults();
         }
+      }
     },
   })
 </script>
