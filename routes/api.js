@@ -663,7 +663,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
     description,
   } = req.body;
 
-  let _date = foo.resetTime(moment(date));
+  let _date = moment(date);
   let {
     results
   } = await select_func.room(conn, {
@@ -671,7 +671,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
     building_id,
   });
 
-  let now = foo.resetTime(moment());
+  let now = moment();
   let min_date = (() => {
     let _min_date = now;
     if (results[0]) {
