@@ -9,7 +9,7 @@
 <div>
   <button type="button left" class="btn btn-default">시간</button>
   <button type="button" class="btn btn_right" :class="leftInfoClass(info.start_time)" style="position: relative;"> 
-    <div>
+    <div> 
       {{
         (info.start_time && !info.end_time) ? info.start_time.start_time_string + '~' + info.start_time.end_time_string : 
         (info.start_time && info.end_time) ? info.start_time.start_time_string + '~' + info.end_time.end_time_string : ''
