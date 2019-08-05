@@ -52,6 +52,8 @@ let self = {
 
     if (is_tz_utc && info.timeZone != 'UTC') {
       target_date.setHours(target_date.getHours() - 9);
+    } else if (!is_tz_utc && info.timeZone == 'UTC') {
+      target_date.setHours(target_date.getHours() + 9);
     }
     let target_year = target_date.getFullYear();
     let target_month = target_date.getMonth() + 1;
@@ -66,6 +68,8 @@ let self = {
     let target_date = new Date(date_string);
     if (is_tz_utc && info.timeZone != 'UTC') {
       target_date.setHours(target_date.getHours() - 9);
+    } else if (!is_tz_utc && info.timeZone == 'UTC') {
+      target_date.setHours(target_date.getHours() + 9);
     }
     let target_year = target_date.getFullYear();
     let target_month = target_date.getMonth() + 1;
