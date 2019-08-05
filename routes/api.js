@@ -298,15 +298,14 @@ router.get('/room', db_func.inDBStream(async (req, res, next, conn) => {
     page,
     page_length,
   });
-
   await checkRoomTime(conn, {
     building_id,
     results,
     time_id_list,
     date,
   })
-
   foo.cleaningList(results, req.user);
+
   res.status(200).json({
     results: sort_by_floor ? roomSortByFloor(results) : results,
     list_count,
@@ -1401,18 +1400,20 @@ function checkRoomTime(conn, object) {
             }
             if (results[i].is_active == 0)
               continue;
-            
-            for (let i in available_time_results) {
-              let start_dtime = moment('1970/1/1 ' + available_time_results[i].start_time, "YYYY-MM-DD HH:mm");
-              let end_dtime = moment('1970/1/1 ' + available_time_results[i].end_time, "YYYY-MM-DD HH:mm");
-    
-              for (let j in rsv_time_results) {
-                let _start_dtime = moment('1970/1/1 ' + rsv_time_results[j].start_time, "YYYY-MM-DD HH:mm");
-                let _end_dtime = moment('1970/1/1 ' + rsv_time_results[j].end_time, "YYYY-MM-DD HH:mm");
+
+            for (let j in available_time_results) {
+              let start_dtime = moment('1970/1/1 ' + available_time_results[j].start_time, "YYYY-MM-DD HH:mm");
+              let end_dtime = moment('1970/1/1 ' + available_time_results[j].end_time, "YYYY-MM-DD HH:mm");
+              for (let k in rsv_time_results) {
+                if (results[i].room_id != rsv_time_results[k].room_id) 
+                  continue;
                 
-                if (results[i].room_id == rsv_time_results[j].room_id && _start_dtime < end_dtime && _end_dtime > start_dtime) {
+                let _start_dtime = moment('1970/1/1 ' + rsv_time_results[k].start_time, "YYYY-MM-DD HH:mm");
+                let _end_dtime = moment('1970/1/1 ' + rsv_time_results[k].end_time, "YYYY-MM-DD HH:mm");
+
+                if (_start_dtime < end_dtime && _end_dtime > start_dtime) {
                   results[i].is_active = 0;
-                  results[i].message = `시간을 다시 선택해주세요 (${rsv_time_results[j].title} : ${foo.parseTimeString(rsv_time_results[j].start_time)} ~ ${foo.parseTimeString(rsv_time_results[j].end_time)})`
+                  results[i].message = `시간을 다시 선택해주세요 (${rsv_time_results[k].title} : ${foo.parseTimeString(rsv_time_results[k].start_time)} ~ ${foo.parseTimeString(rsv_time_results[k].end_time)})`
                   break;
                 }
               }
@@ -1420,7 +1421,7 @@ function checkRoomTime(conn, object) {
           }
         }
       }
-      resolve(results)
+      resolve();
     } catch (error) {
       reject(error);
     }
