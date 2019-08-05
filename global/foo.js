@@ -47,7 +47,7 @@ let self = {
     date.hour(0);
     return date;
   },
-  parseDateTime: (date_string, is_tz_utc) => {
+  parseDateTime: (date_string, need_tz_chage, is_tz_utc) => {
     let target_date = new Date(date_string);
 
     if (is_tz_utc && info.timeZone != 'UTC') {
@@ -64,7 +64,7 @@ let self = {
     let target_string = `${target_year}-${((target_month<10)? ("0"+target_month): target_month)}-${((target_day<10)? ("0"+target_day): target_day)} ${((target_hours<10)? ("0"+target_hours): target_hours)}:${((target_minutes<10)? ("0"+target_minutes): target_minutes)}`;
     return target_string;
   },
-  parseDate: (date_string, is_tz_utc) => {
+  parseDate: (date_string, need_tz_chage, is_tz_utc) => {
     let target_date = new Date(date_string);
     if (is_tz_utc && info.timeZone != 'UTC') {
       target_date.setHours(target_date.getHours() - 9);
@@ -105,34 +105,34 @@ let self = {
       }
       delete array[i].password
       if (array[i].date_created) {
-        array[i].datetime_created = self.parseDateTime(array[i].date_created);
-        array[i].date_created = self.parseDate(array[i].date_created);
+        array[i].datetime_created = self.parseDateTime(array[i].date_created, true);
+        array[i].date_created = self.parseDate(array[i].date_created, true);
       }
       if (array[i].date_joined) {
-        array[i].date_joined = self.parseDate(array[i].date_joined);
+        array[i].date_joined = self.parseDate(array[i].date_joined, true);
       }
       if (array[i].date_last_updated) {
-        array[i].datetime_last_updated = self.parseDateTime(array[i].date_last_updated);
-        array[i].date_last_updated = self.parseDate(array[i].date_last_updated);
+        array[i].datetime_last_updated = self.parseDateTime(array[i].date_last_updated, true);
+        array[i].date_last_updated = self.parseDate(array[i].date_last_updated, true);
       }
       if (array[i].date_last_password_changed) {
-        array[i].datetime_last_password_changed = self.parseDateTime(array[i].date_last_password_changed);
-        array[i].date_last_password_changed = self.parseDate(array[i].date_last_password_changed);
+        array[i].datetime_last_password_changed = self.parseDateTime(array[i].date_last_password_changed, true);
+        array[i].date_last_password_changed = self.parseDate(array[i].date_last_password_changed, true);
       }
 
       if (array[i].start_datetime && array[i].end_datetime) {
         let dateString = self.parseDate(array[i].start_datetime, true);
-        let start_time = self.parseTimeString((self.parseDateTime(array[i].start_datetime, true).split(' '))[1], true);
-        let end_time = self.parseTimeString((self.parseDateTime(array[i].end_datetime, true).split(' '))[1], true);
+        let start_time = self.parseTimeString((self.parseDateTime(array[i].start_datetime, true, true).split(' '))[1], true);
+        let end_time = self.parseTimeString((self.parseDateTime(array[i].end_datetime, true, true).split(' '))[1], true);
         array[i].rsv_date = dateString
         array[i].rsv_start_time = start_time
         array[i].rsv_end_time = end_time
       }
       if (array[i].start_datetime) {
-        array[i].start_datetime = self.parseDateTime(array[i].start_datetime, true);
+        array[i].start_datetime = self.parseDateTime(array[i].start_datetime, true, true);
       }
       if (array[i].end_datetime) {
-        array[i].end_datetime = self.parseDateTime(array[i].end_datetime, true);
+        array[i].end_datetime = self.parseDateTime(array[i].end_datetime, true, true);
       }
 
       if (array[i].start_time) {

@@ -872,7 +872,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
       message: '다시 선택하세요',
     })
   } else {
-    let date = foo.parseDate(results[0].start_datetime, true);
+    let date = foo.parseDate(results[0].start_datetime, true, true);
 
     let start_datetime, end_datetime;
 
@@ -1057,8 +1057,8 @@ router.put('/room_rsv/status/:room_rsv_id', checkReqInfo, isAdmin, checkRequireU
     })
   } else {
     if (rsv_status == info.SUBMIT_RSV_STATUS || rsv_status == info.CANCEL_REQ_RSV_STATUS) {
-      let start_datetime = moment(foo.parseDateTime(results[0].start_datetime, true));
-      let end_datetime = moment(foo.parseDateTime(results[0].end_datetime, true));
+      let start_datetime = moment(foo.parseDateTime(results[0].start_datetime, true, true));
+      let end_datetime = moment(foo.parseDateTime(results[0].end_datetime, true, true));
 
       let time_list = (await select_func.room_rsv_time(conn, {
         room_rsv_id,
