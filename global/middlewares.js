@@ -239,6 +239,7 @@ let self = {
       'department_id',
       'representative_name',
       'representative_phone',
+      'representative_student_number',
     ]);
     if (flag) {
       res.status(401).json({

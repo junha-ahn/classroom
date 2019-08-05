@@ -269,6 +269,7 @@ let self = {
           non_student_count,
           representative_name,
           representative_phone,
+          representative_student_number,
           description,
         } = object;
 
@@ -284,6 +285,7 @@ let self = {
           .set('non_student_count', non_student_count)
           .set('representative_name', representative_name)
           .set('representative_phone', representative_phone)
+          .set('representative_student_number', representative_student_number)
           .set('description', description)
           .set('date_last_updated', squel.str('NOW()'))
           .where('room_rsv_id = ?', room_rsv_id)

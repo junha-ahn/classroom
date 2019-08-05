@@ -416,6 +416,7 @@
           this.formData.department_id = person.department_id;
           this.formData.representative_name = person.name;
           this.formData.representative_phone = person.phone;
+          this.formData.representative_student_number = person.student_number;
         },
         // LAST
         detailSubmit: function(e) {
@@ -471,6 +472,9 @@
                 is_require: true,
               },
               'representative_phone': {
+                is_require: true,
+              },
+              'representative_student_number': {
                 is_require: true,
               },
               'description': {

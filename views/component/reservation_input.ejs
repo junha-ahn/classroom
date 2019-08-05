@@ -222,6 +222,13 @@
               </template>
               <input v-else type="text" class="form-control" v-model="room_rsv.representative_phone"  placeholder="전화번호를 입력해주세요" :disabled="mod == 'GET'">
             </div>
+            <div class="text-left">
+              <span>학번</span>
+              <template v-if="mod=='GET'">
+                {{ room_rsv.representative_student_number }}
+              </template>
+              <input v-else type="text" class="form-control" v-model="room_rsv.representative_student_number"  placeholder="학번을 입력해주세요" :disabled="mod == 'GET'">
+            </div>
           </div>
         </div>
         
@@ -460,6 +467,9 @@
             is_require: false,
           },
           'representative_phone': {
+            is_require: false,
+          },
+          'representative_student_number': {
             is_require: false,
           },
           'description': {

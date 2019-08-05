@@ -659,6 +659,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
     non_student_count,
     representative_name,
     representative_phone,
+    representative_student_number,
     description,
   } = req.body;
 
@@ -744,6 +745,7 @@ router.post('/room_rsv', checkReqInfo, checkRequireInsertRoomRsv, db_func.inDBSt
           non_student_count,
           representative_name,
           representative_phone,
+          representative_student_number,
           description,
         });
         await insert_func.room_to_use(conn, {
@@ -778,6 +780,7 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
     non_student_count,
     representative_name,
     representative_phone,
+    representative_student_number,
     description,
   } = req.body;
 
@@ -824,6 +827,7 @@ router.post('/admin/room_rsv', isAdmin, checkReqInfo, checkRequireInsertRoomRsvA
       non_student_count,
       representative_name,
       representative_phone,
+      representative_student_number,
       description,
     });
     await insert_func.room_to_use(conn, {
@@ -854,6 +858,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
     non_student_count,
     representative_name,
     representative_phone,
+    representative_student_number,
     description,
 
     time_list,
@@ -943,6 +948,7 @@ router.put('/room_rsv/:room_rsv_id', isAdmin, checkRequireUpdateRoomRsv, db_func
         non_student_count,
         representative_name,
         representative_phone,
+        representative_student_number,
         description,
       });
 

@@ -207,4 +207,8 @@ var config = {
     name: '종료일',
     data_type: 'object',
   },
+  'representative_student_number' : {
+    name: '대표자 학번',
+    data_type: 'string',
+  },
 }

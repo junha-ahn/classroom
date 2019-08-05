@@ -66,6 +66,10 @@
               <span>전화번호</span>
               <input v-model="formData.representative_phone" v-bind:text="formData.representative_phone" type="text" class="form-control" placeholder="대표자 연락처를 입력하세요" :disabled="menu_step != 'detail'">
           </div>
+          <div class="text-left">
+              <span>학번</span>
+              <input v-model="formData.representative_student_number" v-bind:text="formData.representative_student_number" type="text" class="form-control" placeholder="대표자 학번을 입력하세요" :disabled="menu_step != 'detail'">
+          </div>
         </div>
       </div>
 

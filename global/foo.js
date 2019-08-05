@@ -193,6 +193,9 @@ let self = {
         if (array[i].representative_phone) {
           array[i].representative_phone = '비공개';
         }
+        if (array[i].representative_student_number) {
+          array[i].representative_student_number = '비공개';
+        }
         if (is_personal) {
           if (array[i].name) {
             array[i].name = array[i].name.slice(0, 1) + ('*'.repeat(array[i].name.length - 1));
