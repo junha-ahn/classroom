@@ -49,7 +49,7 @@ let self = {
   },
   parseDateTime: (date_string, is_seoul_tz) => {
     let target_date = new Date(date_string);
-    if (is_seoul_tz) {
+    if (is_seoul_tz && info.timeZone == 'UTC') {
       target_date.setHours(target_date.getHours() - 9);
     }
     let target_year = target_date.getFullYear();
@@ -64,7 +64,7 @@ let self = {
   },
   parseDate: (date_string, is_seoul_tz) => {
     let target_date = new Date(date_string);
-    if (is_seoul_tz) {
+    if (is_seoul_tz && info.timeZone == 'UTC') {
       target_date.setHours(target_date.getHours() - 9);
     }
     let target_year = target_date.getFullYear();
