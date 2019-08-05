@@ -220,6 +220,8 @@ router.get('/mypage/dashboard', renderIsLoggedIn, db_func.inDBStream(async (req,
     receiver_id: req.user.user_id,
     sort_key: 'date_last_updated',
     sort_type: false,
+    page_length: 10,
+    page: 1,
   });
   foo.cleaningList(results);
   res.render('user/mypage_dashboard', foo.getResJson(req.user, {
