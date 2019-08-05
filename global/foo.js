@@ -47,9 +47,10 @@ let self = {
     date.hour(0);
     return date;
   },
-  parseDateTime: (date_string, is_seoul_tz) => {
+  parseDateTime: (date_string, is_tz_utc) => {
     let target_date = new Date(date_string);
-    if (is_seoul_tz && info.timeZone == 'UTC') {
+
+    if (is_tz_utc && info.timeZone != 'UTC') {
       target_date.setHours(target_date.getHours() - 9);
     }
     let target_year = target_date.getFullYear();
@@ -57,14 +58,13 @@ let self = {
     let target_day = target_date.getDate();
     let target_hours = target_date.getHours();
     let target_minutes = target_date.getMinutes();
-
+    
     let target_string = `${target_year}-${((target_month<10)? ("0"+target_month): target_month)}-${((target_day<10)? ("0"+target_day): target_day)} ${((target_hours<10)? ("0"+target_hours): target_hours)}:${((target_minutes<10)? ("0"+target_minutes): target_minutes)}`;
-
     return target_string;
   },
-  parseDate: (date_string, is_seoul_tz) => {
+  parseDate: (date_string, is_tz_utc) => {
     let target_date = new Date(date_string);
-    if (is_seoul_tz && info.timeZone == 'UTC') {
+    if (is_tz_utc && info.timeZone != 'UTC') {
       target_date.setHours(target_date.getHours() - 9);
     }
     let target_year = target_date.getFullYear();
@@ -101,19 +101,19 @@ let self = {
       }
       delete array[i].password
       if (array[i].date_created) {
-        array[i].datetime_created = self.parseDateTime(array[i].date_created, true);
-        array[i].date_created = self.parseDate(array[i].date_created, true);
+        array[i].datetime_created = self.parseDateTime(array[i].date_created);
+        array[i].date_created = self.parseDate(array[i].date_created);
       }
       if (array[i].date_joined) {
-        array[i].date_joined = self.parseDate(array[i].date_joined, true);
+        array[i].date_joined = self.parseDate(array[i].date_joined);
       }
       if (array[i].date_last_updated) {
         array[i].datetime_last_updated = self.parseDateTime(array[i].date_last_updated);
         array[i].date_last_updated = self.parseDate(array[i].date_last_updated);
       }
       if (array[i].date_last_password_changed) {
-        array[i].datetime_last_password_changed = self.parseDateTime(array[i].date_last_password_changed, true);
-        array[i].date_last_password_changed = self.parseDate(array[i].date_last_password_changed, true);
+        array[i].datetime_last_password_changed = self.parseDateTime(array[i].date_last_password_changed);
+        array[i].date_last_password_changed = self.parseDate(array[i].date_last_password_changed);
       }
 
       if (array[i].start_datetime && array[i].end_datetime) {

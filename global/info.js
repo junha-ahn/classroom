@@ -1,5 +1,4 @@
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
 const USER_TYPE = 10;
 const ADMIN_TYPE = 30;
 

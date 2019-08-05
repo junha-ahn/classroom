@@ -134,6 +134,7 @@ let self = {
             sort_key: 'start_datetime',
             sort_type: false,
           })
+          console.log(results[0].start_datetime)
           foo.cleaningList(results, req.user);
           res.render((is_adminpage ? 'admin' : 'user') + '/reservation_lookup', foo.getResJson(req.user, {
             is_adminpage,
