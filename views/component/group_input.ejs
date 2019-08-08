@@ -1,5 +1,5 @@
 <script type="text/x-template" id="input-template">
-  <form class="form-lnline" v-on:submit="onSubmitForm">
+  <form class="form-lnline" v-on:submit.prevent="onSubmitForm">
     <div class="single_input_body">
     
       <div class="pack_div clearfix">
@@ -122,8 +122,6 @@
         this.mod = mod;
       },
       onSubmitForm: function(e) {
-        e.preventDefault();
-        
         var _validate = validate(this.group, {
           'department_id': {
             is_require: this.mod == 'POST' ? true : false,

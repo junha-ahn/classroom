@@ -1,5 +1,5 @@
 <% include ../sub/header %>
-      <form v-on:submit="join">
+      <form v-on:submit.prevent="onSubmitForm">
         <div class="single_input_body">
         
           <div class="pack_div clearfix">
@@ -196,8 +196,7 @@
               });
           }
         },
-        join: function (e) {
-          e.preventDefault();
+        onSubmitForm: function (e) {
           var _validate = validate(this.joinForm, {
             'department_id': {
               is_require: (this.joinForm.is_student == 1) ? true : false,

@@ -8,7 +8,7 @@
             <p>학습관 또는 각 강의실에 휴일을 설정해주세요</p>
           </div>
           <div class="holiday_left">
-            <form v-on:submit="onSubmitForm">
+            <form v-on:submit.prevent="onSubmitForm">
               <div class="single_input_body">
                   <div class="pack_div clearfix">
                     <div class="div_left">
@@ -179,7 +179,6 @@
           }
         },
         onSubmitForm: function(e) {
-          e.preventDefault();
           var _validate = validate(this.formData, {
             'start_date': {
               is_require: true,

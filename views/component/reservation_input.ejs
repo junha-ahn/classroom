@@ -1,5 +1,5 @@
 <script type="text/x-template" id="input-template">
-    <form class="`form-lnline" v-on:submit="onSubmitForm">
+    <form class="`form-lnline" v-on:submit.prevent="onSubmitForm">
       <div class="single_input_body">
         <div class="pack_div clearfix">
           <div class="div_left">
@@ -434,8 +434,7 @@
         this.mod = mod;
       },
       onSubmitForm: function(e) {
-        e.preventDefault();
-        
+
         var mod = this.mod;
         
         var _validate = validate(this.room_rsv, {

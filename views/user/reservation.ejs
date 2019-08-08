@@ -419,8 +419,7 @@
           this.formData.representative_student_number = person.student_number;
         },
         // LAST
-        detailSubmit: function(e) {
-          e.preventDefault();
+        onSubmitForm: function(e) {
           if (this.menu_step == 'detail') {
             this.nextMenuStep();
           } else {

@@ -1,6 +1,6 @@
 <script type="text/x-template" id="input-template">
   
-  <form class="form-lnline" v-on:submit="onSubmitForm">
+  <form class="form-lnline" v-on:submit.prevent="onSubmitForm">
     <div class="single_input_body">
       <div class="pack_div clearfix">
         <div class="div_left">
@@ -217,7 +217,6 @@
         }
       },
       onSubmitForm: function(e) {
-        e.preventDefault();
         var _validate = validate(this.room, {
           'room_category_id': {
             is_require: true,

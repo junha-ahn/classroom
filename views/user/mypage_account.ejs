@@ -15,7 +15,7 @@
       >
       </user-input>
       
-      <form v-on:submit="onSubmitChagePassword">
+      <form v-on:submit.prevent="onSubmitChagePassword">
         <div class="single_input_body">
           <div class="title">
             <h1>암호 변경</h1>
@@ -86,7 +86,6 @@
     },
     methods: {
       onSubmitChagePassword: function(e) {
-        e.preventDefault();
         var _validate = validate(this.chagePasswordForm, {
           'old_password': {
             is_require: true,

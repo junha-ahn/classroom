@@ -1,5 +1,5 @@
 <div>
-    <form v-on:submit="detailSubmit">
+    <form v-on:submit.prevent="onSubmitForm">
       <div class="pack_div clearfix">
         <div class="div_left">
           <label>학과</label>

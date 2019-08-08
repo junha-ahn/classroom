@@ -1,7 +1,7 @@
 <% include ../sub/header %>
       <% include ../sub/admin_menu %>
       
-      <form v-on:submit="onSubmitForm">
+      <form v-on:submit.prevent="onSubmitForm">
         <div class="admin_right">
           <div class="single_input_body">
             <div class="title">
@@ -151,7 +151,6 @@
           });
         },
         onSubmitForm: function(e) {
-          e.preventDefault();
           var _validate = validate(this.formData, {
             'day_of_the_week': {
               is_require: true,
