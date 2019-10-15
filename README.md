@@ -1,6 +1,6 @@
 # Classroom
 
-- [소개](https://docs.google.com/presentation/d/1I_BCH0gB5qXun0ZsSwoqFiWV-V1Hp2ucN4GDVax1Bm8/edit?usp=sharing)
+- [프로젝트 소개 링크](https://docs.google.com/presentation/d/1I_BCH0gB5qXun0ZsSwoqFiWV-V1Hp2ucN4GDVax1Bm8/edit?usp=sharing)
 
 ## 사용
 
