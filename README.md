@@ -1,6 +1,8 @@
 # 소개
 
-- [프로젝트 소개 링크](https://docs.google.com/presentation/d/1I_BCH0gB5qXun0ZsSwoqFiWV-V1Hp2ucN4GDVax1Bm8/edit?usp=sharing)
+웹을 이용하여, 강의실 예약을 제공
+
+- 2019년 소프트웨어 경진대회 장려상 수상
 
 ## 사용
 
